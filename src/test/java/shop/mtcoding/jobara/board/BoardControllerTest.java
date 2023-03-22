@@ -78,7 +78,7 @@ public class BoardControllerTest {
 
         // then
         resultActions.andExpect(status().isOk());
-        resultActions.andExpect(jsonPath("$.board[0].user[0].id").value(15));
+        resultActions.andExpect(jsonPath("$.board[0].user.userId").value(15));
     }
 
     @Test
