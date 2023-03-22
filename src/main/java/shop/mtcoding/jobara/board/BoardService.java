@@ -51,7 +51,7 @@ public class BoardService {
         try {
             boardDetailPS = boardRepository.findBoardDetailByJoin(principalId, boardId);
         } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         boardDetailPS.skillParse(boardDetailPS.getNeedParse());
         boardDetailPS.faSoild();
@@ -72,14 +72,21 @@ public class BoardService {
         int startNum = page * BoardPagingListDto.ROW;
 
         if (uservo != null && uservo.getRole().equals("employee")) {
-
-            boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, uservo.getId());
-            pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, uservo.getId());
+            try {
+                boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW,
+                        uservo.getId());
+                pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, uservo.getId());
+            } catch (Exception e) {
+                throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
 
         } else {
-
-            boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, 0);
-            pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, 0);
+            try {
+                boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, 0);
+                pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, 0);
+            } catch (Exception e) {
+                throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
 
         pagingDtoPS.makeBlockInfo(keyword);
