@@ -24,9 +24,9 @@ import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.common.aop.CompanyCheck;
 import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
@@ -102,17 +102,12 @@ public class BoardController {
 
     @GetMapping("/boards/updateForm/{id}")
     // @CompanyCheck
-    public String updateForm(@PathVariable int id) {
+    public ResponseEntity<?> updateForm(@PathVariable int id) {
         UserVo principal = setPrincipal();
 
-        List<Integer> boardSkill = boardService.getSkillForDetail(id);
-        BoardUpdateRespDto boardDetailPS = boardService.getDetailForUpdate(id, principal.getId());
+        BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id);
 
-        // model.addAttribute("boardDetail", boardDetailPS);
-        // model.addAttribute("boardSkill", boardSkill);
-        // redisServiceSet.addModel(model);
-
-        return "board/updateForm";
+        return ResponseEntity.status(200).body(boardUpdateFormRespDto);
     }
 
     @PutMapping("/board/update/{id}")

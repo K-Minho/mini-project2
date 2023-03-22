@@ -60,36 +60,48 @@ public class BoardService {
         return boardDetailPS;
     }
 
+    @Transactional(readOnly = true)
     public BoardPagingListDto getListWithJoin(Integer page, String keyword, UserVo uservo) {
 
         if (page == null) {
             page = 0;
         }
 
-        BoardPagingListDto pagingDto;
-        List<BoardListDto> boardsList;
+        BoardPagingListDto pagingDtoPS;
+        List<BoardListDto> boardsListPS;
         int startNum = page * BoardPagingListDto.ROW;
 
         if (uservo != null && uservo.getRole().equals("employee")) {
 
-            boardsList = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, uservo.getId());
-            pagingDto = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, uservo.getId());
+            boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, uservo.getId());
+            pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, uservo.getId());
 
         } else {
 
-            boardsList = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, 0);
-            pagingDto = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, 0);
+            boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, 0);
+            pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, 0);
         }
 
-        pagingDto.makeBlockInfo(keyword);
-        pagingDto.setBoard(boardsList);
+        pagingDtoPS.makeBlockInfo(keyword);
+        pagingDtoPS.setBoard(boardsListPS);
 
-        return pagingDto;
+        return pagingDtoPS;
     }
 
+    @Transactional(readOnly = true)
     public BoardUpdateFormRespDto getUpdateFormInfo(Integer boardId) {
+        BoardUpdateFormRespDto boardUpdateFormRespPS;
+        try {
+            boardUpdateFormRespPS = boardRepository.findUpdateFormInfo(boardId);
+        } catch (Exception e) {
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        return null;
+        boardUpdateFormRespPS.skillParse(boardUpdateFormRespPS.getNeedParse());
+
+        boardUpdateFormRespPS.parseIntegerInfo();
+
+        return boardUpdateFormRespPS;
     }
 
     // 1/2차 경계선 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ

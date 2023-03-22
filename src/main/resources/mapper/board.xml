@@ -222,7 +222,7 @@
             <result property="needParse" column="skills"/>
     </resultMap>
 
-	<select id="BoardUpdateFormRespDto" resultMap="boardUpdateFormResp" >
+	<select id="findUpdateFormInfo" resultMap="boardUpdateFormResp" >
            SELECT bt.*, GROUP_CONCAT(bt2.skill) AS skills
            FROM board_tb bt
            LEFT JOIN boardtech_tb bt2 ON bt.id = bt2.board_id
