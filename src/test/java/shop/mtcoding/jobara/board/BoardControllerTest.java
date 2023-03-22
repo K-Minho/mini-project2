@@ -1,19 +1,11 @@
 package shop.mtcoding.jobara.board;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,12 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
-import shop.mtcoding.jobara.common.util.RedisService;
+import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
 @Transactional
@@ -47,21 +34,45 @@ public class BoardControllerTest {
     @Autowired
     private ObjectMapper om;
 
-    private MockHttpSession mockSession;
+    private MockHttpSession employeeMockSession;
+    private MockHttpSession companyMockSession;
 
     @BeforeEach
     public void setUp() {
-        UserVo principal = new UserVo();
-        // principal.setId(6);
-        // principal.setUsername("cos");
-        // principal.setRole("company");
-        principal.setId(1);
-        principal.setUsername("ssar");
-        principal.setRole("employee");
-        principal.setProfile(null);
+        UserVo employeePrincipal = new UserVo();
+        UserVo companyPrincipal = new UserVo();
+        employeePrincipal.setId(6);
+        employeePrincipal.setUsername("cos");
+        employeePrincipal.setRole("company");
+        employeePrincipal.setProfile(null);
 
-        mockSession = new MockHttpSession();
-        mockSession.setAttribute("principal", principal);
+        companyPrincipal.setId(1);
+        companyPrincipal.setUsername("ssar");
+        companyPrincipal.setRole("employee");
+        companyPrincipal.setProfile(null);
+
+        employeeMockSession = new MockHttpSession();
+        companyMockSession = new MockHttpSession();
+        employeeMockSession.setAttribute("EmployeePrincipal", employeePrincipal);
+        companyMockSession.setAttribute("CompanyPrincipal", companyPrincipal);
+    }
+
+    @Test
+    public void save_test() throws Exception {
+        // given
+        BoardInsertReqDto boardInsertReqDto = new BoardInsertReqDto("포스트맨 저장제목", "포스트맨 저장내용", "1년이상 ~ 3년미만",
+                "4년 대졸이상", "인턴", "2023-04-09", "근면성실", 6, Arrays.asList(1, 2, 3));
+        ;
+        System.out.println("테스트 : " + om.writeValueAsString(boardInsertReqDto));
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/boards")
+                .content(om.writeValueAsString(boardInsertReqDto))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .session(employeeMockSession));
+
+        // then
+        resultActions.andExpect(status().isCreated());
     }
 
     @Test
@@ -71,7 +82,7 @@ public class BoardControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(get("/boards/updateForm/" + boardId)
-                .session(mockSession));
+                .session(companyMockSession));
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : " + responseBody);
@@ -88,7 +99,7 @@ public class BoardControllerTest {
         String keyword = "lang";
         // when
         ResultActions resultActions = mvc.perform(get("/boards/list?page=" + page)
-                .session(mockSession));
+                .session(employeeMockSession));
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : " + responseBody);
@@ -104,7 +115,7 @@ public class BoardControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(get("/")
-                .session(mockSession));
+                .session(employeeMockSession));
 
         // then
         resultActions.andExpect(status().isOk());
@@ -116,7 +127,7 @@ public class BoardControllerTest {
         Integer boardId = 1;
         // when
         ResultActions resultActions = mvc.perform(get("/boards/" + boardId)
-                .session(mockSession));
+                .session(employeeMockSession));
 
         // String responseBody =
         // resultActions.andReturn().getResponse().getContentAsString();
