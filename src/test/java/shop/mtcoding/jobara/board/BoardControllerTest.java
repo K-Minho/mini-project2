@@ -65,6 +65,35 @@ public class BoardControllerTest {
     }
 
     @Test
+    public void list_test() throws Exception {
+        // given
+        Integer page = 0;
+        String keyword = "lang";
+        // when
+        ResultActions resultActions = mvc.perform(get("/boards/list?page=" + page)
+                .session(mockSession));
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.board[0].user[0].id").value(15));
+    }
+
+    @Test
+    public void main_test() throws Exception {
+        // given
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/")
+                .session(mockSession));
+
+        // then
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
     public void detail_test() throws Exception {
         // given
         Integer boardId = 1;
@@ -79,18 +108,6 @@ public class BoardControllerTest {
         // then
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(jsonPath("$.resume[0].id").value(1));
-    }
-
-    @Test
-    public void main_test() throws Exception {
-        // given
-
-        // when
-        ResultActions resultActions = mvc.perform(get("/")
-                .session(mockSession));
-
-        // then
-        resultActions.andExpect(status().isOk());
     }
 
 }

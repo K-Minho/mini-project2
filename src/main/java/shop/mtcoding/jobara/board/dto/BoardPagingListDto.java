@@ -30,8 +30,8 @@ public class BoardPagingListDto {
         private String title;
         private String companyName;
         private String dday;
-        private List<UserDto> user;
-        private List<LoveDto> love;
+        private UserDto user;
+        private LoveDto love;
 
         @Getter
         @Setter

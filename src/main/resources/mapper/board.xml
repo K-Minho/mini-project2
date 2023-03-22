@@ -81,11 +81,11 @@
     <result property="title" column="title"/>
     <result property="companyName" column="company_name"/>
     <result property="dday" column="dday"/>
-    <collection property="user" javaType="java.util.ArrayList" ofType="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto$UserDto">
+    <collection property="user"  ofType="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto$UserDto">
         <id property="userId" column="user_id"/>
         <result property="profile" column="profile"/>
     </collection>
-    <collection property="love" javaType="java.util.ArrayList" ofType="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto$LoveDto">
+    <collection property="love"  ofType="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto$LoveDto">
         <id property="loveId" column="love_id"/>
         <result property="css" column="css"/>
     </collection>
