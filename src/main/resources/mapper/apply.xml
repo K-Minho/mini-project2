@@ -35,19 +35,53 @@
         select * from apply_tb where user_id = #{userId} and board_id = #{boardId}
     </select>
 
-    <select id="findByUserIdWithBoardAndUser" resultType="shop.mtcoding.jobara.apply.dto.ApplyResp$CompanyApplyRespDto">
-        select at.id, at.user_id, at.board_id, rt.id as resume_id, at.state, at.created_at, et.real_name, bt.title,
+    <resultMap id="ApplyJoinBoardAndUserAndResumeForComapny" type="shop.mtcoding.jobara.apply.dto.ApplyResp$ApplyJoinBoardAndUser">
+        <id property="id" column="id" />
+        <result property="state" column="state" />
+        <result property="createdAt" column="created_at" />
+        <association property="board" javaType="shop.mtcoding.jobara.apply.dto.ApplyResp$ApplyJoinBoardAndUser$BoardDto">
+            <id property="id" column="board_id" />
+            <result property="title" column="title" />
+        </association>
+        <association property="user" javaType="shop.mtcoding.jobara.apply.dto.ApplyResp$ApplyJoinBoardAndUser$UserDto">
+            <id property="id" column="user_id" />
+            <result property="realName" column="real_name" />
+        </association>
+        <association property="resume" javaType="shop.mtcoding.jobara.apply.dto.ApplyResp$ApplyJoinBoardAndUser$ResumeDto">
+            <id property="id" column="resume_id" />
+        </association>
+    </resultMap>
+
+    <select id="findByUserIdWithBoardAndUser" resultMap="ApplyJoinBoardAndUserAndResumeForComapny">
+        select at.id, at.user_id, at.board_id, rt.id as resume_id, at.state, at.created_at, et.real_name, bt.title
         from apply_tb at
         inner join employee_tb et
         on et.user_id = at.user_id
-        inner join board_tb bt
+        inner join (select * from board_tb where user_id = #{userId}) bt
         on at.board_id = bt.id
         inner join resume_tb rt
         on rt.user_id = et.user_id
-        where bt.user_id = #{userId} and at.resume_id = rt.id;
-    </select>  
+        where at.resume_id = rt.id
+    </select>   
 
-    <select id="findByUserIdWithBoardAndResume" resultType="shop.mtcoding.jobara.apply.dto.ApplyResp$EmployeeApplyRespDto">
+    <resultMap id="ApplyJoinBoardAndUserAndResumeForEmployee" type="shop.mtcoding.jobara.apply.dto.ApplyResp$ApplyJoinBoardAndResume">
+        <id property="id" column="id" />
+        <result property="state" column="state" />
+        <result property="createdAt" column="created_at" />
+        <association property="board" javaType="shop.mtcoding.jobara.apply.dto.ApplyResp$ApplyJoinBoardAndResume$BoardDto">
+            <id property="id" column="board_id" />
+            <result property="title" column="board_title" />
+        </association>
+        <association property="user" javaType="shop.mtcoding.jobara.apply.dto.ApplyResp$ApplyJoinBoardAndResume$UserDto">
+            <id property="id" column="user_id" />
+        </association>
+        <association property="resume" javaType="shop.mtcoding.jobara.apply.dto.ApplyResp$ApplyJoinBoardAndResume$ResumeDto">
+            <id property="id" column="resume_id" />
+            <result property="title" column="resume_title" />
+        </association>
+    </resultMap>
+
+    <select id="findByUserIdWithBoardAndResume" resultMap="ApplyJoinBoardAndUserAndResumeForEmployee">
         select at.id, at.board_id, at.user_id, rt.id as resume_id, at.state, at.created_at, rt.title resume_title, bt.title board_title
         from apply_tb at
         inner join resume_tb rt
@@ -56,6 +90,7 @@
         on at.board_id = bt.id
         where at.user_id = #{userId} and at.resume_id = rt.id
     </select>  
+
     <select id="findByIdWithBoardForMail" resultType="shop.mtcoding.jobara.apply.dto.ApplyResp$MailDto">
         select at.id, at.user_id, at.board_id, at.resume_id, at.state, bt.title board_title
         from (select * from apply_tb where id = #{id}) at
