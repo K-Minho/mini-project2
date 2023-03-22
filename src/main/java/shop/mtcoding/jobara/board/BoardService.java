@@ -43,6 +43,21 @@ public class BoardService {
     ResumeRepository resumeRepository;
 
     @Transactional(readOnly = true)
+    public BoardDetailRespDto getDetail(Integer principalId, Integer boardId) {
+        BoardDetailRespDto boardDetailPS;
+
+        try {
+            boardDetailPS = boardRepository.findBoardDetailByJoin(principalId, boardId);
+        } catch (Exception e) {
+            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return boardDetailPS;
+    }
+
+    // 1/2차 경계선
+
+    @Transactional(readOnly = true)
     public List<BoardMainRespDto> getListToMain() {
         List<BoardMainRespDto> boardListPS;
 

@@ -17,6 +17,10 @@ import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
 @Mapper
 public interface BoardRepository {
 
+        public BoardDetailRespDto findBoardDetailByJoin(@Param("userId") int userId, @Param("boardId") int boardId);
+
+        // 1/2차 경계선
+
         public List<Board> findAll();
 
         public BoardDetailRespDto findByIdWithCompany(int boardId);

@@ -60,6 +60,10 @@ public class BoardController {
     @Autowired
     private RedisServiceSet redisServiceSet;
 
+    public UserVo setPrincipal() {
+        return new UserVo(1, "ssar", "", "employee");
+    }
+
     @GetMapping({ "/", "/home" })
     public String home(Model model, HttpServletRequest request) {
 
@@ -81,6 +85,8 @@ public class BoardController {
 
     @GetMapping("/board/{id}")
     public String detail(@PathVariable int id) {
+        UserVo principal = setPrincipal();
+        boardService.getDetail(principal.getId(), id);
 
         // BoardDetailRespDto boardPS = boardService.getDetail(id);
         // UserVo principal = redisService.getValue("principal");
