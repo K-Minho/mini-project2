@@ -9,5 +9,4 @@ public class JobaraApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(JobaraApplication.class, args);
 	}
-
 }
