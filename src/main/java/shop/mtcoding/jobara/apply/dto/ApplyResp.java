@@ -2,91 +2,71 @@ package shop.mtcoding.jobara.apply.dto;
 
 import java.sql.Timestamp;
 
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import shop.mtcoding.jobara.common.util.DateParse;
 
 public class ApplyResp {
 
     @Getter
-    @Setter
-    public static class CompanyApplyRespDto {
-        private Integer userId;
-        private Integer boardId;
-        private Integer resumeId;
-        private String realName;
-        private String title;
-        private Integer state;
+    @Setter(AccessLevel.PRIVATE)
+    public static class ApplyJoinBoardAndUser {
+        private Integer id;
+        private String state;
         private Timestamp createdAt;
+        private BoardDto board;
+        private UserDto user;
+        private ResumeDto resume;
 
-        public String getCreatedAtToString() {
-            return DateParse.format(createdAt);
+        @Getter
+        @Setter(AccessLevel.PRIVATE)
+        public static class BoardDto {
+            private Integer id;
+            private String title;
         }
 
-        public String getStateToString() {
-            switch (state) {
-                case 1:
-                    return "합격";
-                case -1:
-                    return "불합격";
-                default:
-                    return "검토중";
-            }
+        @Getter
+        @Setter(AccessLevel.PRIVATE)
+        public static class UserDto {
+            private Integer id;
+            private String realName;
         }
 
-        public String getPreview() {
-            if (title.length() > 30) {
-                return title.substring(0, 30) + "...";
-            } else {
-                return title;
-            }
+        @Getter
+        @Setter(AccessLevel.PRIVATE)
+        public static class ResumeDto {
+            private Integer id;
         }
     }
 
     @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class EmployeeApplyRespDto {
-        private Integer userId;
-        private Integer boardId;
-        private Integer resumeId;
-        private String resumeTitle;
-        private String boardTitle;
+    @Setter(AccessLevel.PRIVATE)
+    public static class ApplyJoinBoardAndResume {
+        private Integer id;
         private Integer state;
         private Timestamp createdAt;
+        private BoardDto board;
+        private UserDto user;
+        private ResumeDto resume;
 
-        public String getCreatedAtToString() {
-            return DateParse.format(createdAt);
+        @Getter
+        @Setter(AccessLevel.PRIVATE)
+        public static class BoardDto {
+            private Integer id;
+            private String title;
         }
 
-        public String getStateToString() {
-            switch (state) {
-                case 1:
-                    return "합격";
-                case -1:
-                    return "불합격";
-                default:
-                    return "검토중";
-            }
+        @Getter
+        @Setter(AccessLevel.PRIVATE)
+        public static class UserDto {
+            private Integer id;
         }
 
-        public String getBoardTitlePreview() {
-            if (boardTitle.length() > 20) {
-                return boardTitle.substring(0, 20) + "...";
-            } else {
-                return boardTitle;
-            }
-        }
-
-        public String getResumeTitlePreview() {
-            if (resumeTitle.length() > 20) {
-                return resumeTitle.substring(0, 20) + "...";
-            } else {
-                return resumeTitle;
-            }
+        @Getter
+        @Setter(AccessLevel.PRIVATE)
+        public static class ResumeDto {
+            private Integer id;
+            private String title;
         }
     }
 
