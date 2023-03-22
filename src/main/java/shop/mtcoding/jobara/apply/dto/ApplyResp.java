@@ -9,7 +9,7 @@ import lombok.Setter;
 public class ApplyResp {
 
     @Getter
-    @Setter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PROTECTED)
     public static class ApplyJoinBoardAndUser {
         private Integer id;
         private String state;
@@ -19,28 +19,28 @@ public class ApplyResp {
         private ResumeDto resume;
 
         @Getter
-        @Setter(AccessLevel.PRIVATE)
+        @Setter(AccessLevel.PROTECTED)
         public static class BoardDto {
             private Integer id;
             private String title;
         }
 
         @Getter
-        @Setter(AccessLevel.PRIVATE)
+        @Setter(AccessLevel.PROTECTED)
         public static class UserDto {
             private Integer id;
             private String realName;
         }
 
         @Getter
-        @Setter(AccessLevel.PRIVATE)
+        @Setter(AccessLevel.PROTECTED)
         public static class ResumeDto {
             private Integer id;
         }
     }
 
     @Getter
-    @Setter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PROTECTED)
     public static class ApplyJoinBoardAndResume {
         private Integer id;
         private Integer state;
@@ -50,20 +50,20 @@ public class ApplyResp {
         private ResumeDto resume;
 
         @Getter
-        @Setter(AccessLevel.PRIVATE)
+        @Setter(AccessLevel.PROTECTED)
         public static class BoardDto {
             private Integer id;
             private String title;
         }
 
         @Getter
-        @Setter(AccessLevel.PRIVATE)
+        @Setter(AccessLevel.PROTECTED)
         public static class UserDto {
             private Integer id;
         }
 
         @Getter
-        @Setter(AccessLevel.PRIVATE)
+        @Setter(AccessLevel.PROTECTED)
         public static class ResumeDto {
             private Integer id;
             private String title;
