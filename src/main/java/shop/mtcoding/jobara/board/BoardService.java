@@ -60,19 +60,6 @@ public class BoardService {
 
     // 1/2차 경계선
 
-    @Transactional(readOnly = true)
-    public List<BoardMainRespDto> getListToMain() {
-        List<BoardMainRespDto> boardListPS;
-
-        try {
-            boardListPS = boardRepository.findAllWithCompanyToMain();
-        } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return boardListPS;
-    }
-
     // @Transactional(readOnly = true)
     // public BoardDetailRespDto getDetail(int id) {
     // BoardDetailRespDto boardDetailPS;

@@ -74,10 +74,6 @@ public class BoardController {
                 }
             }
         }
-        List<BoardMainRespDto> boardListPS = boardService.getListToMain();
-        model.addAttribute("boardMainList", boardListPS);
-        model.addAttribute("remember", username);
-        redisServiceSet.addModel(model);
         return "board/home";
     }
 
