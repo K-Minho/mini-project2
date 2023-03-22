@@ -61,6 +61,10 @@ public class BoardController {
         return new UserVo(1, "ssar", "", "employee");
     }
 
+    public UserVo setCompanyPrincipal() {
+        return new UserVo(6, "cos", "", "company");
+    }
+
     @GetMapping({ "/", "/home" })
     public ResponseEntity<?> home(HttpServletRequest request) {
 
@@ -73,7 +77,7 @@ public class BoardController {
                 }
             }
         }
-        return ResponseEntity.status(200).body(null);
+        return new ResponseEntity<>(new ResponseDto<>(1, "메인 페이지", null), HttpStatus.OK);
     }
 
     @GetMapping("/boards/{id}")
@@ -82,7 +86,7 @@ public class BoardController {
         System.out.println(principal.getId());
         BoardDetailRespDto boardDetailRespDto = boardService.getDetail(principal.getId(), id);
 
-        return ResponseEntity.status(200).body(boardDetailRespDto);
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 상세페이지", boardDetailRespDto), HttpStatus.OK);
     }
 
     @GetMapping("/boards/list")
@@ -90,52 +94,55 @@ public class BoardController {
         UserVo principal = setPrincipal();
         BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
 
-        return ResponseEntity.status(200).body(boardPagingDto);
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 목록페이지", boardPagingDto), HttpStatus.OK);
     }
 
     @GetMapping("/boards/saveForm")
     // @CompanyCheck
     public ResponseEntity<?> saveForm() {
-        return ResponseEntity.status(200).body(null);
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록페이지", null), HttpStatus.OK);
     }
 
     @GetMapping("/boards/updateForm/{id}")
     // @CompanyCheck
     public ResponseEntity<?> updateForm(@PathVariable int id) {
-        UserVo principal = setPrincipal();
+        UserVo principal = setCompanyPrincipal();
         BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id);
 
-        return ResponseEntity.status(200).body(boardUpdateFormRespDto);
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정페이지", boardUpdateFormRespDto), HttpStatus.OK);
     }
 
-    @PutMapping("/board/update/{id}")
-    @CompanyCheckApi
+    @PutMapping("/boards/{id}")
+    // @CompanyCheckApi
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody BoardUpdateReqDto boardUpdateReqDto) {
-        UserVo principal = redisService.getValue("principal");
-
+        UserVo principal = setCompanyPrincipal();
         // 유효성
-        Verify.validateApiString(boardUpdateReqDto.getDeadline(), "마감 날짜를 선택하세요");
+        // Verify.validateApiString(boardUpdateReqDto.getDeadline(), "마감 날짜를 선택하세요");
 
-        ArrayList<Object> resDateParse = DateParse.Dday(boardUpdateReqDto.getDeadline());
-        if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
-            throw new CustomApiException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
-        }
+        // ArrayList<Object> resDateParse =
+        // DateParse.Dday(boardUpdateReqDto.getDeadline());
+        // if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) <
+        // 100)) {
+        // throw new CustomApiException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String)
+        // resDateParse.get(1) + ")");
+        // }
 
-        if (boardUpdateReqDto.getFavor().length() > 16) {
-            throw new CustomApiException("우대사항은 16자 이내 입력 가능합니다");
-        }
+        // if (boardUpdateReqDto.getFavor().length() > 16) {
+        // throw new CustomApiException("우대사항은 16자 이내 입력 가능합니다");
+        // }
 
-        Verify.isEqualApi(boardUpdateReqDto.getCheckedValues().size(), 0, "선호기술을 한 가지 이상 선택해주세요.",
-                HttpStatus.BAD_REQUEST);
+        // Verify.isEqualApi(boardUpdateReqDto.getCheckedValues().size(), 0, "선호기술을 한 가지
+        // 이상 선택해주세요.",
+        // HttpStatus.BAD_REQUEST);
 
-        Verify.validateApiString(boardUpdateReqDto.getTitle(), "제목을 입력하세요");
-        Verify.validateApiString(boardUpdateReqDto.getContent(), "내용을 입력하세요");
-        Verify.validateApiString(boardUpdateReqDto.getCareerString(), "경력을 입력하세요");
+        // Verify.validateApiString(boardUpdateReqDto.getTitle(), "제목을 입력하세요");
+        // Verify.validateApiString(boardUpdateReqDto.getContent(), "내용을 입력하세요");
+        // Verify.validateApiString(boardUpdateReqDto.getCareerString(), "경력을 입력하세요");
 
         boardService.updateBoard(boardUpdateReqDto, principal.getId());
         boardService.updateTech(boardUpdateReqDto.getCheckedValues(), id);
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정완료", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정 성공", null), HttpStatus.CREATED);
     }
 
     @PostMapping("/board/save")
