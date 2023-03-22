@@ -33,52 +33,6 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @GetMapping("/list")
-    public @ResponseBody ResponseEntity<?> employeeList(Model model, Integer page) {
-        UserVo principal = (UserVo) model.getAttribute("principal");
-        PagingDto pagingPS = employeeService.getEmployee(page);
-        model.addAttribute("pagingDto", pagingPS);
-        if (principal != null) {
-            if (principal.getRole().equals("company")) {
-                List<EmployeeAndResumeRespDto> recommendEmployeeListPS = employeeService
-                        .getRecommendEmployee(principal.getId());
-                model.addAttribute("recommendEmployeeList", recommendEmployeeListPS);
-            }
-        }
-
-        return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.valueOf(200));
-    }
-
-    @GetMapping("/employee/{id}/resume/{resumeId}")
-    public ResponseEntity<?> employeeDetail(@PathVariable int id, @PathVariable int resumeId, Model model) {
-        EmployeeAndResumeRespDto employeePS = employeeService.getEmployee(id, resumeId);
-        List<String> employeeTechPS = employeeService.getEmployeeTech(id);
-        model.addAttribute("employee", employeePS);
-        model.addAttribute("employeeTech", employeeTechPS);
-        return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.valueOf(200));
-    }
-
-    // @GetMapping("/employee/updateForm")
-    // @EmployeeCheck
-    // public ResponseEntity<?> updateForm(Model model) {
-    // UserVo principal = (UserVo) model.getAttribute("principal");
-    // EmployeeUpdateRespDto employeeUpdateRespDto =
-    // employeeService.getEmployeeUpdateRespDto(principal.getId());
-    // List<Integer> employeeSkill =
-    // employeeService.getSkillForDetail(principal.getId());
-    // model.addAttribute("employeeDto", employeeUpdateRespDto);
-    // model.addAttribute("employeeSkill", employeeSkill);
-
-    // return new ResponseEntity<>(new ResponseDto<>(1, "", model),
-    // HttpStatus.valueOf(200));
-    // }
-
-    @PostMapping("/join")
-    public ResponseEntity<?> join(EmployeeJoinReqDto employeeJoinReqDto) {
-        employeeService.insertEmployee(employeeJoinReqDto);
-        return new ResponseEntity<>(new ResponseDto<>(1, "", null), HttpStatus.valueOf(201));
-    }
-
     @PutMapping("/employee/update/tech/{id}")
     @EmployeeCheckApi
     public ResponseEntity<?> update(@PathVariable int id,
@@ -102,6 +56,48 @@ public class EmployeeController {
     @GetMapping("/joinForm")
     public String joinForm() {
         return "employee/joinForm";
+    }
+
+    @GetMapping("/employee/{id}/resume/{resumeId}")
+    public ResponseEntity<?> employeeDetail(@PathVariable int id, @PathVariable int resumeId, Model model) {
+        EmployeeAndResumeRespDto employeePS = employeeService.getEmployee(id, resumeId);
+        List<String> employeeTechPS = employeeService.getEmployeeTech(id);
+        model.addAttribute("employee", employeePS);
+        model.addAttribute("employeeTech", employeeTechPS);
+        return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.valueOf(200));
+    }
+
+    @GetMapping("/employee/{id}/updateForm")
+    @EmployeeCheck
+    public ResponseEntity<?> updateForm(@PathVariable int id, Model model) {
+
+        EmployeeUpdateRespDto employeeUpdateRespDto = employeeService.getEmployeeUpdateRespDto(id);
+        List<Integer> employeeSkill = employeeService.getSkillForDetail(id);
+        model.addAttribute("employeeDto", employeeUpdateRespDto);
+        model.addAttribute("employeeSkill", employeeSkill);
+        return ResponseEntity.status(200).body(model);
+    }
+
+    @GetMapping("/list")
+    public @ResponseBody ResponseEntity<?> employeeList(Model model, Integer page) {
+        UserVo principal = (UserVo) model.getAttribute("principal");
+        PagingDto pagingPS = employeeService.getEmployee(page);
+        model.addAttribute("pagingDto", pagingPS);
+        if (principal != null) {
+            if (principal.getRole().equals("company")) {
+                List<EmployeeAndResumeRespDto> recommendEmployeeListPS = employeeService
+                        .getRecommendEmployee(principal.getId());
+                model.addAttribute("recommendEmployeeList", recommendEmployeeListPS);
+            }
+        }
+
+        return ResponseEntity.status(200).body(model);
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity<?> join(EmployeeJoinReqDto employeeJoinReqDto) {
+        employeeService.insertEmployee(employeeJoinReqDto);
+        return new ResponseEntity<>(new ResponseDto<>(1, "가입 완료", null), HttpStatus.valueOf(201));
     }
 
     @GetMapping("/employee/{id}")

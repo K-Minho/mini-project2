@@ -19,6 +19,7 @@ import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeLoginReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeUpdateReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeResp.EmployeeAndResumeRespDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeResp.EmployeeUpdateRespDto;
+import shop.mtcoding.jobara.employee.dto.EmployeeResp.EmployeeUpdateRespDto.EmployeeDto;
 import shop.mtcoding.jobara.employee.model.Employee;
 import shop.mtcoding.jobara.employee.model.EmployeeRepository;
 import shop.mtcoding.jobara.employee.model.EmployeeTechRepository;
@@ -83,18 +84,17 @@ public class EmployeeService {
         return userVo;
     }
 
-    // @Transactional(readOnly = true)
-    // public EmployeeUpdateRespDto getEmployeeUpdateRespDto(Integer principalId) {
-    // User user = userRepository.findById(principalId);
-    // Employee employee = employeeRepository.findByUserId(principalId);
-    // EmployeeUpdateRespDto employeeUpdateRespDto = new
-    // EmployeeUpdateRespDto(user.getId(), user.getPassword(),
-    // user.getEmail(),
-    // user.getAddress(), user.getDetailAddress(), user.getTel(),
-    // employee.getRealName(),
-    // employee.getCareer(), employee.getEducation());
-    // return employeeUpdateRespDto;
-    // }
+    @Transactional(readOnly = true)
+    public EmployeeUpdateRespDto getEmployeeUpdateRespDto(Integer principalId) {
+        User user = userRepository.findById(principalId);
+        Employee employee = employeeRepository.findByUserId(principalId);
+        EmployeeUpdateRespDto employeeUpdateRespDto = new EmployeeUpdateRespDto(user.getId(), user.getPassword(),
+                user.getEmail(),
+                user.getAddress(), user.getDetailAddress(), user.getTel(),
+                new EmployeeDto(employee.getRealName(),
+                        employee.getEducation(), employee.getCareer()));
+        return employeeUpdateRespDto;
+    }
 
     @Transactional
     public void insertEmployee(EmployeeJoinReqDto employeeJoinReqDto) {

@@ -25,6 +25,7 @@ public class EmployeeResp {
 
         @Getter
         @Setter
+        @AllArgsConstructor
         public static class EmployeeDto {
             private String realName;
             private String education;

@@ -88,7 +88,27 @@
                 )
     </select>
 
-    <select id="findEmployeeByIdAndResume" resultType="shop.mtcoding.jobara.employee.dto.EmployeeResp$EmployeeAndResumeRespDto">
+        <resultMap id="employeeIdAndResume" type="shop.mtcoding.jobara.employee.dto.EmployeeResp$EmployeeAndResumeRespDto">
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
+        <result property="address" column="address"/>
+        <result property="detailAddress" column="detail_address"/>
+        <result property="tel" column="tel"/>
+        <result property="profile" column="profile"/>
+        <result property="role" column="role"/>
+        <result property="createdAt" column="created_at"/>
+        <association property="employeeDto" javaType="shop.mtcoding.jobara.employee.dto.EmployeeResp$EmployeeAndResumeRespDto$EmployeeDto">
+            <result property="realName" column="real_name"/>
+            <result property="education" column="education"/>
+            <result property="career" column="career"/>
+        </association>
+        <association property="resumeDto" javaType="shop.mtcoding.jobara.employee.dto.EmployeeResp$EmployeeAndResumeRespDto$ResumeDto">
+            <result property="title" column="title"/>
+            <result property="content" column="content"/>
+        </association>
+    </resultMap>
+
+    <select id="findEmployeeByIdAndResume" resultMap="employeeIdAndResume">
          SELECT user_tb.*, employee_tb.real_name, education, career, title, content
         FROM user_tb
         JOIN employee_tb ON user_tb.id = employee_tb.user_id
