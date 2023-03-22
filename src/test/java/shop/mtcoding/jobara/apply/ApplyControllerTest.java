@@ -129,4 +129,42 @@ public class ApplyControllerTest {
         resultActions.andExpect(jsonPath("$.code").value(1));
         resultActions.andExpect(jsonPath("$.msg").value("불합격 처리 완료"));
     }
+    
+    @Test
+    public void employeeApplyList_test() throws Exception {
+        // given
+        Integer id = 6;
+
+        // mock
+        List<ApplyJoinBoardAndResume> applyListPS = new ArrayList<>();
+        ApplyJoinBoardAndResume applyJoinBoardAndResume = ApplyJoinBoardAndResumeBuilder.makeApplyJoinBoardAndResume(1,
+                0,
+                ApplyJoinBoardAndResumeBuilder.makeUser(1),
+                ApplyJoinBoardAndResumeBuilder.makeBoard(1, "공고제목1"),
+                ApplyJoinBoardAndResumeBuilder.makeResume(1, "이력서제목1"));
+        applyListPS.add(applyJoinBoardAndResume);
+        applyJoinBoardAndResume = ApplyJoinBoardAndResumeBuilder.makeApplyJoinBoardAndResume(2, 0,
+                ApplyJoinBoardAndResumeBuilder.makeUser(2),
+                ApplyJoinBoardAndResumeBuilder.makeBoard(2, "공고제목2"),
+                ApplyJoinBoardAndResumeBuilder.makeResume(2, "이력서제목2"));
+        applyListPS.add(applyJoinBoardAndResume);
+        given(applyService.getApplyForEmployee(id)).willReturn(applyListPS);
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/employee/" + id + "/apply"));
+        String resp = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + resp);
+
+        // then
+        resultActions.andExpect(status().is2xxSuccessful());
+        resultActions.andExpect(jsonPath("$.code").value(1));
+        resultActions.andExpect(jsonPath("$.msg").value("지원 기업 리스트 불러오기 성공"));
+        resultActions.andExpect(jsonPath("$.data[0].id").value(1));
+        resultActions.andExpect(jsonPath("$.data[0].state").value(0));
+        resultActions.andExpect(jsonPath("$.data[0].board.id").value(1));
+        resultActions.andExpect(jsonPath("$.data[0].board.title").value("공고제목1"));
+        resultActions.andExpect(jsonPath("$.data[0].user.id").value(1));
+        resultActions.andExpect(jsonPath("$.data[0].resume.id").value(1));
+        resultActions.andExpect(jsonPath("$.data[0].resume.title").value("이력서제목1"));
+    }
 }
