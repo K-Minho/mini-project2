@@ -4,21 +4,21 @@ server:
     encoding:
       charset: UTF-8
       force: true
-spring:
-  redis:
-    host: localhost
-    port: 6379
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: kimalss22@gmail.com
-    password: mwtjqsmcfcgufchd
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+# spring:
+#   redis:
+#     host: localhost
+#     port: 6379
+#   mail:
+#     host: smtp.gmail.com
+#     port: 587
+#     username: kimalss22@gmail.com
+#     password: mwtjqsmcfcgufchd
+#     properties:
+#       mail:
+#         smtp:
+#           auth: true
+#           starttls:
+#             enable: true
   datasource:
     url: jdbc:h2:mem:test;MODE=MySQL
     driver-class-name: org.h2.Driver
@@ -36,10 +36,10 @@ spring:
   output:
     ansi:
       enabled: always
-  mvc:
-    view:
-      prefix: /WEB-INF/view/
-      suffix: .jsp
+  # mvc:
+  #   view:
+  #     prefix: /WEB-INF/view/
+  #     suffix: .jsp
 mybatis:
   mapper-locations:
   - mapper/**.xml
