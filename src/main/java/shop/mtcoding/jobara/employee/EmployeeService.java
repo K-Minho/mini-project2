@@ -83,16 +83,18 @@ public class EmployeeService {
         return userVo;
     }
 
-    @Transactional(readOnly = true)
-    public EmployeeUpdateRespDto getEmployeeUpdateRespDto(Integer principalId) {
-        User user = userRepository.findById(principalId);
-        Employee employee = employeeRepository.findByUserId(principalId);
-        EmployeeUpdateRespDto employeeUpdateRespDto = new EmployeeUpdateRespDto(user.getId(), user.getPassword(),
-                user.getEmail(),
-                user.getAddress(), user.getDetailAddress(), user.getTel(), employee.getRealName(),
-                employee.getCareer(), employee.getEducation());
-        return employeeUpdateRespDto;
-    }
+    // @Transactional(readOnly = true)
+    // public EmployeeUpdateRespDto getEmployeeUpdateRespDto(Integer principalId) {
+    // User user = userRepository.findById(principalId);
+    // Employee employee = employeeRepository.findByUserId(principalId);
+    // EmployeeUpdateRespDto employeeUpdateRespDto = new
+    // EmployeeUpdateRespDto(user.getId(), user.getPassword(),
+    // user.getEmail(),
+    // user.getAddress(), user.getDetailAddress(), user.getTel(),
+    // employee.getRealName(),
+    // employee.getCareer(), employee.getEducation());
+    // return employeeUpdateRespDto;
+    // }
 
     @Transactional
     public void insertEmployee(EmployeeJoinReqDto employeeJoinReqDto) {
