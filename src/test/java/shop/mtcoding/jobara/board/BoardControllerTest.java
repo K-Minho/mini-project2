@@ -2,6 +2,7 @@ package shop.mtcoding.jobara.board;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
+import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
 @Transactional
@@ -58,6 +60,24 @@ public class BoardControllerTest {
     }
 
     @Test
+    public void update_test() throws Exception {
+        // given
+        BoardUpdateReqDto boardUpdateReqDto = new BoardUpdateReqDto(1, "포스트맨 저장제목", "포스트맨 저장내용", "1년이상 ~ 3년미만",
+                "4년 대졸이상", "인턴", "2023-04-09", "근면성실", 6, Arrays.asList(1, 2, 3));
+        ;
+        Integer boardId = 1;
+
+        // when
+        ResultActions resultActions = mvc.perform(put("/boards/" + boardId)
+                .content(om.writeValueAsString(boardUpdateReqDto))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .session(companyMockSession));
+
+        // then
+        resultActions.andExpect(status().isCreated());
+    }
+
+    @Test
     public void save_test() throws Exception {
         // given
         BoardInsertReqDto boardInsertReqDto = new BoardInsertReqDto("포스트맨 저장제목", "포스트맨 저장내용", "1년이상 ~ 3년미만",
@@ -69,7 +89,7 @@ public class BoardControllerTest {
         ResultActions resultActions = mvc.perform(post("/boards")
                 .content(om.writeValueAsString(boardInsertReqDto))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .session(employeeMockSession));
+                .session(companyMockSession));
 
         // then
         resultActions.andExpect(status().isCreated());

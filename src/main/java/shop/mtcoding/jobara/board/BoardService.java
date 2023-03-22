@@ -287,7 +287,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateTech(ArrayList<Integer> techList, int boardId) {
+    public void updateTech(List<Integer> techList, int boardId) {
         try {
             boardTechRepository.deleteByBoardId(boardId);
         } catch (Exception e) {
