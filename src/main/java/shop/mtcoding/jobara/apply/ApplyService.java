@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyDecideReqDto;
 import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyReqDto;
-import shop.mtcoding.jobara.apply.dto.ApplyResp.CompanyApplyRespDto;
-import shop.mtcoding.jobara.apply.dto.ApplyResp.EmployeeApplyRespDto;
+import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndResume;
+import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndUser;
 import shop.mtcoding.jobara.apply.dto.ApplyResp.MailDto;
 import shop.mtcoding.jobara.apply.model.Apply;
 import shop.mtcoding.jobara.apply.model.ApplyRepository;
@@ -43,9 +43,6 @@ public class ApplyService {
         Verify.validateApiObject(boardPS, "존재하지 않는 게시물 입니다.");
         Verify.isNotEqualApi(applyRepository.findByUserIdAndBoardId(apply), null, "이미 지원한 공고입니다.",
                 HttpStatus.BAD_REQUEST);
-        // if (applyRepository.findByUserIdAndBoardId(apply) != null) {
-        // throw new CustomApiException("이미 지원한 공고입니다.");
-        // }
         try {
             applyRepository.insert(apply);
         } catch (Exception e) {
@@ -54,12 +51,12 @@ public class ApplyService {
     }
 
     @Transactional(readOnly = true)
-    public List<CompanyApplyRespDto> getApplyForCompany(Integer principalId) {
+    public List<ApplyJoinBoardAndUser> getApplyForCompany(Integer principalId) {
         return applyRepository.findByUserIdWithBoardAndUser(principalId);
     }
 
     @Transactional(readOnly = true)
-    public List<EmployeeApplyRespDto> getApplyForEmployee(Integer principalId) {
+    public List<ApplyJoinBoardAndResume> getApplyForEmployee(Integer principalId) {
         return applyRepository.findByUserIdWithBoardAndResume(principalId);
     }
 
@@ -71,9 +68,6 @@ public class ApplyService {
         Apply applyPS = applyRepository.findByUserIdAndBoardId(apply);
         Verify.isEqualApi(applyRepository.findByUserIdAndBoardId(apply), null,
                 "존재하지 않는 지원입니다.", HttpStatus.BAD_REQUEST);
-        // if (applyPS == null) {
-        // throw new CustomApiException("존재하지 않는 지원입니다.");
-        // }
         applyPS.setState(applyDecideReqDto.getState());
         try {
             applyRepository.updateById(applyPS);
