@@ -8,9 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto.BoardListDto;
@@ -22,6 +19,7 @@ import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
+import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.board.model.Board;
 import shop.mtcoding.jobara.board.model.BoardRepository;
 import shop.mtcoding.jobara.board.model.BoardTechRepository;
@@ -87,6 +85,11 @@ public class BoardService {
         pagingDto.setBoard(boardsList);
 
         return pagingDto;
+    }
+
+    public BoardUpdateFormRespDto getUpdateFormInfo(Integer boardId) {
+
+        return null;
     }
 
     // 1/2차 경계선 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ

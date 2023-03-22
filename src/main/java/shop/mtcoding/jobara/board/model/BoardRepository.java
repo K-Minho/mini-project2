@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto.BoardListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertSkillReqDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
@@ -13,8 +15,7 @@ import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
-import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
-import shop.mtcoding.jobara.board.dto.BoardPagingListDto.BoardListDto;
+import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 
 @Mapper
 public interface BoardRepository {
@@ -27,6 +28,8 @@ public interface BoardRepository {
         public BoardPagingListDto pagingWithJoin(@Param("page") int page, @Param("keyword") String keyword,
                         @Param("row") int row,
                         @Param("userId") int userId);
+
+        public BoardUpdateFormRespDto findUpdateFormInfo(int boardId);
 
         // 1/2차 경계선
 

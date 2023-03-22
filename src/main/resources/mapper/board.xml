@@ -208,7 +208,33 @@
         </choose>
 	</select>
 
+    <!-- updateForm 요청 -->
+   <resultMap id="boardUpdateFormResp" type="shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto">
+            <id property="id" column="id"/>
+            <result property="userId" column="user_id"/>
+            <result property="title" column="title"/>
+            <result property="content" column="content"/>
+            <result property="careerInteger" column="career"/>
+            <result property="educationInteger" column="education"/>
+            <result property="jobTypeInteger" column="job_type"/>
+            <result property="favor" column="favor"/>
+            <result property="deadline" column="deadline"/>
+            <result property="needParse" column="skills"/>
+    </resultMap>
 
+	<select id="BoardUpdateFormRespDto" resultMap="boardUpdateFormResp" >
+           SELECT bt.*, GROUP_CONCAT(bt2.skill) AS skills
+           FROM board_tb bt
+           LEFT JOIN boardtech_tb bt2 ON bt.id = bt2.board_id
+           WHERE bt.id = #{boardId}
+           GROUP BY bt.id
+	</select>
+
+
+    <!-- 1/2차 경계선 -->
+    <!-- 1/2차 경계선 -->
+    <!-- 1/2차 경계선 -->
+    <!-- 1/2차 경계선 -->
     <!-- 1/2차 경계선 -->
 
     <select id="findAll" resultType="shop.mtcoding.jobara.board.model.Board">
