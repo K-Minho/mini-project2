@@ -94,11 +94,10 @@ public class BoardController {
         return ResponseEntity.status(200).body(boardPagingDto);
     }
 
-    @GetMapping("/board/saveForm")
-    @CompanyCheck
-    public String saveForm(Model model) {
-        redisServiceSet.addModel(model);
-        return "board/saveForm";
+    @GetMapping("/boards/saveForm")
+    // @CompanyCheck
+    public ResponseEntity<?> saveForm() {
+        return ResponseEntity.status(200).body(null);
     }
 
     @GetMapping("/board/updateForm/{id}")
