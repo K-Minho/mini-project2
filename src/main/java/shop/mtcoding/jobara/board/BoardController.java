@@ -21,13 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
 import shop.mtcoding.jobara.common.aop.CompanyCheck;
 import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
@@ -63,7 +62,7 @@ public class BoardController {
     }
 
     @GetMapping({ "/", "/home" })
-    public String home(HttpServletRequest request) {
+    public ResponseEntity<?> home(HttpServletRequest request) {
 
         String username = "";
         Cookie[] cookies = request.getCookies();
@@ -74,7 +73,7 @@ public class BoardController {
                 }
             }
         }
-        return "board/home";
+        return ResponseEntity.status(200).body(null);
     }
 
     @GetMapping("/boards/{id}")
@@ -86,13 +85,13 @@ public class BoardController {
         return ResponseEntity.status(200).body(boardDetailRespDto);
     }
 
-    @GetMapping("/board/list")
-    public String list(Model model, Integer page, String keyword) {
-        UserVo principal = redisService.getValue("principal");
-        PagingDto pagingDto = boardService.getListWithPaging(page, keyword, principal);
-        model.addAttribute("pagingDto", pagingDto);
-        redisServiceSet.addModel(model);
-        return "board/list";
+    @GetMapping("/boards/list")
+    public ResponseEntity<?> list(Integer page, String keyword) {
+        UserVo principal = setPrincipal();
+        BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
+        // model.addAttribute("pagingDto", pagingDto);
+
+        return ResponseEntity.status(200).body(boardPagingDto);
     }
 
     @GetMapping("/board/saveForm")

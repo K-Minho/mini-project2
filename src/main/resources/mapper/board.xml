@@ -74,6 +74,141 @@
         ) rt ON rt.user_id = #{userId};
     </select>
 
+<!-- list -->
+
+<resultMap id="boardListJoin" type="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto">
+    <result property="boardId" column="board_id"/>
+    <result property="title" column="title"/>
+    <result property="companyName" column="company_name"/>
+    <result property="dday" column="dday"/>
+    <collection property="user" javaType="java.util.ArrayList" ofType="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto$UserDto">
+        <id property="userId" column="user_id"/>
+        <result property="profile" column="profile"/>
+    </collection>
+    <collection property="love" javaType="java.util.ArrayList" ofType="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto$LoveDto">
+        <id property="loveId" column="love_id"/>
+        <result property="css" column="css"/>
+    </collection>
+</resultMap>
+
+    <select id="findAllWithJoin" resultMap="boardListJoin">
+      <choose>
+            <!-- selectBox 키워드  lang (기술매칭) 일때 -->
+            <when test="keyword != null and keyword.equals('lang')">
+            
+                SELECT bt.id board_id, bt.title, ct.company_name, ut.id user_id, ut.profile, bt.dday
+                <if test='userId != 0'>
+                , CASE WHEN lt.id IS NOT NULL THEN lt.id ELSE 0 END as love_id,
+                CASE WHEN lt.id IS NOT NULL THEN 'fa-solid' ELSE '' END as css
+                </if>
+                FROM (
+                    SELECT id, title, user_id, DATEDIFF(DAY, now(), deadline) dday 
+                    FROM board_tb 
+                    WHERE board_tb.id IN (
+                        SELECT DISTINCT bt.board_id 
+                        FROM boardtech_tb bt
+                        INNER JOIN employeetech_tb dt ON bt.skill = dt.skill
+                        WHERE dt.user_id = #{userId}
+                    )  
+                ) bt
+                INNER JOIN company_tb ct ON bt.user_id = ct.user_id
+                INNER JOIN user_tb ut ON bt.user_id = ut.id
+                <if test='userId != 0'>
+                LEFT OUTER JOIN love_tb lt ON bt.id = lt.board_id AND lt.user_id = #{userId}
+                </if>
+                WHERE bt.dday >= 0
+
+                ORDER BY dday
+                OFFSET #{startNum} ROWS 
+                FETCH NEXT #{row} ROWS ONLY
+            </when>
+
+
+
+            <!-- 1. selectBox 키워드 x, 2. 키워드가 마감순-->
+            <otherwise>
+                    SELECT bt.id board_id, bt.title, ct.company_name, ut.id user_id, ut.profile, DATEDIFF(DAY, now(), bt.deadline) dday
+                    <!-- 키워드x, 키워드 마감순이면서 "user.role이 employee일 때" : 각 유저별 좋아요 반영-->
+                    <if test='userId != 0'>
+                    , 
+                    CASE WHEN lt.id IS NOT NULL THEN lt.id ELSE 0 END as love_id,
+                    CASE WHEN lt.id IS NOT NULL THEN 'fa-solid' ELSE '' END as css
+                    </if>
+                    FROM BOARD_TB bt
+
+                    inner join company_tb ct
+                    on bt.user_id = ct.user_id
+
+                    inner join user_tb ut
+                    on bt.user_id=ut.id
+
+                    <if test='userId != 0'>
+                    left outer join love_tb lt
+                    on bt.id = lt.board_id
+                    and lt.user_id = #{userId}
+                    </if>
+
+                    where DATEDIFF(DAY, now(), bt.deadline) >= 0
+                    <if test='keyword == null or keyword == ""'>
+                    ORDER BY bt.id desc
+                    </if>
+                    
+                    <if test="keyword != null and keyword.equals('deadline')">
+                    ORDER BY dday
+                    </if>
+                    
+                    OFFSET #{startNum} ROWS 
+                    FETCH NEXT #{row} ROWS ONLY
+            </otherwise>
+        </choose>
+      
+    </select>
+
+   <resultMap id="boardListPagingJoin" type="shop.mtcoding.jobara.board.dto.BoardPagingListDto">
+            <result property="totalCount" column="total_count"/>
+            <result property="totalPage" column="total_page"/>
+            <result property="currentPage" column="current_page"/>
+            <result property="isFirst" column="first"/>
+    </resultMap>
+
+
+	<select id="pagingWithJoin" resultMap="boardListPagingJoin" >
+        <choose>
+
+                <!-- selectBox 키워드가 lang일 떄 paging -->
+                <when test="keyword != null and keyword.equals('lang')">
+                    SELECT count(*) total_count,  CEILING( count(*) / #{row} ) total_page, #{page} current_page,
+                    case when #{page} = 0 then 1
+                        else 0 
+                        end first
+
+                    FROM 
+                        
+                      ( SELECT id, title, user_id, DATEDIFF(DAY, now(), deadline) dday 
+                        FROM board_tb 
+                        WHERE DATEDIFF(DAY, now(), deadline) >= 0 and  board_tb.id IN 
+                        (
+                            SELECT DISTINCT btt.board_id 
+                            FROM boardtech_tb btt
+                            INNER JOIN employeetech_tb ett ON btt.skill = ett.skill
+                            WHERE ett.user_id = #{userId})  )
+                </when>
+
+                      
+
+                <!-- selectBox 키워드가 없을 때 paging  -->
+                <otherwise>
+                    SELECT count(*) total_count,  CEILING( count(*) / #{row} ) total_page, #{page} current_page,
+                    case when #{page} = 0 then 1
+                        else 0 
+                        end first
+                    FROM board_tb
+                    where DATEDIFF(DAY, now(), deadline) >= 0
+                </otherwise>
+        </choose>
+	</select>
+
+
     <!-- 1/2차 경계선 -->
 
     <select id="findAll" resultType="shop.mtcoding.jobara.board.model.Board">

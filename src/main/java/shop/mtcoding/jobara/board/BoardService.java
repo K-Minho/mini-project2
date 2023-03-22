@@ -8,12 +8,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto.BoardListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertSkillReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardListRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
@@ -58,31 +62,34 @@ public class BoardService {
         return boardDetailPS;
     }
 
-    // 1/2차 경계선
+    public BoardPagingListDto getListWithJoin(Integer page, String keyword, UserVo uservo) {
 
-    // @Transactional(readOnly = true)
-    // public BoardDetailRespDto getDetail(int id) {
-    // BoardDetailRespDto boardDetailPS;
+        if (page == null) {
+            page = 0;
+        }
 
-    // try {
-    // boardDetailPS = boardRepository.findByIdWithCompany(id);
-    // } catch (Exception e) {
-    // throw new CustomException("서버에 일시적인 문제가 생겼습니다",
-    // HttpStatus.INTERNAL_SERVER_ERROR);
-    // }
+        BoardPagingListDto pagingDto;
+        List<BoardListDto> boardsList;
+        int startNum = page * BoardPagingListDto.ROW;
 
-    // String career = CareerParse.careerToString(boardDetailPS.getCareer());
-    // boardDetailPS.setCareerString(career);
+        if (uservo != null && uservo.getRole().equals("employee")) {
 
-    // String education =
-    // EducationParse.educationToString(boardDetailPS.getEducation());
-    // boardDetailPS.setEducationString(education);
+            boardsList = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, uservo.getId());
+            pagingDto = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, uservo.getId());
 
-    // String jobType = JobTypeParse.jopTypeToString(boardDetailPS.getJobType());
-    // boardDetailPS.setJobTypeString(jobType);
+        } else {
 
-    // return boardDetailPS;
-    // }
+            boardsList = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, 0);
+            pagingDto = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, 0);
+        }
+
+        pagingDto.makeBlockInfo(keyword);
+        pagingDto.setBoard(boardsList);
+
+        return pagingDto;
+    }
+
+    // 1/2차 경계선 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     public PagingDto getListWithPaging(Integer page, String keyword, UserVo uservo) {
 
