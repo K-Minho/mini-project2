@@ -33,22 +33,10 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @PutMapping("/employee/update/tech/{id}")
-    @EmployeeCheckApi
-    public ResponseEntity<?> update(@PathVariable int id,
-            @RequestBody EmployeeTechUpdateReqDto employeeTechUpdateReqDto, Model model) {
-        UserVo principal = (UserVo) model.getAttribute("principal");
-        if (employeeTechUpdateReqDto.getCheckedValues() != null) {
-            employeeService.updateEmpolyeeTech(employeeTechUpdateReqDto.getCheckedValues(), principal.getId());
-        }
-        return new ResponseEntity<>(new ResponseDto<>(1, " 수정완료", null), HttpStatus.valueOf(201));
-    }
-
     @PostMapping("/employee/update/{id}")
     @EmployeeCheck
     public @ResponseBody ResponseEntity<?> update(@PathVariable int id, EmployeeUpdateReqDto employeeUpdateReqDto,
             MultipartFile profile) {
-
         UserVo UserVoPS = employeeService.updateEmpolyee(employeeUpdateReqDto, id, profile);
         return ResponseEntity.status(201).body(UserVoPS);
     }
@@ -56,6 +44,17 @@ public class EmployeeController {
     @GetMapping("/joinForm")
     public String joinForm() {
         return "employee/joinForm";
+    }
+
+    @PutMapping("/employee/update/tech/{id}")
+    @EmployeeCheckApi
+    public ResponseEntity<?> update(@PathVariable int id,
+            @RequestBody EmployeeTechUpdateReqDto employeeTechUpdateReqDto, Model model) {
+        if (employeeTechUpdateReqDto.getCheckedValues() != null) {
+            employeeService.updateEmpolyeeTech(employeeTechUpdateReqDto.getCheckedValues(), id);
+        }
+        return new ResponseEntity<>(new ResponseDto<>(1, " 수정완료", null),
+                HttpStatus.valueOf(201));
     }
 
     @GetMapping("/employee/{id}/resume/{resumeId}")
