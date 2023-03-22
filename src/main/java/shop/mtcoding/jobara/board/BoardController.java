@@ -100,17 +100,17 @@ public class BoardController {
         return ResponseEntity.status(200).body(null);
     }
 
-    @GetMapping("/board/updateForm/{id}")
-    @CompanyCheck
-    public String updateForm(Model model, @PathVariable int id) {
-        UserVo principal = redisService.getValue("principal");
+    @GetMapping("/boards/updateForm/{id}")
+    // @CompanyCheck
+    public String updateForm(@PathVariable int id) {
+        UserVo principal = setPrincipal();
 
         List<Integer> boardSkill = boardService.getSkillForDetail(id);
-
         BoardUpdateRespDto boardDetailPS = boardService.getDetailForUpdate(id, principal.getId());
-        model.addAttribute("boardDetail", boardDetailPS);
-        model.addAttribute("boardSkill", boardSkill);
-        redisServiceSet.addModel(model);
+
+        // model.addAttribute("boardDetail", boardDetailPS);
+        // model.addAttribute("boardSkill", boardSkill);
+        // redisServiceSet.addModel(model);
 
         return "board/updateForm";
     }
