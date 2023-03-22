@@ -221,7 +221,7 @@ public class BoardService {
         try {
             boardRepository.insert(board);
         } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return board.getId();
@@ -262,14 +262,14 @@ public class BoardService {
     }
 
     @Transactional
-    public void insertSkill(ArrayList<Integer> checkLang, int boardId) {
+    public void insertSkill(List<Integer> checkLang, int boardId) {
 
         BoardInsertSkillReqDto boardInsertSkillReqDto = new BoardInsertSkillReqDto(boardId, checkLang);
 
         try {
             boardTechRepository.insertSkill(boardInsertSkillReqDto);
         } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
