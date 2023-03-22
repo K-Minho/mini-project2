@@ -63,7 +63,7 @@ public class BoardController {
     }
 
     @GetMapping({ "/", "/home" })
-    public String home(Model model, HttpServletRequest request) {
+    public String home(HttpServletRequest request) {
 
         String username = "";
         Cookie[] cookies = request.getCookies();

@@ -81,4 +81,16 @@ public class BoardControllerTest {
         resultActions.andExpect(jsonPath("$.resume[0].id").value(1));
     }
 
+    @Test
+    public void main_test() throws Exception {
+        // given
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/")
+                .session(mockSession));
+
+        // then
+        resultActions.andExpect(status().isOk());
+    }
+
 }
