@@ -3,6 +3,7 @@ package shop.mtcoding.jobara.apply;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,9 +22,12 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyReqDto;
-import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndUser;
+import shop.mtcoding.jobara.apply.dto.ApplyJoinBoardAndResumeBuilder;
 import shop.mtcoding.jobara.apply.dto.ApplyJoinBoardAndUserBuilder;
+import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyDecideReqDto;
+import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyReqDto;
+import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndResume;
+import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndUser;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
 @WebMvcTest(ApplyController.class)
@@ -73,27 +77,27 @@ public class ApplyControllerTest {
     @Test
     public void companyApplyList_test() throws Exception {
         // given
-        Integer id = 1;
-        
+        Integer id = 6;
+
         // mock
         List<ApplyJoinBoardAndUser> applyListPS = new ArrayList<>();
         ApplyJoinBoardAndUser applyJoinBoardAndUser = ApplyJoinBoardAndUserBuilder.makeApplyJoinBoardAndUser(1, "0",
-                                                        ApplyJoinBoardAndUserBuilder.makeUser(1, "김일"),
-                                                        ApplyJoinBoardAndUserBuilder.makeBoard(1, "제목1"),
-                                                        ApplyJoinBoardAndUserBuilder.makeResume(1));
+                ApplyJoinBoardAndUserBuilder.makeUser(1, "김일"),
+                ApplyJoinBoardAndUserBuilder.makeBoard(1, "제목1"),
+                ApplyJoinBoardAndUserBuilder.makeResume(1));
         applyListPS.add(applyJoinBoardAndUser);
         applyJoinBoardAndUser = ApplyJoinBoardAndUserBuilder.makeApplyJoinBoardAndUser(2, "0",
-                                    ApplyJoinBoardAndUserBuilder.makeUser(2, "김이"),
-                                    ApplyJoinBoardAndUserBuilder.makeBoard(2, "제목2"),
-                                    ApplyJoinBoardAndUserBuilder.makeResume(2));
+                ApplyJoinBoardAndUserBuilder.makeUser(2, "김이"),
+                ApplyJoinBoardAndUserBuilder.makeBoard(2, "제목2"),
+                ApplyJoinBoardAndUserBuilder.makeResume(2));
         applyListPS.add(applyJoinBoardAndUser);
         given(applyService.getApplyForCompany(id)).willReturn(applyListPS);
-    
+
         // when
-        ResultActions resultActions = mvc.perform(get("/company/"+id+"/apply"));
+        ResultActions resultActions = mvc.perform(get("/company/" + id + "/apply"));
         String resp = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : " + resp);
-    
+
         // then
         resultActions.andExpect(status().is2xxSuccessful());
         resultActions.andExpect(jsonPath("$.code").value(1));
@@ -105,5 +109,24 @@ public class ApplyControllerTest {
         resultActions.andExpect(jsonPath("$.data[0].user.id").value(1));
         resultActions.andExpect(jsonPath("$.data[0].user.realName").value("김일"));
         resultActions.andExpect(jsonPath("$.data[0].resume.id").value(1));
+    }
+
+    @Test
+    public void decideApplyment_test() throws Exception {
+        // given
+        Integer id = 1;
+        ApplyDecideReqDto applyDecideReqDto = new ApplyDecideReqDto(2, -1);
+
+        // when
+        ResultActions resultActions = mvc.perform(put("/board/" + id + "/apply")
+                .content(om.writeValueAsString(applyDecideReqDto))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .session(mockSession));
+        String resp = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + resp);
+        // then
+        resultActions.andExpect(status().is2xxSuccessful());
+        resultActions.andExpect(jsonPath("$.code").value(1));
+        resultActions.andExpect(jsonPath("$.msg").value("불합격 처리 완료"));
     }
 }
