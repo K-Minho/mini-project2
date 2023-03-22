@@ -52,6 +52,7 @@ public class BoardService {
             throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         boardDetailPS.skillParse(boardDetailPS.getNeedParse());
+        boardDetailPS.faSoild();
         return boardDetailPS;
     }
 

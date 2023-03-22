@@ -39,6 +39,16 @@ public class BoardDetailRespDto {
                 .collect(Collectors.toList());
     }
 
+    public void faSoild() {
+        if (love == null) {
+            love = new LoveDto();
+            love.id = 0;
+            love.css = "";
+        } else {
+            love.css = "fa-solid";
+        }
+    }
+
     @Getter
     @Setter
     public static class CompanyDto {
@@ -75,5 +85,7 @@ public class BoardDetailRespDto {
         private Integer id;
         private Integer boardId;
         private Integer userId;
+        private String css;
+
     }
 }
