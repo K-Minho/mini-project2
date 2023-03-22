@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertSkillReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;

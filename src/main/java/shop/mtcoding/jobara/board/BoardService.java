@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertSkillReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
@@ -51,7 +51,7 @@ public class BoardService {
         } catch (Exception e) {
             throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
+        boardDetailPS.skillParse(boardDetailPS.getNeedParse());
         return boardDetailPS;
     }
 
@@ -70,27 +70,29 @@ public class BoardService {
         return boardListPS;
     }
 
-    @Transactional(readOnly = true)
-    public BoardDetailRespDto getDetail(int id) {
-        BoardDetailRespDto boardDetailPS;
+    // @Transactional(readOnly = true)
+    // public BoardDetailRespDto getDetail(int id) {
+    // BoardDetailRespDto boardDetailPS;
 
-        try {
-            boardDetailPS = boardRepository.findByIdWithCompany(id);
-        } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    // try {
+    // boardDetailPS = boardRepository.findByIdWithCompany(id);
+    // } catch (Exception e) {
+    // throw new CustomException("서버에 일시적인 문제가 생겼습니다",
+    // HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
 
-        String career = CareerParse.careerToString(boardDetailPS.getCareer());
-        boardDetailPS.setCareerString(career);
+    // String career = CareerParse.careerToString(boardDetailPS.getCareer());
+    // boardDetailPS.setCareerString(career);
 
-        String education = EducationParse.educationToString(boardDetailPS.getEducation());
-        boardDetailPS.setEducationString(education);
+    // String education =
+    // EducationParse.educationToString(boardDetailPS.getEducation());
+    // boardDetailPS.setEducationString(education);
 
-        String jobType = JobTypeParse.jopTypeToString(boardDetailPS.getJobType());
-        boardDetailPS.setJobTypeString(jobType);
+    // String jobType = JobTypeParse.jopTypeToString(boardDetailPS.getJobType());
+    // boardDetailPS.setJobTypeString(jobType);
 
-        return boardDetailPS;
-    }
+    // return boardDetailPS;
+    // }
 
     public PagingDto getListWithPaging(Integer page, String keyword, UserVo uservo) {
 

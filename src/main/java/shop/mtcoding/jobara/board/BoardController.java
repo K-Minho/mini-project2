@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
@@ -38,8 +38,6 @@ import shop.mtcoding.jobara.common.util.RedisService;
 import shop.mtcoding.jobara.common.util.RedisServiceSet;
 import shop.mtcoding.jobara.common.util.Verify;
 import shop.mtcoding.jobara.love.LoveService;
-import shop.mtcoding.jobara.love.dto.LoveResp.LoveDetailRespDto;
-import shop.mtcoding.jobara.resume.model.Resume;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
 @Controller
@@ -83,27 +81,13 @@ public class BoardController {
         return "board/home";
     }
 
-    @GetMapping("/board/{id}")
-    public String detail(@PathVariable int id) {
+    @GetMapping("/boards/{id}")
+    public ResponseEntity<?> detail(@PathVariable int id) {
         UserVo principal = setPrincipal();
-        boardService.getDetail(principal.getId(), id);
+        System.out.println(principal.getId());
+        BoardDetailRespDto boardDetailRespDto = boardService.getDetail(principal.getId(), id);
 
-        // BoardDetailRespDto boardPS = boardService.getDetail(id);
-        // UserVo principal = redisService.getValue("principal");
-        // if (principal != null) {
-        // List<Resume> resumeList = boardService.getResume(principal.getId());
-        // model.addAttribute("resumeList", resumeList);
-
-        // if (principal.getRole().equals("employee")) {
-        // LoveDetailRespDto lovePS = loveService.getLove(id, principal);
-        // model.addAttribute("love", lovePS);
-        // }
-        // }
-        // List<Integer> boardSkill = boardService.getSkillForDetail(id);
-        // model.addAttribute("boardSkill", boardSkill);
-        // model.addAttribute("board", boardPS);
-        // redisServiceSet.addModel(model);
-        return "board/detail";
+        return ResponseEntity.ok().body(boardDetailRespDto);
     }
 
     @GetMapping("/board/list")

@@ -76,27 +76,27 @@ public class BoardResp {
         private Integer userId;
     }
 
-    @Getter
-    @Setter
-    public static class BoardDetailRespDto {
-        private Integer id;
-        private String title;
-        private String content;
+    // @Getter
+    // @Setter
+    // public static class BoardDetailRespDto {
+    // private Integer id;
+    // private String title;
+    // private String content;
 
-        private Integer career;
-        private String careerString;
-        private Integer education;
-        private String educationString;
-        private Integer jobType;
-        private String jobTypeString;
+    // private Integer career;
+    // private String careerString;
+    // private Integer education;
+    // private String educationString;
+    // private Integer jobType;
+    // private String jobTypeString;
 
-        private String favor;
-        private Integer userId;
-        private String companyName;
-        private String companyScale;
-        private String companyField;
-        private String profile;
-    }
+    // private String favor;
+    // private Integer userId;
+    // private String companyName;
+    // private String companyScale;
+    // private String companyField;
+    // private String profile;
+    // }
 
     @NoArgsConstructor
     @AllArgsConstructor
