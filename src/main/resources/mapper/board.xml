@@ -5,10 +5,81 @@
 
 <mapper namespace="shop.mtcoding.jobara.board.model.BoardRepository">
 
+
+     <resultMap id="boardDetailJoin" type="shop.mtcoding.jobara.board.dto.BoardDetailRespDto">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="careerInteger" column="career"/>
+        <result property="jobTypeInteger" column="job_type"/>
+        <result property="educationInteger" column="education"/>
+        <result property="favor" column="favor"/>
+
+        <association property="company" javaType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$CompanyDto">
+            <id property="userId" column="company_user_id"/>
+            <result property="companyName" column="company_name"/>
+            <result property="companyScale" column="company_scale"/>
+            <result property="companyField" column="company_field"/>
+        </association>
+
+        <association property="user" javaType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$UserDto">
+            <id property="id" column="user_id"/>
+            <result property="profile" column="profile"/>
+        </association>
+
+        <association property="love" javaType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$LoveDto">
+            <id property="id" column="love_id"/>
+            <id property="boardId" column="love_board_id"/>
+            <id property="userId" column="love_user_id"/>
+        </association>
+
+        <collection property="resume" javaType="java.util.ArrayList" ofType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$ResumeDto">
+            <id property="id" column="resume_id"/>
+            <result property="userId" column="resume_user_id"/>
+            <result property="title" column="resume_title"/>
+            <result property="content" column="resume_content"/>
+            <result property="createdAt" column="resume_created_at"/>
+        </collection>
+
+        <collection property="needParse" ofType="java.lang.String">
+            <result column="skills" />
+        </collection>
+    </resultMap>
+
+    <select id="findBoardDetailByJoin" resultMap="boardDetailJoin">
+        SELECT bt.*, ct.user_id company_user_id, ct.company_name company_name, ct.company_scale company_scale
+            , ct.company_field company_field, ut.id user_id, ut.profile profile,lv.id love_id, lv.board_id love_board_id, lv.user_id love_user_id, btt.skills
+            , rt.id resume_id, rt.user_id resume_user_id, rt.title resume_title, rt.content resume_content, rt.created_at resume_created_at
+        FROM (
+            SELECT * 
+            FROM BOARD_TB
+            WHERE id = #{boardId}
+        ) bt
+        LEFT OUTER JOIN company_tb ct ON bt.user_id = ct.user_id
+        LEFT OUTER JOIN user_tb ut ON bt.user_id = ut.id
+        LEFT OUTER JOIN (
+            SELECT *
+            FROM love_tb
+            WHERE user_id = #{userId}
+        ) lv ON lv.board_id = bt.id
+        LEFT OUTER JOIN (
+            SELECT board_id, STRING_AGG(skill, ',') skills
+            FROM BOARDTECH_TB
+            GROUP BY board_id
+        ) btt ON btt.board_id = bt.id
+        LEFT OUTER JOIN (
+            SELECT *
+            FROM resume_tb
+            ORDER BY id 
+        ) rt ON rt.user_id = #{userId};
+    </select>
+
+    <!-- 1/2차 경계선 -->
+
     <select id="findAll" resultType="shop.mtcoding.jobara.board.model.Board">
         select * from board_tb
     </select>
-
+<!-- 
     <select id="findAllByUserIdForLangMatching" resultType="shop.mtcoding.jobara.board.dto.BoardResp$BoardListRespDto">
         select bt.id, bt.title, ct.company_name, ut.id user_id, ut.profile from
 
@@ -25,7 +96,7 @@
         
         inner join user_tb ut
         on bt.user_id=ut.id
-    </select>
+    </select> -->
 
 
 
@@ -196,14 +267,14 @@
         select * from board_tb where id = #{id}
     </select>
 
-    <select id="findByIdWithCompany" resultType="shop.mtcoding.jobara.board.dto.BoardResp$BoardDetailRespDto">
+    <!-- <select id="findByIdWithCompany" resultType="shop.mtcoding.jobara.board.dto.BoardResp$BoardDetailRespDto">
         SELECT bt.id, bt.title, bt.content, bt.career, bt.job_type, bt.education, bt.favor, ct.company_name, ct. company_scale, ct.company_field,  ut.id user_id,  ut.profile FROM BOARD_TB bt 
         inner join company_tb ct
         on bt.user_id = ct.user_id
         inner join user_tb ut
         on bt.user_id=ut.id
         where bt.id = #{boardId}
-    </select>
+    </select> -->
 
 
     <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
