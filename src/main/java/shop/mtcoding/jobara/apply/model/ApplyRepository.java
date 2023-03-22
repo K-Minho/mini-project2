@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import shop.mtcoding.jobara.apply.dto.ApplyResp.CompanyApplyRespDto;
-import shop.mtcoding.jobara.apply.dto.ApplyResp.EmployeeApplyRespDto;
+import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndResume;
+import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndUser;
 import shop.mtcoding.jobara.apply.dto.ApplyResp.MailDto;
 
 @Mapper
@@ -23,9 +23,9 @@ public interface ApplyRepository {
 
     public Apply findByUserIdAndBoardId(Apply apply);
 
-    public List<CompanyApplyRespDto> findByUserIdWithBoardAndUser(int userId);
+    public List<ApplyJoinBoardAndUser> findByUserIdWithBoardAndUser(int userId);
 
-    public List<EmployeeApplyRespDto> findByUserIdWithBoardAndResume(int userId);
+    public List<ApplyJoinBoardAndResume> findByUserIdWithBoardAndResume(int userId);
 
     public MailDto findByIdWithBoardForMail(int id);
 }
