@@ -80,23 +80,23 @@ public class BoardController {
     }
 
     @GetMapping("/board/{id}")
-    public String detail(@PathVariable int id, Model model) {
-        BoardDetailRespDto boardPS = boardService.getDetail(id);
-        UserVo principal = redisService.getValue("principal");
-        if (principal != null) {
-            List<Resume> resumeList = boardService.getResume(principal.getId());
-            model.addAttribute("resumeList", resumeList);
+    public String detail(@PathVariable int id) {
 
-            if (principal.getRole().equals("employee")) {
-                LoveDetailRespDto lovePS = loveService.getLove(id, principal);
-                model.addAttribute("love", lovePS);
-            }
-        }
+        // BoardDetailRespDto boardPS = boardService.getDetail(id);
+        // UserVo principal = redisService.getValue("principal");
+        // if (principal != null) {
+        // List<Resume> resumeList = boardService.getResume(principal.getId());
+        // model.addAttribute("resumeList", resumeList);
 
-        List<Integer> boardSkill = boardService.getSkillForDetail(id);
-        model.addAttribute("boardSkill", boardSkill);
-        model.addAttribute("board", boardPS);
-        redisServiceSet.addModel(model);
+        // if (principal.getRole().equals("employee")) {
+        // LoveDetailRespDto lovePS = loveService.getLove(id, principal);
+        // model.addAttribute("love", lovePS);
+        // }
+        // }
+        // List<Integer> boardSkill = boardService.getSkillForDetail(id);
+        // model.addAttribute("boardSkill", boardSkill);
+        // model.addAttribute("board", boardPS);
+        // redisServiceSet.addModel(model);
         return "board/detail";
     }
 
