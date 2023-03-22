@@ -89,7 +89,7 @@ public class BoardControllerTest {
 
         // then
         resultActions.andExpect(status().isOk());
-        resultActions.andExpect(jsonPath("$.title").value("JAVA백엔드주니어개발자"));
+        resultActions.andExpect(jsonPath("$.data.title").value("JAVA백엔드주니어개발자"));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class BoardControllerTest {
 
         // then
         resultActions.andExpect(status().isOk());
-        resultActions.andExpect(jsonPath("$.board[0].user.userId").value(15));
+        resultActions.andExpect(jsonPath("$.data.board[0].user.userId").value(15));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class BoardControllerTest {
 
         // then
         resultActions.andExpect(status().isOk());
-        resultActions.andExpect(jsonPath("$.resume[0].id").value(1));
+        resultActions.andExpect(jsonPath("$.data.resume[0].id").value(1));
     }
 
 }
