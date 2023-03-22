@@ -65,6 +65,23 @@ public class BoardControllerTest {
     }
 
     @Test
+    public void updateForm_test() throws Exception {
+        // given
+        Integer boardId = 4;
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/boards/updateForm/" + boardId)
+                .session(mockSession));
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.title").value("JAVA백엔드주니어개발자"));
+    }
+
+    @Test
     public void list_test() throws Exception {
         // given
         Integer page = 0;

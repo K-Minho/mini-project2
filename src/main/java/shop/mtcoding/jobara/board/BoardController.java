@@ -89,7 +89,6 @@ public class BoardController {
     public ResponseEntity<?> list(Integer page, String keyword) {
         UserVo principal = setPrincipal();
         BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
-        // model.addAttribute("pagingDto", pagingDto);
 
         return ResponseEntity.status(200).body(boardPagingDto);
     }
@@ -104,7 +103,6 @@ public class BoardController {
     // @CompanyCheck
     public ResponseEntity<?> updateForm(@PathVariable int id) {
         UserVo principal = setPrincipal();
-
         BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id);
 
         return ResponseEntity.status(200).body(boardUpdateFormRespDto);
