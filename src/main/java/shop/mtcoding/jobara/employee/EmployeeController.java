@@ -33,17 +33,17 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @PostMapping("/employee/update/{id}")
-    @EmployeeCheck
-    public @ResponseBody ResponseEntity<?> update(@PathVariable int id, EmployeeUpdateReqDto employeeUpdateReqDto,
-            MultipartFile profile) {
-        UserVo UserVoPS = employeeService.updateEmpolyee(employeeUpdateReqDto, id, profile);
-        return ResponseEntity.status(201).body(UserVoPS);
-    }
-
     @GetMapping("/joinForm")
     public String joinForm() {
         return "employee/joinForm";
+    }
+
+    @PostMapping("/employee/update/{id}")
+    @EmployeeCheck
+    public @ResponseBody ResponseEntity<?> update(@PathVariable int id,
+            @RequestBody EmployeeUpdateReqDto employeeUpdateReqDto) {
+        UserVo UserVoPS = employeeService.updateEmpolyee(employeeUpdateReqDto, id);
+        return ResponseEntity.status(201).body(UserVoPS);
     }
 
     @PutMapping("/employee/update/tech/{id}")

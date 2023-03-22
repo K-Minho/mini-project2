@@ -115,24 +115,25 @@ public class EmployeeService {
     }
 
     @Transactional
-    public UserVo updateEmpolyee(EmployeeUpdateReqDto employeeUpdateReqDto, Integer principalId,
-            MultipartFile profile) {
-        String uuidImageName = PathUtil.writeImageFile(profile);
-
+    public UserVo updateEmpolyee(EmployeeUpdateReqDto employeeUpdateReqDto, Integer id) {
+        // String uuidImageName = PathUtil.writeImageFile(profile);
         String salt = Hash.makeSalt();
+        // System.out.println("디버깅" + employeeUpdateReqDto.getAddress());
         String hashPassword = Hash.encode(employeeUpdateReqDto.getPassword() + salt);
-        User user = new User(employeeUpdateReqDto, principalId, uuidImageName, hashPassword, salt);
-        Employee employee = new Employee(principalId, employeeUpdateReqDto.getRealName(),
-                employeeUpdateReqDto.getCareer(),
-                employeeUpdateReqDto.getEducation());
+        User user = new User(employeeUpdateReqDto, id, "null.jpg", hashPassword, salt);
+        Employee employee = new Employee(id,
+                employeeUpdateReqDto.getEmployeeDto().getRealName(),
+                employeeUpdateReqDto.getEmployeeDto().getCareer(),
+                employeeUpdateReqDto.getEmployeeDto().getEducation());
         try {
             userRepository.updateById(user);
             employeeRepository.updateByUserId(employee);
         } catch (Exception e) {
             throw new CustomException("회원 수정 실패", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        user = userRepository.findById(principalId);
+        user = userRepository.findById(id);
         UserVo userVoPS = new UserVo(user.getId(), user.getUsername(), user.getProfile(), user.getRole());
+        // System.out.println("디버깅"+employee.getEducation());
         return userVoPS;
     }
 
