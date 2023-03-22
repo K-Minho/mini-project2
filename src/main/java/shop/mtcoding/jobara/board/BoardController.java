@@ -87,7 +87,7 @@ public class BoardController {
         System.out.println(principal.getId());
         BoardDetailRespDto boardDetailRespDto = boardService.getDetail(principal.getId(), id);
 
-        return ResponseEntity.ok().body(boardDetailRespDto);
+        return ResponseEntity.status(200).body(boardDetailRespDto);
     }
 
     @GetMapping("/board/list")

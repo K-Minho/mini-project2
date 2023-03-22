@@ -10,9 +10,9 @@
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="content" column="content"/>
-        <result property="career" column="career"/>
-        <result property="jobType" column="job_type"/>
-        <result property="education" column="education"/>
+        <result property="careerInteger" column="career"/>
+        <result property="jobTypeInteger" column="job_type"/>
+        <result property="educationInteger" column="education"/>
         <result property="favor" column="favor"/>
 
         <association property="company" javaType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$CompanyDto">

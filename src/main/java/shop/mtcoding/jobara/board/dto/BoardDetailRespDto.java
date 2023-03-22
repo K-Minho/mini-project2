@@ -9,6 +9,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
+import shop.mtcoding.jobara.common.util.CareerParse;
+import shop.mtcoding.jobara.common.util.EducationParse;
+import shop.mtcoding.jobara.common.util.JobTypeParse;
 
 @Getter
 @Setter
@@ -16,9 +19,15 @@ public class BoardDetailRespDto {
     private Integer id;
     private String title;
     private String content;
-    private Integer career;
-    private Integer jobType;
-    private Integer education;
+    @JsonIgnore
+    private Integer careerInteger;
+    @JsonIgnore
+    private Integer jobTypeInteger;
+    @JsonIgnore
+    private Integer educationInteger;
+    private String career;
+    private String jobType;
+    private String education;
     private String favor;
 
     private CompanyDto company;
@@ -47,6 +56,13 @@ public class BoardDetailRespDto {
         } else {
             love.css = "fa-solid";
         }
+    }
+
+    public void parseIntegerInfo() {
+        this.career = CareerParse.careerToString(careerInteger);
+        this.jobType = JobTypeParse.jopTypeToString(jobTypeInteger);
+        this.education = EducationParse.educationToString(educationInteger);
+        System.out.print("테스트" + education);
     }
 
     @Getter

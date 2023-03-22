@@ -53,6 +53,8 @@ public class BoardService {
         }
         boardDetailPS.skillParse(boardDetailPS.getNeedParse());
         boardDetailPS.faSoild();
+        boardDetailPS.parseIntegerInfo();
+
         return boardDetailPS;
     }
 
