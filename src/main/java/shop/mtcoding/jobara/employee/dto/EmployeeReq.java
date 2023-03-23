@@ -28,13 +28,18 @@ public class EmployeeReq {
       public static class EmployeeUpdateReqDto {
             private String password;
             private String email;
-            private String education;
-            private String realName;
             private String address;
             private String detailAddress;
             private String tel;
-            private Integer career;
+            private EmployeeDto employeeDto;
 
+            @Getter
+            @Setter
+            public static class EmployeeDto {
+                  private String realName;
+                  private String education;
+                  private Integer career;
+            }
       }
 
       @Getter

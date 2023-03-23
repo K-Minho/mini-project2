@@ -21,9 +21,16 @@ public class EmployeeResp {
         private String address;
         private String detailAddress;
         private String tel;
-        private String realName;
-        private Integer career;
-        private String education;
+        private EmployeeDto employeeDto;
+
+        @Getter
+        @Setter
+        @AllArgsConstructor
+        public static class EmployeeDto {
+            private String realName;
+            private String education;
+            private Integer career;
+        }
     }
 
     @Getter
@@ -32,8 +39,6 @@ public class EmployeeResp {
     @NoArgsConstructor
     public static class EmployeeAndResumeRespDto {
         private Integer id;
-        private String username;
-        private String password;
         private String email;
         private String address;
         private String detailAddress;
@@ -41,14 +46,27 @@ public class EmployeeResp {
         private String profile;
         private String role;
         private Timestamp createdAt;
-        private String realName;
-        private String education;
-        private Integer career;
-        private String title;
-        private String content;
+        private EmployeeDto employeeDto;
+        private ResumeDto resumeDto;
 
         public String getCreatedAtToString() {
             return DateParse.format(createdAt);
         }
+
+        @Getter
+        @Setter
+        public static class EmployeeDto {
+            private String realName;
+            private String education;
+            private Integer career;
+        }
+
+        @Getter
+        @Setter
+        public static class ResumeDto {
+            private String title;
+            private String content;
+        }
     }
+
 }
