@@ -30,21 +30,6 @@ public class BoardReq {
         private Integer userId;
 
         private List<Integer> checkedValues;
-
-        public BoardUpdateReqDto(Integer id, String title, String content, String careerString, String educationString,
-                String jobTypeString, String deadline, String favor, Integer userId, List<Integer> checkedValues) {
-            this.id = id;
-            this.title = title;
-            this.content = content;
-            this.careerString = careerString;
-            this.educationString = educationString;
-            this.jobTypeString = jobTypeString;
-            this.deadline = deadline;
-            this.favor = favor;
-            this.userId = userId;
-            this.checkedValues = checkedValues;
-        }
-
     }
 
     @Getter
@@ -65,21 +50,6 @@ public class BoardReq {
         private String favor;
         private Integer userId;
         private List<Integer> checkLang;
-
-        public BoardInsertReqDto(String title, String content, String careerString,
-                String educationString, String jobTypeString, String deadline, String favor, Integer userId,
-                List<Integer> checkLang) {
-            this.title = title;
-            this.content = content;
-            this.careerString = careerString;
-            this.educationString = educationString;
-            this.jobTypeString = jobTypeString;
-            this.deadline = deadline;
-            this.favor = favor;
-            this.userId = userId;
-            this.checkLang = checkLang;
-        }
-
     }
 
     @NoArgsConstructor
