@@ -35,7 +35,7 @@ public class LoveController {
         return new UserVo(6, "cos", "", "company");
     }
 
-    @PostMapping("/love")
+    @PostMapping("/loves")
     // @EmployeeCheckApi
     public ResponseEntity<?> save(@RequestBody LoveSaveReqDto loveSaveReqDto) {
         // 인증
@@ -51,7 +51,7 @@ public class LoveController {
         return new ResponseEntity<>(new ResponseDto<>(1, "좋아요성공", loveId), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/love/{id}")
+    @DeleteMapping("/loves/{id}")
     // @EmployeeCheckApi
     public ResponseEntity<?> cancel(@PathVariable Integer id) {
         // 인증
