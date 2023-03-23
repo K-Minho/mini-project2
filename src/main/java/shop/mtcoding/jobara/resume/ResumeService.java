@@ -33,7 +33,6 @@ public class ResumeService {
 
     @Transactional
     public void saveResume(Integer principalId, ResumeSaveReq resumeSaveReq) {
-        System.out.println("test" + resumeSaveReq.getTitle());
         Resume resume = new Resume(principalId, resumeSaveReq.getTitle(), resumeSaveReq.getContent());
         try {
             resumeRepository.insert(resume);
