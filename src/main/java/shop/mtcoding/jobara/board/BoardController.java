@@ -1,6 +1,5 @@
 package shop.mtcoding.jobara.board;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -18,21 +17,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.common.aop.CompanyCheck;
-import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
-import shop.mtcoding.jobara.common.ex.CustomApiException;
-import shop.mtcoding.jobara.common.ex.CustomException;
-import shop.mtcoding.jobara.common.util.DateParse;
 import shop.mtcoding.jobara.common.util.RedisService;
 import shop.mtcoding.jobara.common.util.RedisServiceSet;
 import shop.mtcoding.jobara.common.util.Verify;
@@ -183,13 +177,13 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
     }
 
-    @GetMapping("/board/boardList/{id}")
-    @CompanyCheck
-    public String myBoardList(@PathVariable int id) {
+    @GetMapping("/boards/boardList/{id}")
+    // @CompanyCheck
+    public ResponseEntity<?> myBoardList(@PathVariable int id) {
         UserVo principal = setCompanyPrincipal();
 
-        List<MyBoardListRespDto> myBoardListPS = boardService.getMyBoard(principal.getId(), id);
-        return "board/myBoardList";
+        List<BoardMyListRespDto> myBoardListPS = boardService.getMyBoardList(principal.getId(), id);
+        return new ResponseEntity<>(new ResponseDto<>(1, "등록한 게시글 목록", myBoardListPS), HttpStatus.OK);
     }
 
     @GetMapping("/board/scrapList/{id}")

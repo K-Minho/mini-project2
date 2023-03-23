@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto.BoardListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
@@ -109,6 +110,23 @@ public class BoardService {
         boardUpdateFormRespPS.parseIntegerInfo();
 
         return boardUpdateFormRespPS;
+    }
+
+    @Transactional(readOnly = true)
+    public List<BoardMyListRespDto> getMyBoardList(int coPrincipalId, int userId) {
+        // 권한 체크
+        // if (coPrincipalId != userId) {
+        // throw new CustomException("공고 리스트 열람 권한이 없습니다.");
+        // }
+
+        List<BoardMyListRespDto> myBoardListPS;
+        try {
+            myBoardListPS = boardRepository.findByIdForMyList(coPrincipalId);
+        } catch (Exception e) {
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return myBoardListPS;
     }
 
     // 1/2차 경계선 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
