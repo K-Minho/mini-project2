@@ -230,6 +230,38 @@
            GROUP BY bt.id
 	</select>
 
+<!-- MyBoardList -->
+   <resultMap id="myBoardListJoin" type="shop.mtcoding.jobara.board.dto.BoardMyListRespDto">
+            <id property="id" column="id"/>
+            <result property="title" column="title"/>
+            <result property="dday" column="dday"/>
+
+            <association property="company" javaType="shop.mtcoding.jobara.board.dto.BoardMyListRespDto$CompanyDto">
+                <id property="userId" column="user_id"/>
+                <result property="companyName" column="company_name"/>
+            </association>
+            
+            <association property="user" javaType="shop.mtcoding.jobara.board.dto.BoardMyListRespDto$UserDto">
+                <result property="profile" column="profile"/>
+            </association>
+
+    </resultMap>
+
+    <select id="findByIdForMyList" resultMap="myBoardListJoin">
+        SELECT bt.id, bt.title, ct.company_name, ut.id user_id, ut.profile, DATEDIFF(DAY, now(), deadline) dday FROM BOARD_TB bt
+        inner join company_tb ct
+        on bt.user_id = ct.user_id
+        inner join user_tb ut
+        on bt.user_id=ut.id
+        where ut.id = ${userId}
+        order by dday 
+    </select>
+
+
+
+
+
+
 
     <!-- 1/2차 경계선 -->
     <!-- 1/2차 경계선 -->
