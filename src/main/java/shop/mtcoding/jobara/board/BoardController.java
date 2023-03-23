@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
-import shop.mtcoding.jobara.common.aop.CompanyCheck;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.common.util.RedisService;
 import shop.mtcoding.jobara.common.util.RedisServiceSet;
@@ -183,25 +182,23 @@ public class BoardController {
         UserVo principal = setCompanyPrincipal();
 
         List<BoardMyListRespDto> myBoardListPS = boardService.getMyBoardList(principal.getId(), id);
-        return new ResponseEntity<>(new ResponseDto<>(1, "등록한 게시글 목록", myBoardListPS), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "등록 게시글 목록", myBoardListPS), HttpStatus.OK);
     }
 
-    @GetMapping("/board/scrapList/{id}")
-    public String myScrapBoardList(@PathVariable int id, Model model) {
+    @GetMapping("/boards/scrapList/{id}")
+    public ResponseEntity<?> myScrapBoardList(@PathVariable int id, Model model) {
 
-        UserVo principal = redisService.getValue("principal");
+        UserVo principal = setPrincipal();
 
         // 인증체크
-        Verify.validateObject(
-                principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST,
-                "/loginForm");
+        // Verify.validateObject(
+        // principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST,
+        // "/loginForm");
 
-        Verify.checkRole(principal, "employee");
+        // Verify.checkRole(principal, "employee");
 
-        List<MyScrapBoardListRespDto> myScrapBoardListPS = boardService.getMyScrapBoard(principal.getId(), id);
-        model.addAttribute("myScrapBoardList", myScrapBoardListPS);
-        redisServiceSet.addModel(model);
-        return "board/myScrapBoardList";
+        List<BoardMyScrapListRespDto> myScrapBoardListPS = boardService.getMyScrapBoardList(principal.getId(), id);
+        return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 게시글 목록", myScrapBoardListPS), HttpStatus.OK);
     }
 
     @DeleteMapping("/board/{id}")

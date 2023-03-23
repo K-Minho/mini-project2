@@ -273,7 +273,7 @@
             </association>
 
             <association property="love" javaType="shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto$LoveDto">
-                <id property="lovdId" column="lovd_id"/>
+                <id property="lovdId" column="love_id"/>
                 <result property="boardId" column="love_board_id"/>
                 <result property="userId" column="love_user_id"/>
                 <result property="css" column="css"/>
