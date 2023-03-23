@@ -60,6 +60,22 @@ public class BoardControllerTest {
     }
 
     @Test
+    public void myBoardList_test() throws Exception {
+        // given
+        Integer companyId = 6;
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/boards/boardList/" + companyId)
+                .session(companyMockSession));
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.data[0].title").value("인공지능 (AI Solution) 개발"));
+    }
+
+    @Test
     public void update_test() throws Exception {
         // given
         BoardUpdateReqDto boardUpdateReqDto = new BoardUpdateReqDto(1, "포스트맨 저장제목", "포스트맨 저장내용", "1년이상 ~ 3년미만",
@@ -83,7 +99,7 @@ public class BoardControllerTest {
         BoardInsertReqDto boardInsertReqDto = new BoardInsertReqDto("포스트맨 저장제목", "포스트맨 저장내용", "1년이상 ~ 3년미만",
                 "4년 대졸이상", "인턴", "2023-04-09", "근면성실", 6, Arrays.asList(1, 2, 3));
         ;
-        System.out.println("테스트 : " + om.writeValueAsString(boardInsertReqDto));
+        // System.out.println("테스트 : " + om.writeValueAsString(boardInsertReqDto));
 
         // when
         ResultActions resultActions = mvc.perform(post("/boards")
@@ -105,7 +121,7 @@ public class BoardControllerTest {
                 .session(companyMockSession));
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-        System.out.println("테스트 : " + responseBody);
+        // System.out.println("테스트 : " + responseBody);
 
         // then
         resultActions.andExpect(status().isOk());
@@ -122,7 +138,7 @@ public class BoardControllerTest {
                 .session(employeeMockSession));
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-        System.out.println("테스트 : " + responseBody);
+        // System.out.println("테스트 : " + responseBody);
 
         // then
         resultActions.andExpect(status().isOk());
@@ -149,8 +165,7 @@ public class BoardControllerTest {
         ResultActions resultActions = mvc.perform(get("/boards/" + boardId)
                 .session(employeeMockSession));
 
-        // String responseBody =
-        // resultActions.andReturn().getResponse().getContentAsString();
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         // System.out.println("테스트 : " + responseBody);
 
         // then
