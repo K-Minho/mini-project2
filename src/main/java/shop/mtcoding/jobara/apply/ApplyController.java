@@ -3,6 +3,7 @@ package shop.mtcoding.jobara.apply;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,9 +24,8 @@ import shop.mtcoding.jobara.common.aop.CompanyCheck;
 import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
 import shop.mtcoding.jobara.common.aop.EmployeeCheck;
 import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
+import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
-import shop.mtcoding.jobara.common.util.Verify;
-import shop.mtcoding.jobara.user.vo.UserVo;
 
 @RestController
 public class ApplyController {
@@ -38,9 +38,9 @@ public class ApplyController {
 
     @PostMapping("/employee/apply")
     @EmployeeCheckApi
-    public ResponseEntity<?> apply(@RequestBody ApplyReqDto applyReqDto) {
-        UserVo principal = (UserVo) session.getAttribute("principal");
-        applyService.insertApply(applyReqDto, principal.getId());
+    public ResponseEntity<?> apply(@RequestBody @Valid ApplyReqDto applyReqDto) {
+        LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+        applyService.insertApply(applyReqDto, loginUser.getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "지원 성공", null), HttpStatus.CREATED);
     }
 
@@ -54,9 +54,7 @@ public class ApplyController {
     @PutMapping("/company/apply/{id}")
     @CompanyCheckApi
     public @ResponseBody ResponseEntity<?> decideApplyment(@PathVariable int id,
-            @RequestBody ApplyDecideReqDto applyDecideReqDto) {
-        Verify.validateApiObject(applyDecideReqDto.getUserId(), "처리할 유저 Id를 입력하세요.");
-        Verify.validateApiObject(applyDecideReqDto.getState(), "처리할 결과 코드를 입력하세요.");
+            @RequestBody @Valid ApplyDecideReqDto applyDecideReqDto) {
         applyService.approveApply(applyDecideReqDto, id);
         if (applyDecideReqDto.getState() == 1) {
             return new ResponseEntity<>(new ResponseDto<>(1, "합격 처리 완료", null), HttpStatus.CREATED);
