@@ -185,13 +185,10 @@ public class BoardController {
 
     @GetMapping("/board/boardList/{id}")
     @CompanyCheck
-    public String myBoardList(@PathVariable int id, Model model) {
-
-        UserVo principal = redisService.getValue("principal");
+    public String myBoardList(@PathVariable int id) {
+        UserVo principal = setCompanyPrincipal();
 
         List<MyBoardListRespDto> myBoardListPS = boardService.getMyBoard(principal.getId(), id);
-        model.addAttribute("myBoardList", myBoardListPS);
-        redisServiceSet.addModel(model);
         return "board/myBoardList";
     }
 
