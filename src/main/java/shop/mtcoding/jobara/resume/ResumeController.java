@@ -59,7 +59,7 @@ public class ResumeController {
     }
 
     @GetMapping("/resume/list")
-    public String resumeList(Model model) {
+    public ResponseEntity<?> resumeList(Model model) {
         // UserVo principal = redisService.getValue("principal");
         // Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED,
         // "/#login");
@@ -67,7 +67,7 @@ public class ResumeController {
         UserVo principal = setPrincipal();
         List<Resume> resumeListPS = resumeService.findByUserId(principal.getId());
         model.addAttribute("resumeList", resumeListPS);
-        return "resume/list";
+        return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.OK);
     }
 
     @GetMapping("/resume/saveForm")
