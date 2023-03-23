@@ -3,6 +3,7 @@ package shop.mtcoding.jobara.company;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyJoinReqDto;
+import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyUpdateReqDto;
 import shop.mtcoding.jobara.company.dto.CompanyResp;
 import shop.mtcoding.jobara.company.model.Company;
 import shop.mtcoding.jobara.user.model.User;
@@ -113,5 +115,33 @@ public class CompanyControllerTest extends CompanyResp {
         resultActions.andExpect(status().is2xxSuccessful());
         resultActions.andExpect(jsonPath("$.code").value(1));
         resultActions.andExpect(jsonPath("$.msg").value("기업 회원 가입 성공"));
+    }
+
+    @Test
+    public void update_test() throws Exception {
+        // given
+        CompanyUpdateReqDto companyUpdateReqDto = new CompanyUpdateReqDto();
+        companyUpdateReqDto.setPassword("1234");
+        companyUpdateReqDto.setEmail("ssar@naver.com");
+        companyUpdateReqDto.setAddress("부산시");
+        companyUpdateReqDto.setDetailAddress("부산야호");
+        companyUpdateReqDto.setCompanyName("부산자동차");
+        companyUpdateReqDto.setProfile("1234");
+        companyUpdateReqDto.setTel("123123123");
+        companyUpdateReqDto.setCompanyScale("대기업");
+        companyUpdateReqDto.setCompanyField("자동차만들기");
+
+        // when
+        ResultActions resultActions = mvc.perform(put("/company/update")
+                .content(om.writeValueAsString(companyUpdateReqDto))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .session(mockSession));
+        String resp = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + resp);
+
+        // then
+        resultActions.andExpect(status().is2xxSuccessful());
+        resultActions.andExpect(jsonPath("$.code").value(1));
+        resultActions.andExpect(jsonPath("$.msg").value("기업 회원 수정 성공"));
     }
 }

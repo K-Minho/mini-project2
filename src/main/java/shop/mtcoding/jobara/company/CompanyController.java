@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,9 +46,9 @@ public class CompanyController {
         return new ResponseEntity<>(new ResponseDto<>(1, "기업 회원 가입 성공", null), HttpStatus.CREATED);
     }
 
-    @PostMapping("/company/update")
+    @PutMapping("/company/update")
     @CompanyCheck
-    public ResponseEntity<?> update(CompanyUpdateReqDto companyUpdateReqDto) {
+    public ResponseEntity<?> update(@RequestBody CompanyUpdateReqDto companyUpdateReqDto) {
         UserVo principal = (UserVo) session.getAttribute("principal");
 
         Verify.validateApiString(companyUpdateReqDto.getPassword(), "암호를 입력하세요.");
