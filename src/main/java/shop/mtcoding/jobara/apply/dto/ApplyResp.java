@@ -12,7 +12,7 @@ public class ApplyResp {
     @Setter(AccessLevel.PROTECTED)
     public static class ApplyJoinBoardAndUser {
         private Integer id;
-        private String state;
+        private Integer state;
         private Timestamp createdAt;
         private BoardDto board;
         private UserDto user;

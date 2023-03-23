@@ -7,7 +7,7 @@ import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndUser;
 
 public class ApplyJoinBoardAndUserBuilder extends ApplyJoinBoardAndUser {
 
-    public static ApplyJoinBoardAndUser makeApplyJoinBoardAndUser(Integer id, String state, UserDto user,
+    public static ApplyJoinBoardAndUser makeApplyJoinBoardAndUser(Integer id, Integer state, UserDto user,
             BoardDto board, ResumeDto resume) {
         ApplyJoinBoardAndUser mockApplyJoinBoardAndUser = new ApplyJoinBoardAndUser();
         mockApplyJoinBoardAndUser.setId(id);

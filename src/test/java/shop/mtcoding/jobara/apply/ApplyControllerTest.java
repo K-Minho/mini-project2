@@ -81,12 +81,12 @@ public class ApplyControllerTest {
 
         // mock
         List<ApplyJoinBoardAndUser> applyListPS = new ArrayList<>();
-        ApplyJoinBoardAndUser applyJoinBoardAndUser = ApplyJoinBoardAndUserBuilder.makeApplyJoinBoardAndUser(1, "0",
+        ApplyJoinBoardAndUser applyJoinBoardAndUser = ApplyJoinBoardAndUserBuilder.makeApplyJoinBoardAndUser(1, 0,
                 ApplyJoinBoardAndUserBuilder.makeUser(1, "김일"),
                 ApplyJoinBoardAndUserBuilder.makeBoard(1, "제목1"),
                 ApplyJoinBoardAndUserBuilder.makeResume(1));
         applyListPS.add(applyJoinBoardAndUser);
-        applyJoinBoardAndUser = ApplyJoinBoardAndUserBuilder.makeApplyJoinBoardAndUser(2, "0",
+        applyJoinBoardAndUser = ApplyJoinBoardAndUserBuilder.makeApplyJoinBoardAndUser(2, 0,
                 ApplyJoinBoardAndUserBuilder.makeUser(2, "김이"),
                 ApplyJoinBoardAndUserBuilder.makeBoard(2, "제목2"),
                 ApplyJoinBoardAndUserBuilder.makeResume(2));
