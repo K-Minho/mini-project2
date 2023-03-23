@@ -10,14 +10,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import shop.mtcoding.jobara.common.dto.ResponseDto;
-import shop.mtcoding.jobara.common.ex.CustomException;
-import shop.mtcoding.jobara.common.util.RedisService;
-import shop.mtcoding.jobara.common.util.RedisServiceSet;
-import shop.mtcoding.jobara.common.util.Verify;
 import shop.mtcoding.jobara.resume.dto.ResumeReq.ResumeSaveReq;
 import shop.mtcoding.jobara.resume.dto.ResumeReq.ResumeUpdateReq;
 import shop.mtcoding.jobara.resume.model.Resume;
@@ -33,7 +30,7 @@ public class ResumeController {
         return new UserVo(1, "ssar", "", "employee");
     }
 
-    @PostMapping("/resume/update/{id}")
+    @PutMapping("/employee/resume/{id}")
     public ResponseEntity<?> updateResume(@PathVariable Integer id, @RequestBody ResumeUpdateReq resumeUpdateReq) {
         // UserVo principal = redisService.getValue("principal");
         // Verify.validateApiObject(principal, "로그인이 필요합니다.");
@@ -46,7 +43,7 @@ public class ResumeController {
         return new ResponseEntity<>(new ResponseDto<>(1, "작성 완료", null), HttpStatus.OK);
     }
 
-    @GetMapping("/resume/{id}")
+    @GetMapping("/employee/resume/{id}")
     public ResponseEntity<?> saveResumeForm(@PathVariable("id") Integer id, Model model) {
         // UserVo principal = redisService.getValue("principal");
         // Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED,
@@ -58,7 +55,7 @@ public class ResumeController {
         return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.OK);
     }
 
-    @GetMapping("/resume/list")
+    @GetMapping("/employee/resume/list")
     public ResponseEntity<?> resumeList(Model model) {
         // UserVo principal = redisService.getValue("principal");
         // Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED,
@@ -70,7 +67,7 @@ public class ResumeController {
         return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.OK);
     }
 
-    @GetMapping("/resume/saveForm")
+    @GetMapping("/employee/resume/saveForm")
     public String saveForm(Model model) {
         // UserVo principal = redisService.getValue("principal");
         // Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED,
@@ -79,7 +76,7 @@ public class ResumeController {
         return "resume/saveForm";
     }
 
-    @PostMapping("/resume/save")
+    @PostMapping("/employee/resume/save")
     public ResponseEntity<?> saveResume(@RequestBody ResumeSaveReq resumeSaveReq) {
         // UserVo principal = redisService.getValue("principal");
         // Verify.validateObject(principal, "로그인이 필요합니다.");
@@ -94,7 +91,7 @@ public class ResumeController {
         return new ResponseEntity<>(new ResponseDto<>(1, "작성 완료", resumeSaveReq), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/resume/{id}/delete")
+    @DeleteMapping("/employee/resume/{id}")
     public ResponseEntity<?> deleteResume(@PathVariable int id) {
         // UserVo principal = redisService.getValue("principal");
         // Verify.validateApiObject(principal, "로그인이 필요합니다.");
