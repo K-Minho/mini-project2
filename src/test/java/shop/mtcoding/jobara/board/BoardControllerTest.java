@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import shop.mtcoding.jobara.board.dto.BoardInsertReqBuilder;
+import shop.mtcoding.jobara.board.dto.BoardUpdateReqBuilder;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.jobara.user.vo.UserVo;
@@ -111,7 +113,8 @@ public class BoardControllerTest {
     @Test
     public void update_test() throws Exception {
         // given
-        BoardUpdateReqDto boardUpdateReqDto = new BoardUpdateReqDto(1, "포스트맨 저장제목", "포스트맨 저장내용", "1년이상 ~ 3년미만",
+        BoardUpdateReqDto boardUpdateReqDto = BoardUpdateReqBuilder.makeBoardUpdateReqForTest(1, "포스트맨 저장제목",
+                "포스트맨 저장내용", "1년이상 ~ 3년미만",
                 "4년 대졸이상", "인턴", "2023-04-09", "근면성실", 6, Arrays.asList(1, 2, 3));
         ;
         Integer boardId = 1;
@@ -129,7 +132,8 @@ public class BoardControllerTest {
     @Test
     public void save_test() throws Exception {
         // given
-        BoardInsertReqDto boardInsertReqDto = new BoardInsertReqDto("포스트맨 저장제목", "포스트맨 저장내용", "1년이상 ~ 3년미만",
+        BoardInsertReqDto boardInsertReqDto = BoardInsertReqBuilder.makeBoardInsertReqForTest("포스트맨 저장제목", "포스트맨 저장내용",
+                "1년이상 ~ 3년미만",
                 "4년 대졸이상", "인턴", "2023-04-09", "근면성실", 6, Arrays.asList(1, 2, 3));
         ;
         // System.out.println("테스트 : " + om.writeValueAsString(boardInsertReqDto));

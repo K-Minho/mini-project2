@@ -9,14 +9,13 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
@@ -26,13 +25,10 @@ import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
-import shop.mtcoding.jobara.common.util.RedisService;
-import shop.mtcoding.jobara.common.util.RedisServiceSet;
-import shop.mtcoding.jobara.common.util.Verify;
 import shop.mtcoding.jobara.love.LoveService;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
-@Controller
+@RestController
 public class BoardController {
 
     @Autowired
@@ -43,12 +39,6 @@ public class BoardController {
 
     @Autowired
     HttpSession session;
-
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private RedisServiceSet redisServiceSet;
 
     public UserVo setPrincipal() {
         return new UserVo(1, "ssar", "", "employee");
