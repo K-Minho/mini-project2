@@ -44,9 +44,6 @@ public class CompanyService {
         Verify.isNotEqual(
                 userRepository.findByUsername(companyJoinReqDto.getUsername()), null, "이미 존재하는 유저네임 입니다.",
                 HttpStatus.BAD_REQUEST);
-        // if (userRepository.findByUsername(companyJoinReqDto.getUsername()) != null) {
-        // throw new CustomException("이미 존재하는 유저네임 입니다.");
-        // }
         String salt = Hash.makeSalt();
         String hashPassword = Hash.encode(companyJoinReqDto.getPassword() + salt);
         User user = new User(companyJoinReqDto, hashPassword, salt);

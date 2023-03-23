@@ -1,14 +1,18 @@
 package shop.mtcoding.jobara.company;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import shop.mtcoding.jobara.common.aop.CompanyCheck;
+import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.common.ex.CustomException;
 import shop.mtcoding.jobara.common.util.RedisService;
 import shop.mtcoding.jobara.common.util.RedisServiceSet;
@@ -47,12 +51,12 @@ public class CompanyConetroller {
     }
 
     @PostMapping("/company/join")
-    public String join(CompanyJoinReqDto companyJoinReqDto) {
-        Verify.validateString(companyJoinReqDto.getUsername(), "유저네임을 입력하세요.");
-        Verify.validateString(companyJoinReqDto.getPassword(), "암호를 입력하세요.");
-        Verify.validateString(companyJoinReqDto.getEmail(), "이메일을 입력하세요.");
+    public ResponseEntity<?> join(@RequestBody CompanyJoinReqDto companyJoinReqDto) {
+        Verify.validateApiString(companyJoinReqDto.getUsername(), "유저네임을 입력하세요.");
+        Verify.validateApiString(companyJoinReqDto.getPassword(), "암호를 입력하세요.");
+        Verify.validateApiString(companyJoinReqDto.getEmail(), "이메일을 입력하세요.");
         companyService.insertCompany(companyJoinReqDto);
-        return "redirect:/";
+        return new ResponseEntity<>(new ResponseDto<>(1, "기업 회원 가입 성공", null), HttpStatus.CREATED);
     }
 
     @PostMapping("/company/update")
