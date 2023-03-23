@@ -1,5 +1,6 @@
 package shop.mtcoding.jobara.board;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -57,6 +58,22 @@ public class BoardControllerTest {
         companyMockSession = new MockHttpSession();
         employeeMockSession.setAttribute("EmployeePrincipal", employeePrincipal);
         companyMockSession.setAttribute("CompanyPrincipal", companyPrincipal);
+    }
+
+    @Test
+    public void myBoardDelete() throws Exception {
+        // given
+        Integer boardId = 1;
+
+        // when
+        ResultActions resultActions = mvc.perform(delete("/boards/" + boardId)
+                .session(employeeMockSession));
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        // System.out.println("테스트 : " + responseBody);
+
+        // then
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.msg").value("게시글을 삭제하였습니다"));
     }
 
     @Test

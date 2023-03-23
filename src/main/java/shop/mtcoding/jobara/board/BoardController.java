@@ -201,7 +201,7 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 게시글 목록", myScrapBoardListPS), HttpStatus.OK);
     }
 
-    @DeleteMapping("/board/{id}")
+    @DeleteMapping("/boards/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
         UserVo principal = setCompanyPrincipal();
         // Verify.validateApiObject(
