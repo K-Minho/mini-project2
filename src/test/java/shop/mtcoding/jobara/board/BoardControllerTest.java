@@ -60,6 +60,22 @@ public class BoardControllerTest {
     }
 
     @Test
+    public void myScrapBoardList_test() throws Exception {
+        // given
+        Integer userId = 6;
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/boards/scrapList/" + userId)
+                .session(employeeMockSession));
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.data[0].company.companyName").value("스윙비(Swingvy)"));
+    }
+
+    @Test
     public void myBoardList_test() throws Exception {
         // given
         Integer companyId = 6;

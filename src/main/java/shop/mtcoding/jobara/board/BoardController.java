@@ -186,7 +186,7 @@ public class BoardController {
     }
 
     @GetMapping("/boards/scrapList/{id}")
-    public ResponseEntity<?> myScrapBoardList(@PathVariable int id, Model model) {
+    public ResponseEntity<?> myScrapBoardList(@PathVariable int id) {
 
         UserVo principal = setPrincipal();
 
