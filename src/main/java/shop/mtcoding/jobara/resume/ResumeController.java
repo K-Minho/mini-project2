@@ -47,7 +47,7 @@ public class ResumeController {
     }
 
     @GetMapping("/resume/{id}")
-    public String saveResumeForm(@PathVariable("id") Integer id, Model model) {
+    public ResponseEntity<?> saveResumeForm(@PathVariable("id") Integer id, Model model) {
         // UserVo principal = redisService.getValue("principal");
         // Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED,
         // "/#login");
@@ -55,7 +55,7 @@ public class ResumeController {
         UserVo principal = setPrincipal();
         Resume resumePS = resumeService.findById(principal.getId(), id);
         model.addAttribute("resume", resumePS);
-        return "resume/updateForm";
+        return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.OK);
     }
 
     @GetMapping("/resume/list")
