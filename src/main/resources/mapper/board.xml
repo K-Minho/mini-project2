@@ -258,7 +258,42 @@
     </select>
 
 
+   <resultMap id="myScrapBoardListJoin" type="shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto">
+            <id property="id" column="id"/>
+            <result property="title" column="title"/>
+            <result property="dday" column="dday"/>
 
+            <association property="company" javaType="shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto$CompanyDto">
+                <id property="userId" column="user_id"/>
+                <result property="companyName" column="company_name"/>
+            </association>
+            
+            <association property="user" javaType="shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto$UserDto">
+                <result property="profile" column="profile"/>
+            </association>
+
+            <association property="love" javaType="shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto$LoveDto">
+                <id property="lovdId" column="lovd_id"/>
+                <result property="boardId" column="love_board_id"/>
+                <result property="userId" column="love_user_id"/>
+                <result property="css" column="css"/>
+            </association>
+
+    </resultMap>
+
+    <select id="findAllScrapBoardList" resultMap="myScrapBoardListJoin">
+        SELECT bt.id, bt.title, ct.company_name, ut.id user_id, ut.profile, lt.id love_id, 'fa-solid' css, DATEDIFF(DAY, now(), bt.deadline) dday,
+               lt.board_id love_board_id, lt.user_id love_user_id 
+        FROM BOARD_TB bt
+        inner join company_tb ct
+        on bt.user_id = ct.user_id
+        inner join user_tb ut
+        on bt.user_id=ut.id
+        inner join love_tb lt
+        on lt.board_id = bt.id
+        where lt.user_id = #{userId}
+        order by dday 
+    </select>
 
 
 

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardPagingListDto.BoardListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertSkillReqDto;
@@ -33,6 +34,8 @@ public interface BoardRepository {
         public BoardUpdateFormRespDto findUpdateFormInfo(int boardId);
 
         public List<BoardMyListRespDto> findByIdForMyList(int userId);
+
+        public List<BoardMyScrapListRespDto> findAllScrapBoardList(int userId);
 
         // 1/2차 경계선
 
