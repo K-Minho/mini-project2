@@ -17,13 +17,13 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public UserVo getUser(UserLoginReqDto userLoginReqDto) {
+    public User getUser(UserLoginReqDto userLoginReqDto) {
         String salt = userRepository.findByUsername(userLoginReqDto.getUsername()).getSalt();
         String hashPassword = Hash.encode(userLoginReqDto.getPassword() + salt);
-        UserVo userVoPS = userRepository.findByUsernameAndPassword(
+        User userPS = userRepository.findByUsernameAndPassword(
                 new User(userLoginReqDto.getUsername(), hashPassword));
-        Verify.validateObject(userVoPS, "유저네임이나 암호를 확인해주세요.");
-        return userVoPS;
+        Verify.validateObject(userPS, "유저네임이나 암호를 확인해주세요.");
+        return userPS;
     }
 
     @Transactional(readOnly = true)

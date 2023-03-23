@@ -38,7 +38,7 @@ public class EmployeeController {
         return "employee/joinForm";
     }
 
-    @PostMapping("/employee/update/{id}")
+    @PutMapping("/employee/{id}")
     @EmployeeCheck
     public @ResponseBody ResponseEntity<?> update(@PathVariable int id,
             @RequestBody EmployeeUpdateReqDto employeeUpdateReqDto) {
@@ -66,7 +66,7 @@ public class EmployeeController {
         return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.valueOf(200));
     }
 
-    @GetMapping("/employee/{id}/updateForm")
+    @GetMapping("/employee/{id}")
     @EmployeeCheck
     public ResponseEntity<?> updateForm(@PathVariable int id, Model model) {
 
@@ -93,13 +93,13 @@ public class EmployeeController {
         return ResponseEntity.status(200).body(model);
     }
 
-    @PostMapping("/join")
+    @PostMapping("/joinEmployee")
     public ResponseEntity<?> join(EmployeeJoinReqDto employeeJoinReqDto) {
         employeeService.insertEmployee(employeeJoinReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "가입 완료", null), HttpStatus.valueOf(201));
     }
 
-    @GetMapping("/employee/{id}")
+    @GetMapping("/user/{id}")
     public @ResponseBody ResponseEntity<?> employeeDetail(@PathVariable int id, Model model) {
         EmployeeAndResumeRespDto employeePS = employeeService.getEmployee(id);
         List<String> employeeTechPS = employeeService.getEmployeeTech(id);

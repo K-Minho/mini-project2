@@ -48,7 +48,7 @@
         select * from user_tb where username = #{username}
     </select>
 
-    <select id="findByUsernameAndPassword" resultType="shop.mtcoding.jobara.user.vo.UserVo">
+    <select id="findByUsernameAndPassword" resultType="shop.mtcoding.jobara.user.model.User">
         select * from user_tb where username = #{username} and password = #{password}
     </select>
 </mapper>
