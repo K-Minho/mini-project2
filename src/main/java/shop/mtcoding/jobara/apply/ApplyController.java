@@ -7,7 +7,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +36,7 @@ public class ApplyController {
     @Autowired
     private HttpSession session;
 
-    @PostMapping("/apply")
+    @PostMapping("/employee/apply")
     @EmployeeCheckApi
     public ResponseEntity<?> apply(@RequestBody ApplyReqDto applyReqDto) {
         UserVo principal = (UserVo) session.getAttribute("principal");
@@ -45,14 +44,14 @@ public class ApplyController {
         return new ResponseEntity<>(new ResponseDto<>(1, "지원 성공", null), HttpStatus.CREATED);
     }
 
-    @GetMapping("/company/{id}/apply")
+    @GetMapping("/company/apply/{id}")
     @CompanyCheck
     public ResponseEntity<?> companyApplyList(@PathVariable Integer id) {
         List<ApplyJoinBoardAndUser> applyListPS = applyService.getApplyForCompany(id);
         return new ResponseEntity<>(new ResponseDto<>(1, "지원자 리스트 불러오기 성공", applyListPS), HttpStatus.OK);
     }
 
-    @PutMapping("/board/{id}/apply")
+    @PutMapping("/company/apply/{id}")
     @CompanyCheckApi
     public @ResponseBody ResponseEntity<?> decideApplyment(@PathVariable int id,
             @RequestBody ApplyDecideReqDto applyDecideReqDto) {
@@ -66,7 +65,7 @@ public class ApplyController {
         }
     }
 
-    @GetMapping("/employee/{id}/apply")
+    @GetMapping("/employee/apply/{id}")
     @EmployeeCheck
     public ResponseEntity<?> employeeApplyList(@PathVariable Integer id) {
         List<ApplyJoinBoardAndResume> applyListPS = applyService.getApplyForEmployee(id);
