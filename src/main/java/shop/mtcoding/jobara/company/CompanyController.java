@@ -37,7 +37,7 @@ public class CompanyController {
         return new ResponseEntity<>(new ResponseDto<>(1, "기업 회원 정보 불러오기 성공", companyInfo), HttpStatus.OK);
     }
 
-    @PostMapping("/company/join")
+    @PostMapping("/joinCompany")
     public ResponseEntity<?> join(@RequestBody CompanyJoinReqDto companyJoinReqDto) {
         Verify.validateApiString(companyJoinReqDto.getUsername(), "유저네임을 입력하세요.");
         Verify.validateApiString(companyJoinReqDto.getPassword(), "암호를 입력하세요.");
@@ -46,9 +46,9 @@ public class CompanyController {
         return new ResponseEntity<>(new ResponseDto<>(1, "기업 회원 가입 성공", null), HttpStatus.CREATED);
     }
 
-    @PutMapping("/company/update")
+    @PutMapping("/company/{id}")
     @CompanyCheck
-    public ResponseEntity<?> update(@RequestBody CompanyUpdateReqDto companyUpdateReqDto) {
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody CompanyUpdateReqDto companyUpdateReqDto) {
         UserVo principal = (UserVo) session.getAttribute("principal");
 
         Verify.validateApiString(companyUpdateReqDto.getPassword(), "암호를 입력하세요.");
