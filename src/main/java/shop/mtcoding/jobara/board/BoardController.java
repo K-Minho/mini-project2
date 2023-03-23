@@ -72,7 +72,7 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 상세페이지", boardDetailRespDto), HttpStatus.OK);
     }
 
-    @GetMapping("/boards/list")
+    @GetMapping("/boards")
     public ResponseEntity<?> list(Integer page, String keyword) {
         UserVo principal = setPrincipal();
         BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
@@ -80,13 +80,13 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 목록페이지", boardPagingDto), HttpStatus.OK);
     }
 
-    @GetMapping("/boards/saveForm")
+    @GetMapping("/company/boards/saveForm")
     // @CompanyCheck
     public ResponseEntity<?> saveForm() {
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록페이지", null), HttpStatus.OK);
     }
 
-    @GetMapping("/boards/updateForm/{id}")
+    @GetMapping("/company/boards/updateForm/{id}")
     // @CompanyCheck
     public ResponseEntity<?> updateForm(@PathVariable int id) {
         UserVo principal = setCompanyPrincipal();
@@ -95,7 +95,7 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정페이지", boardUpdateFormRespDto), HttpStatus.OK);
     }
 
-    @PutMapping("/boards/{id}")
+    @PutMapping("/company/boards/{id}")
     // @CompanyCheckApi
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody BoardUpdateReqDto boardUpdateReqDto) {
         UserVo principal = setCompanyPrincipal();
@@ -128,7 +128,7 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정 성공", null), HttpStatus.CREATED);
     }
 
-    @PostMapping("/boards")
+    @PostMapping("/company/boards")
     // @CompanyCheck
     public ResponseEntity<?> save(@RequestBody BoardInsertReqDto boardInsertReqDto) {
 
@@ -166,7 +166,7 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
     }
 
-    @GetMapping("/boards/boardList/{id}")
+    @GetMapping("/company/boards/myList/{id}")
     // @CompanyCheck
     public ResponseEntity<?> myBoardList(@PathVariable int id) {
         UserVo principal = setCompanyPrincipal();
@@ -175,7 +175,7 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "등록 게시글 목록", myBoardListPS), HttpStatus.OK);
     }
 
-    @GetMapping("/boards/scrapList/{id}")
+    @GetMapping("/employee/boards/myScrapList/{id}")
     public ResponseEntity<?> myScrapBoardList(@PathVariable int id) {
 
         UserVo principal = setPrincipal();
@@ -191,7 +191,7 @@ public class BoardController {
         return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 게시글 목록", myScrapBoardListPS), HttpStatus.OK);
     }
 
-    @DeleteMapping("/boards/{id}")
+    @DeleteMapping("/company/boards/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
         UserVo principal = setCompanyPrincipal();
         // Verify.validateApiObject(
