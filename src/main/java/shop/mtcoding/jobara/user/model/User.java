@@ -2,6 +2,7 @@ package shop.mtcoding.jobara.user.model;
 
 import java.sql.Timestamp;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeUpdateReqDto;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
     private Integer id;
     private String username;
