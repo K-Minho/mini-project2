@@ -11,7 +11,7 @@ import shop.mtcoding.jobara.common.util.MyBase64Decoder;
 import shop.mtcoding.jobara.common.util.Verify;
 import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyJoinReqDto;
 import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyUpdateReqDto;
-import shop.mtcoding.jobara.company.dto.CompanyResp.CompanyUpdateRespDto;
+import shop.mtcoding.jobara.company.dto.CompanyResp.CompanyInfo;
 import shop.mtcoding.jobara.company.model.Company;
 import shop.mtcoding.jobara.company.model.CompanyRepository;
 import shop.mtcoding.jobara.user.model.User;
@@ -25,17 +25,11 @@ public class CompanyService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public CompanyUpdateRespDto getCompanyUpdateRespDto(Integer principalId) {
+    public CompanyInfo getCompany(Integer principalId) {
         User user = userRepository.findById(principalId);
         Company company = companyRepository.findByUserId(principalId);
-        // CompanyUpdateRespDto companyUpdateRespDto = new
-        // CompanyUpdateRespDto(user.getPassword(), user.getEmail(),
-        // user.getAddress(),
-        // user.getDetailAddress(), user.getTel(), company.getCompanyName(),
-        // company.getCompanyScale(),
-        // company.getCompanyField());
-        CompanyUpdateRespDto companyUpdateRespDto = new CompanyUpdateRespDto(user, company);
-        return companyUpdateRespDto;
+        CompanyInfo companyInfo = new CompanyInfo(user, company);
+        return companyInfo;
     }
 
     @Transactional
