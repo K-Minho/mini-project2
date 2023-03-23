@@ -2,6 +2,7 @@ package shop.mtcoding.jobara.company;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,12 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyJoinReqDto;
 import shop.mtcoding.jobara.company.dto.CompanyResp;
 import shop.mtcoding.jobara.company.model.Company;
 import shop.mtcoding.jobara.user.model.User;
@@ -84,5 +87,31 @@ public class CompanyControllerTest extends CompanyResp {
         resultActions.andExpect(jsonPath("$.data.company.companyName").value("부산자동차"));
         resultActions.andExpect(jsonPath("$.data.company.companyScale").value("대기업"));
         resultActions.andExpect(jsonPath("$.data.company.companyField").value("자동차업"));
+    }
+
+    @Test
+    public void join_test() throws Exception {
+        // given
+        CompanyJoinReqDto companyJoinReqDto = new CompanyJoinReqDto();
+        companyJoinReqDto.setUsername("ssar");
+        companyJoinReqDto.setPassword("1234");
+        companyJoinReqDto.setEmail("ssar@naver.com");
+        companyJoinReqDto.setAddress("부산시");
+        companyJoinReqDto.setDetailAddress("부산야호");
+        companyJoinReqDto.setCompanyName("부산자동차");
+        companyJoinReqDto.setCompanyNumb(123411234L);
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/company/join")
+                .content(om.writeValueAsString(companyJoinReqDto))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .session(mockSession));
+        String resp = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + resp);
+
+        // then
+        resultActions.andExpect(status().is2xxSuccessful());
+        resultActions.andExpect(jsonPath("$.code").value(1));
+        resultActions.andExpect(jsonPath("$.msg").value("기업 회원 가입 성공"));
     }
 }
