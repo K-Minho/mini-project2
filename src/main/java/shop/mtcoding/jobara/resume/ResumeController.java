@@ -91,7 +91,7 @@ public class ResumeController {
             resumeSaveReq.setTitle("무제");
         }
         resumeService.saveResume(principal.getId(), resumeSaveReq);
-        return new ResponseEntity<>(new ResponseDto<>(1, "작성 완료", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "작성 완료", resumeSaveReq), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/resume/{id}/delete")
