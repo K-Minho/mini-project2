@@ -19,26 +19,33 @@ public class JwtVerifyFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         String prefixJwt = req.getHeader(JwtProvider.HEADER);
-        String jwt = prefixJwt.replace(JwtProvider.TOKEN_PREFIX, "");
-        try {
-            DecodedJWT decodedJWT = JwtProvider.verify(jwt);
-            int id = decodedJWT.getClaim("id").asInt();
-            String role = decodedJWT.getClaim("role").asString();
 
-            // 내부적으로 권한처리
-            HttpSession session = req.getSession();
-            LoginUser loginUser = LoginUser.builder().id(id).role(role).build();
-            session.setAttribute("loginUser", loginUser);
-            chain.doFilter(req, resp);
-        } catch (SignatureVerificationException sve) {
+        if (prefixJwt == null) {
             resp.setStatus(401);
             resp.setContentType("text/plain; charset=utf-8");
-            resp.getWriter().println("로그인을 하지 않았거나 만료되었습니다.");
-        } catch (TokenExpiredException tee) {
-            resp.setStatus(401);
-            resp.setContentType("text/plain; charset=utf-8");
-            resp.getWriter().println("로그인을 하지 않았거나 만료되었습니다.");
+            resp.getWriter().println("로그인이 필요합니다.");
+        } else {
+            String jwt = prefixJwt.replace(JwtProvider.TOKEN_PREFIX, "");
+            try {
+                DecodedJWT decodedJWT = JwtProvider.verify(jwt);
+                int id = decodedJWT.getClaim("id").asInt();
+                String role = decodedJWT.getClaim("role").asString();
+
+                // 내부적으로 권한처리
+                HttpSession session = req.getSession();
+                LoginUser loginUser = LoginUser.builder().id(id).role(role).build();
+                session.setAttribute("loginUser", loginUser);
+                chain.doFilter(req, resp);
+            } catch (SignatureVerificationException sve) {
+                resp.setStatus(401);
+                resp.setContentType("text/plain; charset=utf-8");
+                resp.getWriter().println("로그인을 하지 않았거나 만료되었습니다.");
+            } catch (TokenExpiredException tee) {
+                resp.setStatus(401);
+                resp.setContentType("text/plain; charset=utf-8");
+                resp.getWriter().println("로그인을 하지 않았거나 만료되었습니다.");
+            }
         }
-    }
 
+    }
 }

@@ -1,4 +1,4 @@
-package shop.mtcoding.jobara.handler.aop;
+package shop.mtcoding.jobara.common.handler.aop;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,14 +7,11 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import shop.mtcoding.jobara.dto.ResponseDto;
-import shop.mtcoding.jobara.handler.ex.CustomValidationException;
+import shop.mtcoding.jobara.common.ex.CustomValidationException;
 
 @Component
 @Aspect
@@ -28,9 +25,9 @@ public class CustomValidationAdvice {
     public void putMapping() {
     }
 
-    @Around("postMapping() || putMapping()") // joinPoint의 전후 제어
+    @Around("postMapping() || putMapping()")
     public Object validationAdvice(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Object[] args = proceedingJoinPoint.getArgs(); // joinPoint의 매개변수
+        Object[] args = proceedingJoinPoint.getArgs();
         for (Object arg : args) {
             if (arg instanceof BindingResult) {
                 BindingResult bindingResult = (BindingResult) arg;
@@ -45,7 +42,7 @@ public class CustomValidationAdvice {
                 }
             }
         }
-        return proceedingJoinPoint.proceed(); // 정상적으로 해당 메서드를 실행해라!!
+        return proceedingJoinPoint.proceed();
     }
 }
 

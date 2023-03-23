@@ -1,4 +1,4 @@
-package shop.mtcoding.bank.handler.ex;
+package shop.mtcoding.jobara.common.ex;
 
 import java.util.Map;
 

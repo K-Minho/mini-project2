@@ -1,14 +1,17 @@
 package shop.mtcoding.jobara.board;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +28,9 @@ import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
+import shop.mtcoding.jobara.common.ex.CustomApiException;
+import shop.mtcoding.jobara.common.util.DateParse;
+import shop.mtcoding.jobara.common.util.Verify;
 import shop.mtcoding.jobara.love.LoveService;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
@@ -97,18 +103,16 @@ public class BoardController {
 
     @PutMapping("/company/boards/{id}")
     // @CompanyCheckApi
-    public ResponseEntity<?> update(@PathVariable int id, @RequestBody BoardUpdateReqDto boardUpdateReqDto) {
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody @Valid BoardUpdateReqDto boardUpdateReqDto,
+            BindingResult bindingResult) {
         UserVo principal = setCompanyPrincipal();
         // 유효성
         // Verify.validateApiString(boardUpdateReqDto.getDeadline(), "마감 날짜를 선택하세요");
 
-        // ArrayList<Object> resDateParse =
-        // DateParse.Dday(boardUpdateReqDto.getDeadline());
-        // if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) <
-        // 100)) {
-        // throw new CustomApiException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String)
-        // resDateParse.get(1) + ")");
-        // }
+        ArrayList<Object> resDateParse = DateParse.Dday(boardUpdateReqDto.getDeadline());
+        if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
+            throw new CustomApiException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
+        }
 
         // if (boardUpdateReqDto.getFavor().length() > 16) {
         // throw new CustomApiException("우대사항은 16자 이내 입력 가능합니다");
