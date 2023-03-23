@@ -35,6 +35,7 @@ public class CompanyResp {
         }
 
         public CompanyInfo(User user, Company company) {
+            this.id = user.getId();
             this.username = user.getUsername();
             this.email = user.getEmail();
             this.address = user.getAddress();

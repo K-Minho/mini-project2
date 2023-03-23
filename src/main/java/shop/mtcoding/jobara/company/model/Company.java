@@ -1,5 +1,6 @@
 package shop.mtcoding.jobara.company.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyUpdateReqDto;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Company {
     private Integer userId;
     private String companyName;

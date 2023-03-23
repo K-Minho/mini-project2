@@ -5,11 +5,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import shop.mtcoding.jobara.common.aop.CompanyCheck;
@@ -20,9 +20,9 @@ import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyUpdateReqDto;
 import shop.mtcoding.jobara.company.dto.CompanyResp.CompanyInfo;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
-public class CompanyConetroller {
+public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
@@ -32,8 +32,7 @@ public class CompanyConetroller {
 
     @GetMapping("/company/{id}")
     public ResponseEntity<?> detail(@PathVariable Integer id) {
-        UserVo principal = (UserVo) session.getAttribute("principal");
-        CompanyInfo companyInfo = companyService.getCompany(principal.getId());
+        CompanyInfo companyInfo = companyService.getCompany(id);
         return new ResponseEntity<>(new ResponseDto<>(1, "기업 회원 정보 불러오기 성공", companyInfo), HttpStatus.OK);
     }
 
