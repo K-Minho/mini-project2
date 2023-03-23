@@ -203,13 +203,12 @@ public class BoardController {
 
     @DeleteMapping("/board/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
+        UserVo principal = setCompanyPrincipal();
+        // Verify.validateApiObject(
+        // principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST);
+        // Verify.checkRoleApi(principal, "company");
 
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateApiObject(
-                principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST);
-        Verify.checkRoleApi(principal, "company");
-
-        boardService.deleteBoard(id, principal.getId());
+        boardService.deleteMyBoard(id, principal.getId());
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글을 삭제하였습니다", null), HttpStatus.OK);
     }

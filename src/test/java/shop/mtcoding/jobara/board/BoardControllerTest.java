@@ -68,7 +68,7 @@ public class BoardControllerTest {
         ResultActions resultActions = mvc.perform(get("/boards/scrapList/" + userId)
                 .session(employeeMockSession));
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-        System.out.println("테스트 : " + responseBody);
+        // System.out.println("테스트 : " + responseBody);
 
         // then
         resultActions.andExpect(status().isOk());
@@ -84,7 +84,7 @@ public class BoardControllerTest {
         ResultActions resultActions = mvc.perform(get("/boards/boardList/" + companyId)
                 .session(companyMockSession));
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-        System.out.println("테스트 : " + responseBody);
+        // System.out.println("테스트 : " + responseBody);
 
         // then
         resultActions.andExpect(status().isOk());

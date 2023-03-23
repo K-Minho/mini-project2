@@ -147,6 +147,24 @@ public class BoardService {
         return myScrapBoardListPS;
     }
 
+    @Transactional
+    public void deleteMyBoard(int boardId, int principalId) {
+        Board boardPS = boardRepository.findById(boardId);
+        // if (boardPS == null) {
+        // throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
+        // }
+
+        // if (boardPS.getUserId() != principalId) {
+        // throw new CustomApiException("게시글 삭제 권한이 없습니다");
+        // }
+
+        try {
+            boardRepository.deleteById(boardId);
+        } catch (Exception e) {
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // 1/2차 경계선 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     public PagingDto getListWithPaging(Integer page, String keyword, UserVo uservo) {
@@ -351,13 +369,13 @@ public class BoardService {
     @Transactional
     public void deleteBoard(int boardId, int principalId) {
         Board boardPS = boardRepository.findById(boardId);
-        if (boardPS == null) {
-            throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
-        }
+        // if (boardPS == null) {
+        // throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
+        // }
 
-        if (boardPS.getUserId() != principalId) {
-            throw new CustomApiException("게시글 삭제 권한이 없습니다");
-        }
+        // if (boardPS.getUserId() != principalId) {
+        // throw new CustomApiException("게시글 삭제 권한이 없습니다");
+        // }
 
         try {
             boardRepository.deleteById(boardId);
