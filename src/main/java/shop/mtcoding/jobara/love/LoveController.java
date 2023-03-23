@@ -27,15 +27,20 @@ public class LoveController {
     @Autowired
     LoveService loveService;
 
-    @Autowired
-    private RedisService redisService;
+    public UserVo setPrincipal() {
+        return new UserVo(1, "ssar", "", "employee");
+    }
+
+    public UserVo setCompanyPrincipal() {
+        return new UserVo(6, "cos", "", "company");
+    }
 
     @PostMapping("/love")
-    @EmployeeCheckApi
+    // @EmployeeCheckApi
     public ResponseEntity<?> save(@RequestBody LoveSaveReqDto loveSaveReqDto) {
         // 인증
-        UserVo principal = redisService.getValue("principal");
-        
+        UserVo principal = setPrincipal();
+
         // 유효성 검사
         if (loveSaveReqDto.getBoardId() == null) {
             throw new CustomApiException("boardId를 전달해 주세요");
@@ -47,10 +52,10 @@ public class LoveController {
     }
 
     @DeleteMapping("/love/{id}")
-    @EmployeeCheckApi
+    // @EmployeeCheckApi
     public ResponseEntity<?> cancel(@PathVariable Integer id) {
         // 인증
-        UserVo principal = redisService.getValue("principal");
+        UserVo principal = setPrincipal();
 
         loveService.deleteLove(id, principal.getId());
 
