@@ -16,7 +16,6 @@ import shop.mtcoding.jobara.company.model.Company;
 import shop.mtcoding.jobara.company.model.CompanyRepository;
 import shop.mtcoding.jobara.user.model.User;
 import shop.mtcoding.jobara.user.model.UserRepository;
-import shop.mtcoding.jobara.user.vo.UserVo;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +50,7 @@ public class CompanyService {
     }
 
     @Transactional
-    public UserVo updateCompany(CompanyUpdateReqDto companyUpdateReqDto, Integer principalId) {
+    public void updateCompany(CompanyUpdateReqDto companyUpdateReqDto, Integer principalId) {
         String profilePath;
         try {
             profilePath = MyBase64Decoder.saveImage(companyUpdateReqDto.getProfile());
@@ -69,8 +68,5 @@ public class CompanyService {
         } catch (Exception e) {
             throw new CustomApiException("회원 수정 실패", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        user = userRepository.findById(principalId);
-        UserVo userVoPS = new UserVo(user.getId(), user.getUsername(), user.getProfile(), user.getRole());
-        return userVoPS;
     }
 }
