@@ -6,6 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto.BoardListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertSkillReqDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
@@ -13,19 +17,31 @@ import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
+import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 
 @Mapper
 public interface BoardRepository {
 
         public BoardDetailRespDto findBoardDetailByJoin(@Param("userId") int userId, @Param("boardId") int boardId);
 
+        public List<BoardListDto> findAllWithJoin(@Param("startNum") int startNum,
+                        @Param("keyword") String keyword, @Param("row") int row, @Param("userId") int userId);
+
+        public BoardPagingListDto pagingWithJoin(@Param("page") int page, @Param("keyword") String keyword,
+                        @Param("row") int row,
+                        @Param("userId") int userId);
+
+        public BoardUpdateFormRespDto findUpdateFormInfo(int boardId);
+
+        public List<BoardMyListRespDto> findByIdForMyList(int userId);
+
+        public List<BoardMyScrapListRespDto> findAllScrapBoardList(int userId);
+
         // 1/2차 경계선
 
         public List<Board> findAll();
 
         public BoardDetailRespDto findByIdWithCompany(int boardId);
-
-        public List<BoardListRespDto> findAllWithCompany();
 
         public List<BoardListRespDto> findAllByUserIdForLangMatching(int userId);
 
