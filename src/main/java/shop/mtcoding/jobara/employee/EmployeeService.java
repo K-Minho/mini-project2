@@ -75,8 +75,8 @@ public class EmployeeService {
         return employeePS;
     }
 
-    public UserVo getEmployee(EmployeeLoginReqDto employeeLoginReqDto) {
-        UserVo userVo = userRepository.findByUsernameAndPassword(
+    public User getEmployee(EmployeeLoginReqDto employeeLoginReqDto) {
+        User userVo = userRepository.findByUsernameAndPassword(
                 new User(employeeLoginReqDto.getUsername(), employeeLoginReqDto.getPassword()));
         if (userVo == null) {
             throw new CustomException("유저네임이나 비밀번호가 틀렸습니다.");
