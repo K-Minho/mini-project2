@@ -35,9 +35,6 @@ public class EmployeeControllerTest {
       @Autowired
       private ObjectMapper om;
 
-      @Mock
-      private EmployeeUpdateReqDto employeeUpdateReqDto;
-
       private MockHttpSession mockSession;
 
       @BeforeEach
@@ -72,15 +69,17 @@ public class EmployeeControllerTest {
       public void update_test() throws Exception {
             // given
             int id = 1;
-            MockMultipartFile file = new MockMultipartFile(
-                        "profile", // 파라미터 이름은 프론트엔드에서 정해진 대로 "profile"로 설정합니다.
-                        "filename.txt", // 파일 이름은 테스트를 위해 아무 값이나 설정합니다.
-                        "image/jpeg", // 파일 타입은 이미지 파일인 jpeg로 설정합니다.
-                        "Test data".getBytes() // 파일 내용은 테스트를 위해 아무 값이나 설정합니다.
-            );
+            String requestBody = om.writeValueAsString();
+
+            // MockMultipartFile file = new MockMultipartFile(
+            // "profile", // 파라미터 이름은 프론트엔드에서 정해진 대로 "profile"로 설정합니다.
+            // "filename.txt", // 파일 이름은 테스트를 위해 아무 값이나 설정합니다.
+            // "image/jpeg", // 파일 타입은 이미지 파일인 jpeg로 설정합니다.
+            // "Test data".getBytes() // 파일 내용은 테스트를 위해 아무 값이나 설정합니다.
+            // );
 
             // when
-            ResultActions resultActions = mvc.perform(post("/join").content(requestBody)
+            ResultActions resultActions = mvc.perform(post("/employee/update/" + id).content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON_VALUE).session(mockSession));
 
             // then
