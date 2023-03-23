@@ -29,8 +29,8 @@ import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.common.ex.CustomApiException;
+import shop.mtcoding.jobara.common.ex.CustomException;
 import shop.mtcoding.jobara.common.util.DateParse;
-import shop.mtcoding.jobara.common.util.Verify;
 import shop.mtcoding.jobara.love.LoveService;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
@@ -107,24 +107,10 @@ public class BoardController {
             BindingResult bindingResult) {
         UserVo principal = setCompanyPrincipal();
         // 유효성
-        // Verify.validateApiString(boardUpdateReqDto.getDeadline(), "마감 날짜를 선택하세요");
-
         ArrayList<Object> resDateParse = DateParse.Dday(boardUpdateReqDto.getDeadline());
         if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
             throw new CustomApiException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
         }
-
-        // if (boardUpdateReqDto.getFavor().length() > 16) {
-        // throw new CustomApiException("우대사항은 16자 이내 입력 가능합니다");
-        // }
-
-        // Verify.isEqualApi(boardUpdateReqDto.getCheckedValues().size(), 0, "선호기술을 한 가지
-        // 이상 선택해주세요.",
-        // HttpStatus.BAD_REQUEST);
-
-        // Verify.validateApiString(boardUpdateReqDto.getTitle(), "제목을 입력하세요");
-        // Verify.validateApiString(boardUpdateReqDto.getContent(), "내용을 입력하세요");
-        // Verify.validateApiString(boardUpdateReqDto.getCareerString(), "경력을 입력하세요");
 
         boardService.updateBoard(boardUpdateReqDto, principal.getId());
         boardService.updateTech(boardUpdateReqDto.getCheckedValues(), id);
@@ -134,35 +120,14 @@ public class BoardController {
 
     @PostMapping("/company/boards")
     // @CompanyCheck
-    public ResponseEntity<?> save(@RequestBody BoardInsertReqDto boardInsertReqDto) {
-
+    public ResponseEntity<?> save(@RequestBody @Valid BoardInsertReqDto boardInsertReqDto,
+            BindingResult bindingResult) {
         UserVo principal = setCompanyPrincipal();
         // 유효성
-        // Verify.validateString(boardInsertReqDto.getTitle(), "제목을 입력하세요");
-        // Verify.validateString(boardInsertReqDto.getContent(), "내용을 입력하세요");
-        // if (boardInsertReqDto.getFavor().length() > 16) {
-        // throw new CustomException("우대사항은 16자 이내 입력 가능합니다");
-        // }
-
-        // Verify.isStringEquals(boardInsertReqDto.getCareerString(), "경력선택", "경력을
-        // 선택하세요", HttpStatus.BAD_REQUEST);
-        // Verify.isStringEquals(boardInsertReqDto.getCareerString(), "학력선택", "학력을
-        // 선택하세요", HttpStatus.BAD_REQUEST);
-        // Verify.isStringEquals(boardInsertReqDto.getCareerString(), "근무형태", "근무형태를
-        // 선택하세요", HttpStatus.BAD_REQUEST);
-
-        // Verify.validateString(boardInsertReqDto.getDeadline(), "마감 날짜를 선택하세요");
-
-        // ArrayList<Object> resDateParse =
-        // DateParse.Dday(boardInsertReqDto.getDeadline());
-        // if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) <
-        // 100)) {
-        // throw new CustomException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String)
-        // resDateParse.get(1) + ")");
-        // }
-
-        // Verify.isEqual(checkLang.size(), 0, "선호기술을 한 가지 이상 선택해주세요.",
-        // HttpStatus.BAD_REQUEST);
+        ArrayList<Object> resDateParse = DateParse.Dday(boardInsertReqDto.getDeadline());
+        if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
+            throw new CustomException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
+        }
 
         int boardId = boardService.insertBoard(boardInsertReqDto, principal.getId());
         boardService.insertSkill(boardInsertReqDto.getCheckLang(), boardId);
