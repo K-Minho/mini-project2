@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,7 @@ public class ApplyController {
 
     @PostMapping("/employee/apply")
     @EmployeeCheckApi
-    public ResponseEntity<?> apply(@RequestBody @Valid ApplyReqDto applyReqDto) {
+    public ResponseEntity<?> apply(@RequestBody @Valid ApplyReqDto applyReqDto, BindingResult bindingResult) {
         LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
         applyService.insertApply(applyReqDto, loginUser.getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "지원 성공", null), HttpStatus.CREATED);
@@ -54,7 +55,7 @@ public class ApplyController {
     @PutMapping("/company/apply/{id}")
     @CompanyCheckApi
     public @ResponseBody ResponseEntity<?> decideApplyment(@PathVariable int id,
-            @RequestBody @Valid ApplyDecideReqDto applyDecideReqDto) {
+            @RequestBody @Valid ApplyDecideReqDto applyDecideReqDto, BindingResult bindingResult) {
         applyService.approveApply(applyDecideReqDto, id);
         if (applyDecideReqDto.getState() == 1) {
             return new ResponseEntity<>(new ResponseDto<>(1, "합격 처리 완료", null), HttpStatus.CREATED);
