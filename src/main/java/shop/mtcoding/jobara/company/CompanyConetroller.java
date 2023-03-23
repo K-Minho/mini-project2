@@ -6,19 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import lombok.RequiredArgsConstructor;
 import shop.mtcoding.jobara.common.aop.CompanyCheck;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
-import shop.mtcoding.jobara.common.util.RedisService;
 import shop.mtcoding.jobara.common.util.Verify;
 import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyJoinReqDto;
 import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyUpdateReqDto;
-import shop.mtcoding.jobara.company.dto.CompanyResp.CompanyUpdateRespDto;
+import shop.mtcoding.jobara.company.dto.CompanyResp.CompanyInfo;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
 @Controller
@@ -29,23 +28,13 @@ public class CompanyConetroller {
     private CompanyService companyService;
 
     @Autowired
-    private RedisService redisService;
-
-    @Autowired
     private HttpSession session;
 
-    @GetMapping("/company/joinForm")
-    public String joinForm() {
-        return "company/joinForm";
-    }
-
-    @GetMapping("/company/updateForm")
-    @CompanyCheck
-    public String updateForm(Model model) {
-        UserVo principal = redisService.getValue("principal");
-        CompanyUpdateRespDto companyUpdateRespDto = companyService.getCompanyUpdateRespDto(principal.getId());
-        model.addAttribute("companyDto", companyUpdateRespDto);
-        return "company/updateForm";
+    @GetMapping("/company/{id}")
+    public ResponseEntity<?> detail(@PathVariable Integer id) {
+        UserVo principal = (UserVo) session.getAttribute("principal");
+        CompanyInfo companyInfo = companyService.getCompany(principal.getId());
+        return new ResponseEntity<>(new ResponseDto<>(1, "기업 회원 정보 불러오기 성공", companyInfo), HttpStatus.OK);
     }
 
     @PostMapping("/company/join")
