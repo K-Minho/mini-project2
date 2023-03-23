@@ -44,7 +44,7 @@ public class ApplyController {
         return new ResponseEntity<>(new ResponseDto<>(1, "지원 성공", null), HttpStatus.CREATED);
     }
 
-    @GetMapping("/company/{id}/apply")
+    @GetMapping("/company/apply/{id}")
     @CompanyCheck
     public ResponseEntity<?> companyApplyList(@PathVariable Integer id) {
         List<ApplyJoinBoardAndUser> applyListPS = applyService.getApplyForCompany(id);
@@ -65,7 +65,7 @@ public class ApplyController {
         }
     }
 
-    @GetMapping("/employee/{id}/apply")
+    @GetMapping("/employee/apply/{id}")
     @EmployeeCheck
     public ResponseEntity<?> employeeApplyList(@PathVariable Integer id) {
         List<ApplyJoinBoardAndResume> applyListPS = applyService.getApplyForEmployee(id);
