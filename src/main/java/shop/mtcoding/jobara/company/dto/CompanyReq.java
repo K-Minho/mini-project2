@@ -25,6 +25,7 @@ public class CompanyReq {
         private String address;
         private String detailAddress;
         private String tel;
+        private String profile;
         private String companyName;
         private String companyScale;
         private String companyField;
