@@ -61,6 +61,21 @@ public class ApplyController {
     @GetMapping("/company/{id}/apply")
     @CompanyCheck
     public ResponseEntity<?> companyApplyList(@PathVariable Integer id) {
+        // 1. 기능 : 해당 기업 회원의 지원자 목록을 불러오는 메소드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 기업회원의 id이며, PK이다.
+
+        // 3. Return :
+        // - ApplyJoinBoardAndUser
+        // (id, state, createdAt,
+        // board(id, title)
+        // user(id, realName)
+        // resume(id))
+
+        // 작성자 : 김태훈
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         List<ApplyJoinBoardAndUser> applyListPS = applyService.getApplyForCompany(id);
         return new ResponseEntity<>(new ResponseDto<>(1, "지원자 리스트 불러오기 성공", applyListPS), HttpStatus.OK);
     }
