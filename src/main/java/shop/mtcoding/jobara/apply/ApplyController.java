@@ -53,6 +53,7 @@ public class ApplyController {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
+
         LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
         applyService.insertApply(applyReqDto, loginUser.getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "지원 성공", null), HttpStatus.CREATED);
@@ -76,6 +77,7 @@ public class ApplyController {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
+
         List<ApplyJoinBoardAndUser> applyListPS = applyService.getApplyForCompany(id);
         return new ResponseEntity<>(new ResponseDto<>(1, "지원자 리스트 불러오기 성공", applyListPS), HttpStatus.OK);
     }
@@ -84,6 +86,21 @@ public class ApplyController {
     @CompanyCheckApi
     public @ResponseBody ResponseEntity<?> decideApplyment(@PathVariable int id,
             @RequestBody @Valid ApplyDecideReqDto applyDecideReqDto, BindingResult bindingResult) {
+        // 1. 기능 : 해당 기업 회원의 지원자의 합/불합 여부를 수정하는 메소드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 지원의 id이며, PK이다.
+        // - ApplyDecideReqDto
+        // (userId, state)
+        // boardId : 최소 1, null
+        // resumeId : 최소 -1 최대 1, null
+
+        // 3. Return :
+
+        // 작성자 : 김태훈
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         applyService.approveApply(applyDecideReqDto, id);
         if (applyDecideReqDto.getState() == 1) {
             return new ResponseEntity<>(new ResponseDto<>(1, "합격 처리 완료", null), HttpStatus.CREATED);
