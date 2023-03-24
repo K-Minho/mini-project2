@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import shop.mtcoding.jobara.common.aop.EmployeeCheck;
+import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
 import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.resume.dto.ResumeReq.ResumeSaveReq;
@@ -32,6 +34,7 @@ public class ResumeController {
     private final HttpSession session;
 
     @PutMapping("/employee/resume/{id}")
+    @EmployeeCheckApi
     public ResponseEntity<?> updateResume(@PathVariable Integer id, @Valid @RequestBody ResumeUpdateReq resumeUpdateReq,
             BindingResult bindingResult) {
 
@@ -44,6 +47,7 @@ public class ResumeController {
     }
 
     @GetMapping("/employee/resume/{id}")
+    @EmployeeCheck
     public ResponseEntity<?> saveResumeForm(@PathVariable("id") Integer id, Model model) {
 
         LoginUser user = (LoginUser) session.getAttribute("loginUser");
@@ -53,6 +57,7 @@ public class ResumeController {
     }
 
     @GetMapping("/employee/resume/list")
+    @EmployeeCheck
     public ResponseEntity<?> resumeList(Model model) {
 
         LoginUser user = (LoginUser) session.getAttribute("loginUser");
@@ -62,12 +67,14 @@ public class ResumeController {
     }
 
     @GetMapping("/employee/resume/saveForm")
+    @EmployeeCheck
     public String saveForm(Model model) {
 
         return "resume/saveForm";
     }
 
     @PostMapping("/employee/resume/save")
+    @EmployeeCheckApi
     public ResponseEntity<?> saveResume(@RequestBody @Valid ResumeSaveReq resumeSaveReq, BindingResult bindingResult) {
 
         LoginUser user = (LoginUser) session.getAttribute("loginUser");
@@ -79,6 +86,7 @@ public class ResumeController {
     }
 
     @DeleteMapping("/employee/resume/{id}")
+    @EmployeeCheckApi
     public ResponseEntity<?> deleteResume(@PathVariable int id) {
 
         LoginUser user = (LoginUser) session.getAttribute("loginUser");
