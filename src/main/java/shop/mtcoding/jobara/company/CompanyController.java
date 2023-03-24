@@ -82,7 +82,27 @@ public class CompanyController {
     @CompanyCheck
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid CompanyUpdateReqDto companyUpdateReqDto, 
             BindingResult bindingResult) {
-                
+        // 1. 기능 : 기업 회원 가입 기능을 구현하는 메소드
+        // 2. Arguments :
+        // - CompanyUpdateReqDto
+        //   (password, email, address, detailAddress, tel, profile, companyName, companyScale, companyField)
+        //    password : 최소 문자열길이 2, 최대 문자열길이 32, empty
+        //    email : 최소 문자열길이 2, 최대 문자열길이 32, empty
+        //    address : 최소 문자열길이 2, 최대 문자열길이 32, empty
+        //    detailAddress : 최소 문자열길이 2, 최대 문자열길이 64, empty
+        //    tel : 최소 문자열길이 2, 최대 문자열길이 64, empty
+        //    profile : empty
+        //    companyName : 최소 문자열길이 1, 최대 문자열길이 16, empty
+        //    companyScale : 최소 문자열길이 1, 최대 문자열길이 8, empty
+        //    companyField : 최소 문자열길이 1, 최대 문자열길이 16, empty
+
+        // 3. Return :
+
+        // 작성자 : 김태훈
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
         companyService.updateCompany(companyUpdateReqDto, loginUser.getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "기업 회원 수정 성공", null), HttpStatus.CREATED);
