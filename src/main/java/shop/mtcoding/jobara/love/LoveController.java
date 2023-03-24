@@ -2,7 +2,6 @@ package shop.mtcoding.jobara.love;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,35 +10,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
+import lombok.RequiredArgsConstructor;
+import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.common.ex.CustomApiException;
-import shop.mtcoding.jobara.common.util.RedisService;
 import shop.mtcoding.jobara.love.dto.LoveReq.LoveSaveReqDto;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
+@RequiredArgsConstructor
 @Controller
 public class LoveController {
 
-    @Autowired
-    HttpSession session;
+    private final HttpSession session;
 
-    @Autowired
-    LoveService loveService;
+    private final LoveService loveService;
 
-    public UserVo setPrincipal() {
-        return new UserVo(1, "ssar", "", "employee");
-    }
-
-    public UserVo setCompanyPrincipal() {
-        return new UserVo(6, "cos", "", "company");
-    }
 
     @PostMapping("/loves")
-    // @EmployeeCheckApi
     public ResponseEntity<?> save(@RequestBody LoveSaveReqDto loveSaveReqDto) {
         // 인증
-        UserVo principal = setPrincipal();
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
         // 유효성 검사
         if (loveSaveReqDto.getBoardId() == null) {
@@ -48,14 +38,13 @@ public class LoveController {
 
         int loveId = loveService.insertLove(loveSaveReqDto.getBoardId(), principal.getId());
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "좋아요성공", loveId), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ResponseDto<>(1, "좋아요 성공", loveId), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/loves/{id}")
-    // @EmployeeCheckApi
     public ResponseEntity<?> cancel(@PathVariable Integer id) {
         // 인증
-        UserVo principal = setPrincipal();
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
         loveService.deleteLove(id, principal.getId());
 
