@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,31 +27,21 @@ import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
+import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
+import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
+import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.common.ex.CustomApiException;
 import shop.mtcoding.jobara.common.ex.CustomException;
 import shop.mtcoding.jobara.common.util.DateParse;
-import shop.mtcoding.jobara.love.LoveService;
-import shop.mtcoding.jobara.user.vo.UserVo;
 
 @RequiredArgsConstructor
 @RestController
 public class BoardController {
 
     private final BoardService boardService;
-    
-    private final LoveService loveService;
 
     private final HttpSession session;
-
-
-    public UserVo setPrincipal() {
-        return new UserVo(1, "ssar", "", "employee");
-    }
-
-    public UserVo setCompanyPrincipal() {
-        return new UserVo(6, "cos", "", "company");
-    }
 
     @GetMapping({ "/", "/home" })
     public ResponseEntity<?> home(HttpServletRequest request) {
@@ -95,8 +84,8 @@ public class BoardController {
         // 수정자 : -
         // 수정일 : -
 
-        UserVo principal = setPrincipal();
-        System.out.println(principal.getId());
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
+
         BoardDetailRespDto boardDetailRespDto = boardService.getDetail(principal.getId(), id);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 상세페이지", boardDetailRespDto), HttpStatus.OK);
@@ -123,14 +112,14 @@ public class BoardController {
         // 수정자 : -
         // 수정일 : -
 
-        UserVo principal = setPrincipal();
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
         BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 목록페이지", boardPagingDto), HttpStatus.OK);
     }
 
     @GetMapping("/company/boards/saveForm")
-    // @CompanyCheck
+    @CompanyCheckApi
     public ResponseEntity<?> saveForm() {
         // 1. 기능 : 구인공고 등록페이지를 요청하는 페이지
         // 2. Arguments :
@@ -144,7 +133,7 @@ public class BoardController {
     }
 
     @GetMapping("/company/boards/updateForm/{id}")
-    // @CompanyCheck
+    @CompanyCheckApi
     public ResponseEntity<?> updateForm(@PathVariable int id) {
         // 1. 기능 : 구인공고 수정페이지를 요청하는 메서드
         // 2. Arguments :
@@ -160,14 +149,14 @@ public class BoardController {
         // 수정자 : -
         // 수정일 : -
 
-        UserVo principal = setCompanyPrincipal();
-        BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id);
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
+        BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id, principal);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정페이지", boardUpdateFormRespDto), HttpStatus.OK);
     }
 
     @PutMapping("/company/boards/{id}")
-    // @CompanyCheckApi
+    @CompanyCheckApi
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody @Valid BoardUpdateReqDto boardUpdateReqDto,
             BindingResult bindingResult) {
         // 1. 기능 : 구인공고 수정을 요청하는 메서드
@@ -192,7 +181,7 @@ public class BoardController {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
-        UserVo principal = setCompanyPrincipal();
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
         ArrayList<Object> resDateParse = DateParse.Dday(boardUpdateReqDto.getDeadline());
         if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
@@ -206,7 +195,7 @@ public class BoardController {
     }
 
     @PostMapping("/company/boards")
-    // @CompanyCheck
+    @CompanyCheckApi
     public ResponseEntity<?> save(@RequestBody @Valid BoardInsertReqDto boardInsertReqDto,
             BindingResult bindingResult) {
         // 1. 기능 : 구인공고 등록을 요청하는 메서드
@@ -230,7 +219,7 @@ public class BoardController {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
-        UserVo principal = setCompanyPrincipal();
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
         ArrayList<Object> resDateParse = DateParse.Dday(boardInsertReqDto.getDeadline());
         if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
@@ -244,7 +233,7 @@ public class BoardController {
     }
 
     @GetMapping("/company/boards/myList/{id}")
-    // @CompanyCheck
+    @CompanyCheckApi
     public ResponseEntity<?> myBoardList(@PathVariable int id) {
         // 1. 기능 : 내가 등록한 공고목록을 요청하는 메서드
         // 2. Arguments :
@@ -261,13 +250,14 @@ public class BoardController {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
-        UserVo principal = setCompanyPrincipal();
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
         List<BoardMyListRespDto> myBoardListPS = boardService.getMyBoardList(principal.getId(), id);
         return new ResponseEntity<>(new ResponseDto<>(1, "등록 게시글 목록", myBoardListPS), HttpStatus.OK);
     }
 
     @GetMapping("/employee/boards/myScrapList/{id}")
+    @EmployeeCheckApi
     public ResponseEntity<?> myScrapBoardList(@PathVariable int id) {
         // 1. 기능 : 내가 스크랩한 공고목록을 요청하는 메서드
         // 2. Arguments :
@@ -285,22 +275,16 @@ public class BoardController {
         // 수정자 : -
         // 수정일 : -
 
-        UserVo principal = setPrincipal();
-
-        // 인증체크
-        // Verify.validateObject(
-        // principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST,
-        // "/loginForm");
-
-        // Verify.checkRole(principal, "employee");
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
         List<BoardMyScrapListRespDto> myScrapBoardListPS = boardService.getMyScrapBoardList(principal.getId(), id);
         return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 게시글 목록", myScrapBoardListPS), HttpStatus.OK);
     }
 
     @DeleteMapping("/company/boards/{id}")
+    @CompanyCheckApi
     public ResponseEntity<?> delete(@PathVariable int id) {
-        UserVo principal = setCompanyPrincipal();
+        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
         // 1. 기능 : 등록된 공고를 삭제 요청하는 메서드
         // 2. Arguments :
         // - PathVariable : id, 삭제요청하는 공고의 id이며, PK이다.
@@ -311,10 +295,6 @@ public class BoardController {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
-
-        // Verify.validateApiObject(
-        // principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST);
-        // Verify.checkRoleApi(principal, "company");
 
         boardService.deleteMyBoard(id, principal.getId());
 

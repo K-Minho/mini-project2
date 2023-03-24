@@ -3,7 +3,6 @@ package shop.mtcoding.jobara.board;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +25,7 @@ import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.board.model.Board;
 import shop.mtcoding.jobara.board.model.BoardRepository;
 import shop.mtcoding.jobara.board.model.BoardTechRepository;
+import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.ex.CustomApiException;
 import shop.mtcoding.jobara.common.ex.CustomException;
 import shop.mtcoding.jobara.common.util.CareerParse;
@@ -40,7 +40,9 @@ import shop.mtcoding.jobara.user.vo.UserVo;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+
     private final BoardTechRepository boardTechRepository;
+
     private final ResumeRepository resumeRepository;
 
     @Transactional(readOnly = true)
@@ -84,7 +86,7 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardPagingListDto getListWithJoin(Integer page, String keyword, UserVo uservo) {
+    public BoardPagingListDto getListWithJoin(Integer page, String keyword, LoginUser principal) {
         // @GetMapping("/boards")에 의해 호출됨.
         // 기능 : 요청 페이지 또는 특정 키워드에 필요한 게시글 목록 데이터 Controller에 전달,
         //       각 상황에 따른 페이지네이션(페이지 버튼 구현)에 필요한 데이터를 가져와 Controller에 전달
@@ -110,11 +112,11 @@ public class BoardService {
         List<BoardListDto> boardsListPS;
         int startNum = page * BoardPagingListDto.ROW;
 
-        if (uservo != null && uservo.getRole().equals("employee")) {
+        if (principal != null && principal.getRole().equals("employee")) {
             try {
                 boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW,
-                        uservo.getId());
-                pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, uservo.getId());
+                principal.getId());
+                pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, principal.getId());
             } catch (Exception e) {
                 throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -135,11 +137,12 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardUpdateFormRespDto getUpdateFormInfo(Integer boardId) {
+    public BoardUpdateFormRespDto getUpdateFormInfo(Integer boardId, LoginUser principal) {
         // @GetMapping("/company/boards/updateForm/{id}")에 의해 호출됨.
         // 기능 : 공고 수정페이지 요청 시 수정 페이지에 미리 띄워야 할 기존 데이터들을 Controller에 전달
         // 사용되는 요소 : skillParse() - 파싱, parseIntegerInfo() - 파싱
         // 진행 과정 :
+        // 1. 게시물이 존재하는지와 로그인 유저&게시물 작성 유저와의 비교로 권한 체크
         // 1. findUpdateFormInfo() 메서드로 수정 페이지에 필요한 데이터를 가져옴
         // 2. 파싱과정
         //  - skillParse : DB에 들어가있는 skill 정보를 GROUP_CONCAT() query 문법을 사용해
@@ -152,6 +155,17 @@ public class BoardService {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
+
+        Board boardPS = boardRepository.findById(boardId);
+
+        if (boardPS == null) {
+            throw new CustomException("없는 게시물을 수정할 수 없습니다");
+        }
+
+        if (boardPS.getUserId() != principal.getId()) {
+            throw new CustomApiException("수정 권한이 없습니다");
+        }
+
 
         BoardUpdateFormRespDto boardUpdateFormRespPS;
         try {
@@ -184,12 +198,10 @@ public class BoardService {
         // 수정자 : -
         // 수정일 : -
 
-        Board boardPS;
-        boardPS = boardRepository.findById(boardUpdateReqDto.getId());
+        Board boardPS = boardRepository.findById(boardUpdateReqDto.getId());
 
-        try {
-        } catch (Exception e) {
-            throw new CustomApiException("없는 게시물을 수정할 수 없습니다");
+        if (boardPS == null) {
+            throw new CustomException("없는 게시물을 수정할 수 없습니다");
         }
 
         if (boardPS.getUserId() != coPrincipalId) {
@@ -259,7 +271,7 @@ public class BoardService {
 
         // 권한 체크
         if (coPrincipalId != userId) {
-        throw new CustomException("공고 리스트 열람 권한이 없습니다.");
+            throw new CustomException("공고 리스트 열람 권한이 없습니다.");
         }
 
         List<BoardMyListRespDto> myBoardListPS;
