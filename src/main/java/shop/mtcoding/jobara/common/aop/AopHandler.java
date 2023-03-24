@@ -1,22 +1,27 @@
 package shop.mtcoding.jobara.common.aop;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import shop.mtcoding.jobara.common.util.RedisService;
-import shop.mtcoding.jobara.common.util.Verify;
-import shop.mtcoding.jobara.user.vo.UserVo;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import shop.mtcoding.jobara.common.ex.CustomApiException;
+import shop.mtcoding.jobara.common.ex.CustomException;
 
 @Aspect
 @Component
 public class AopHandler {
+
     @Autowired
-    private RedisService redisService;
+    HttpServletRequest request;
 
     @Pointcut("@annotation(shop.mtcoding.jobara.common.aop.CompanyCheck)")
     public void CompanyCheck() {
@@ -24,9 +29,29 @@ public class AopHandler {
 
     @Before("CompanyCheck()")
     public void CompanyCheck(JoinPoint joinPoint) {
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED, "/#login");
-        Verify.checkRole(principal, "company");
+        // JWT 토큰을 가져오는 로직
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new CustomException("인증 토큰이 존재하지 않습니다.");
+        }
+        String jwt = token.substring(7);
+        // JWT 토큰 파싱 및 검증 로직
+        try {
+            // JWT 토큰 파싱
+            Claims claims = Jwts.parserBuilder().setSigningKey("메타코딩").build().parseClaimsJws(jwt).getBody();
+
+            // JWT 토큰에서 role 정보 추출
+            String role = (String) claims.get("role");
+
+            // role 정보가 company 경우에만 허용
+            if (!"company".equals(role)) {
+                throw new CustomException("기업회원이 아닙니다.");
+            }
+        } catch (Exception e) {
+            throw new CustomException("기업회원이 아닙니다.");
+        }
     }
 
     @Pointcut("@annotation(shop.mtcoding.jobara.common.aop.CompanyCheckApi)")
@@ -35,9 +60,28 @@ public class AopHandler {
 
     @Before("CompanyCheckApi()")
     public void CompanyCheckApi(JoinPoint joinPoint) {
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateApiObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED);
-        Verify.checkRoleApi(principal, "company");
+        // JWT 토큰을 가져오는 로직
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new CustomException("인증 토큰이 존재하지 않습니다.");
+        }
+        String jwt = token.substring(7);
+        // JWT 토큰 파싱 및 검증 로직
+        try {
+            // JWT 토큰 파싱
+            Claims claims = Jwts.parserBuilder().setSigningKey("메타코딩").build().parseClaimsJws(jwt).getBody();
+            // JWT 토큰에서 role 정보 추출
+            String role = (String) claims.get("role");
+
+            // role 정보가 company 경우에만 허용
+            if (!"company".equals(role)) {
+                throw new CustomApiException("기업회원이 아닙니다.");
+            }
+        } catch (Exception e) {
+            throw new CustomApiException("기업회원이 아닙니다.");
+        }
     }
 
     @Pointcut("@annotation(shop.mtcoding.jobara.common.aop.EmployeeCheck)")
@@ -46,9 +90,28 @@ public class AopHandler {
 
     @Before("EmployeeCheck()")
     public void EmployeeCheck(JoinPoint joinPoint) {
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED, "/#login");
-        Verify.checkRole(principal, "employee");
+        // JWT 토큰을 가져오는 로직
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new CustomException("인증 토큰이 존재하지 않습니다.");
+        }
+        String jwt = token.substring(7);
+        // JWT 토큰 파싱 및 검증 로직
+        try {
+            // JWT 토큰 파싱
+            Claims claims = Jwts.parserBuilder().setSigningKey("메타코딩").build().parseClaimsJws(jwt).getBody();
+            // JWT 토큰에서 role 정보 추출
+            String role = (String) claims.get("role");
+
+            // role 정보가 company 경우에만 허용
+            if (!"employee".equals(role)) {
+                throw new CustomException("일반회원이 아닙니다.");
+            }
+        } catch (Exception e) {
+            throw new CustomException("일반회원이 아닙니다.");
+        }
     }
 
     @Pointcut("@annotation(shop.mtcoding.jobara.common.aop.EmployeeCheckApi)")
@@ -57,8 +120,28 @@ public class AopHandler {
 
     @Before("EmployeeCheckApi()")
     public void EmployeeCheckApi(JoinPoint joinPoint) {
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateApiObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED);
-        Verify.checkRoleApi(principal, "employee");
+        // JWT 토큰을 가져오는 로직
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new CustomException("인증 토큰이 존재하지 않습니다.");
+        }
+        String jwt = token.substring(7);
+        // JWT 토큰 파싱 및 검증 로직
+        try {
+            // JWT 토큰 파싱
+            Claims claims = Jwts.parserBuilder().setSigningKey("메타코딩").build().parseClaimsJws(jwt).getBody();
+
+            // JWT 토큰에서 role 정보 추출
+            String role = (String) claims.get("role");
+
+            // role 정보가 company 경우에만 허용
+            if (!"employee".equals(role)) {
+                throw new CustomApiException("일반회원이 아닙니다.");
+            }
+        } catch (Exception e) {
+            throw new CustomApiException("일반회원이 아닙니다.");
+        }
     }
 }
