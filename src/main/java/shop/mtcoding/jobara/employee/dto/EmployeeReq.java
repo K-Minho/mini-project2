@@ -65,7 +65,6 @@ public class EmployeeReq {
             @Min(2)
             @Max(16)
             private String tel;
-            @NotEmpty
             private EmployeeDto employeeDto;
 
             @Getter
