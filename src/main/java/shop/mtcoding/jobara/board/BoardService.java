@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto;
@@ -34,17 +35,13 @@ import shop.mtcoding.jobara.resume.model.Resume;
 import shop.mtcoding.jobara.resume.model.ResumeRepository;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
+@RequiredArgsConstructor
 @Service
 public class BoardService {
 
-    @Autowired
-    BoardRepository boardRepository;
-
-    @Autowired
-    BoardTechRepository boardTechRepository;
-
-    @Autowired
-    ResumeRepository resumeRepository;
+    private final BoardRepository boardRepository;
+    private final BoardTechRepository boardTechRepository;
+    private final ResumeRepository resumeRepository;
 
     @Transactional(readOnly = true)
     public BoardDetailRespDto getDetail(Integer principalId, Integer boardId) {

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
 import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto;
@@ -34,17 +35,16 @@ import shop.mtcoding.jobara.common.util.DateParse;
 import shop.mtcoding.jobara.love.LoveService;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
+@RequiredArgsConstructor
 @RestController
 public class BoardController {
 
-    @Autowired
-    BoardService boardService;
+    private final BoardService boardService;
+    
+    private final LoveService loveService;
 
-    @Autowired
-    LoveService loveService;
+    private final HttpSession session;
 
-    @Autowired
-    HttpSession session;
 
     public UserVo setPrincipal() {
         return new UserVo(1, "ssar", "", "employee");
