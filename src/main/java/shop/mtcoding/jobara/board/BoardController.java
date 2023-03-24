@@ -87,8 +87,8 @@ public class BoardController {
         // - BoardDetailRespDto
         //   (id, title, content, career, jobType, education, favor, List<Integer> skill,
         //    Company(userId, companyName, comapnyScale, companyField),
-        //    User(id, profile),
-        //    Resume(id, userId, title, content, createdAt)
+        //    user(id, profile),
+        //    resume(id, userId, title, content, createdAt)
 
         // 작성자 : 이상현
         // 작성일 : 2023-03-24
@@ -116,7 +116,7 @@ public class BoardController {
         // - BoardPagingListDto
         //   (keyword, blockCount, currentBlock, currentPage, startPageNum, lastPageNum,
         //    totalCount, totalPage, isLast, isFirst,
-        //    List<Board>(id, title, companyName, dday, User(id, profile), Love(id, css))
+        //    List<Board>(id, title, companyName, dday, user(id, profile), love(id, css))
 
         // 작성자 : 이상현
         // 작성일 : 2023-03-24
@@ -187,9 +187,6 @@ public class BoardController {
         //   checkedValues : 한 가지 이상 선택해야함, null&empty 위와 동일
 
         // 3. Return :
-        // - BoardUpdateFormRespDto
-        //   (id, title, content, career, education, jobType,
-        //    favor, deadline, userId, List<Integer> skill)
         
         // 작성자 : 이상현
         // 작성일 : 2023-03-24
@@ -212,8 +209,29 @@ public class BoardController {
     // @CompanyCheck
     public ResponseEntity<?> save(@RequestBody @Valid BoardInsertReqDto boardInsertReqDto,
             BindingResult bindingResult) {
+        // 1. 기능 : 구인공고 등록을 요청하는 메서드
+        // 2. Arguments :
+        // - BoardInsertReqDto
+        //   (title, content, careerString, educationString, jobTypeString, deadline,
+        //    favor, userId, List<Integer> checkLang)
+        //   title : 최소 1 최대 16, null&empty 들어올 수 없음
+        //   content : 최소 1 최대 65536, null&empty 위와 동일
+        //   careerString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   educationString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   jobTypeString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   deadline : 한 가지 이상 선택해야함, null&empty 위와 동일
+        //              아래 DateParse.Dday 메서드를 통해 마감날짜에 대한 최대 일 수를 100일로 제한           
+        //   favor : 최소 1 최대 16, null&empty 위와 동일
+        //   checkLang : 한 가지 이상 선택해야함, null&empty 위와 동일
+
+        // 3. Return :
+        
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         UserVo principal = setCompanyPrincipal();
-        // 유효성
+
         ArrayList<Object> resDateParse = DateParse.Dday(boardInsertReqDto.getDeadline());
         if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
             throw new CustomException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
@@ -228,6 +246,21 @@ public class BoardController {
     @GetMapping("/company/boards/myList/{id}")
     // @CompanyCheck
     public ResponseEntity<?> myBoardList(@PathVariable int id) {
+        // 1. 기능 : 내가 등록한 공고목록을 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 특정 유저의 id값이다. PK이며 null이 될 수 없음
+        //                  (로그인 유저의 id값과 열람하려는 id값을 비교하여 권한체크에 활용)
+
+        // 3. Return :
+        // - List<BoardMyListRespDto>
+        //   (id, title, dday, company, user,
+        //    company(userId, companyNmae),
+        //    user(profile))
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         UserVo principal = setCompanyPrincipal();
 
         List<BoardMyListRespDto> myBoardListPS = boardService.getMyBoardList(principal.getId(), id);
@@ -236,6 +269,21 @@ public class BoardController {
 
     @GetMapping("/employee/boards/myScrapList/{id}")
     public ResponseEntity<?> myScrapBoardList(@PathVariable int id) {
+        // 1. 기능 : 내가 스크랩한 공고목록을 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 특정 유저의 id값이다. PK이며 null이 될 수 없음
+        //                  (로그인 유저의 id값과 열람하려는 id값을 비교하여 권한체크에 활용)
+
+        // 3. Return :
+        // - List<BoardMyScrapListRespDto>
+        //   (id, title, dday, company, user,
+        //    company(userId, companyNmae),
+        //    user(profile))
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
 
         UserVo principal = setPrincipal();
 
@@ -253,6 +301,17 @@ public class BoardController {
     @DeleteMapping("/company/boards/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
         UserVo principal = setCompanyPrincipal();
+        // 1. 기능 : 등록된 공고를 삭제 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 삭제요청하는 공고의 id값. PK이며 null이 될 수 없음
+        //                  (삭제할 게시물의 존재유무 체크, deleteById Query에 활용)
+        // 3. Return :
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         // Verify.validateApiObject(
         // principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST);
         // Verify.checkRoleApi(principal, "company");

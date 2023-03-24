@@ -61,9 +61,11 @@ public class BoardReq {
     public static class BoardInsertReqDto {
 
         @NotEmpty(message = "제목을 입력하세요")
+        @Size(max = 16, message = "제목은 16자 이내로 입력해주세요")
         private String title;
 
         @NotEmpty(message = "내용을 입력하세요")
+        @Size(max = 65536, message = "내용이 너무 깁니다.")
         private String content;
 
         private Integer career;
