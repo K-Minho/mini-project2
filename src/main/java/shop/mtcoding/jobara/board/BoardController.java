@@ -56,6 +56,12 @@ public class BoardController {
 
     @GetMapping({ "/", "/home" })
     public ResponseEntity<?> home(HttpServletRequest request) {
+        // 1. 기능 : 메인페이지 요청 메서드
+        // ※ Cookie - 메인페이지 하단의 로그인 component에서 아이디 기억하기에 활용
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
 
         String username = "";
         Cookie[] cookies = request.getCookies();
@@ -71,6 +77,21 @@ public class BoardController {
 
     @GetMapping("/boards/{id}")
     public ResponseEntity<?> detail(@PathVariable int id) {
+        // 1. 기능 : 구인공고 목록에서 특정 구인공고 클릭시 해당 페이지를 요청하는 메서드
+        //          (전체 공고리스트, 등록한 공고, 스크랩한 공고 각 페이지에서 요청 가능)
+        // 2. Arguments :
+        // - PathVariable : id, 해당 구인공고의 id이다. PK이며 null이 될 수 없음.
+        // 3. Return :
+        // - BoardDetailRespDto
+        //   (id, title, content, career, jobType, education, favor, skill,
+        //    Company(userId, companyName, comapnyScale, companyField),
+        //    User(id, profile),
+        //    Resume(id, userId, title, content, createdAt)
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         UserVo principal = setPrincipal();
         System.out.println(principal.getId());
         BoardDetailRespDto boardDetailRespDto = boardService.getDetail(principal.getId(), id);
@@ -80,6 +101,22 @@ public class BoardController {
 
     @GetMapping("/boards")
     public ResponseEntity<?> list(Integer page, String keyword) {
+        // 1. 기능 : 구인공고 목록페이지를 요청하는 페이지
+        // 2. Arguments :
+        // - Page : keyword 또는 기본 정렬에 따른 Page 요청 값이다.
+        //         타 페이지에서의 진입시 null 값이 들어올 수 있으며, 해당 경우 Service에서 1페이지 처리를 한다.
+        // - keyword : 구인공고 목록페이지 우상단에 있는 selectBox 내의 요청 값이다.
+        //             null, lang(매칭공고), deadline(마감일순) 값이 들어올 수 있다.
+        // 3. Return :
+        // - BoardPagingListDto
+        //   (keyword, blockCount, currentBlock, currentPage, startPageNum, lastPageNum,
+        //    totalCount, totalPage, isLast, isFirst,
+        //    List<Board>(id, title, companyName, dday, User(id, profile), Love(id, css))
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         UserVo principal = setPrincipal();
         BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
 

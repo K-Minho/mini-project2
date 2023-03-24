@@ -26,7 +26,7 @@ public class BoardPagingListDto {
     @Getter
     @Setter
     public static class BoardListDto {
-        private Integer boardId;
+        private Integer id;
         private String title;
         private String companyName;
         private String dday;
@@ -36,14 +36,14 @@ public class BoardPagingListDto {
         @Getter
         @Setter
         public static class UserDto {
-            private Integer userId;
+            private Integer id;
             private String profile;
         }
 
         @Getter
         @Setter
         public static class LoveDto {
-            private Integer loveId = 0;
+            private Integer id = 0;
             private String css = "";
         }
 
