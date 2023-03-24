@@ -34,6 +34,19 @@ public class CompanyController {
 
     @GetMapping("/company/{id}")
     public ResponseEntity<?> detail(@PathVariable Integer id) {
+        // 1. 기능 : 해당 기업 회원의 상세 정보를 불러오는 메소드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 기업회원의 id이며, PK이다.
+
+        // 3. Return :
+        // - CompanyInfo
+        //   (id, username, email, address, detailAddress, tel, 
+        //    company(companyName, companyScale, companyField))
+
+        // 작성자 : 김태훈
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         CompanyInfo companyInfo = companyService.getCompany(id);
         return new ResponseEntity<>(new ResponseDto<>(1, "기업 회원 정보 불러오기 성공", companyInfo), HttpStatus.OK);
     }
