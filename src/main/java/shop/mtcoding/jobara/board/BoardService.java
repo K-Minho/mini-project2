@@ -66,7 +66,7 @@ public class BoardService {
         //                       View와 DB에서의 표현 방식이 다른것을 파싱한다.
         //                       (이렇게 다르게 저장한 이유는 설계당시 query의 조건절에 걸 때의 용이성과 DB의 부하를 조금이나마 신경쓰자는 취지였음)
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -99,7 +99,7 @@ public class BoardService {
         // 3. makeBlockInfo() - 페이지 구현에 필요한 값을 일부는 DB에서 가져오고, 일부는 해당 메서드를 통해 계산하여 필드에 저장
         // 4. setBoard() - 게시글 목록과 페이지 정보를 하나의 dto에 담아서 View에 전달
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -137,7 +137,7 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardUpdateFormRespDto getUpdateFormInfo(Integer boardId, LoginUser principal) {
+    public BoardUpdateFormRespDto getUpdateFormInfo(Integer boardId, Integer userId) {
         // @GetMapping("/company/boards/updateForm/{id}")에 의해 호출됨.
         // 기능 : 공고 수정페이지 요청 시 수정 페이지에 미리 띄워야 할 기존 데이터들을 Controller에 전달
         // 사용되는 요소 : skillParse() - 파싱, parseIntegerInfo() - 파싱
@@ -151,7 +151,7 @@ public class BoardService {
         //                        View와 DB에서의 표현 방식이 다른것을 파싱한다.
         //                        (이렇게 다르게 저장한 이유는 설계당시 query의 조건절에 걸 때의 용이성과 DB의 부하를 조금이나마 신경쓰자는 취지였음)
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -159,10 +159,10 @@ public class BoardService {
         Board boardPS = boardRepository.findById(boardId);
 
         if (boardPS == null) {
-            throw new CustomException("없는 게시물을 수정할 수 없습니다");
+            throw new CustomApiException("없는 게시물을 수정할 수 없습니다");
         }
 
-        if (boardPS.getUserId() != principal.getId()) {
+        if (boardPS.getUserId() != userId) {
             throw new CustomApiException("수정 권한이 없습니다");
         }
 
@@ -193,7 +193,7 @@ public class BoardService {
         //   - 문자열로 요청온 수정 데이터를 DB에 숫자로 저장하기 위한 파싱과정에 사용
         //    (이렇게 다르게 저장한 이유는 설계당시 query의 조건절에 걸 때의 용이성과 DB의 부하를 조금이나마 신경쓰자는 취지였음)
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -201,7 +201,7 @@ public class BoardService {
         Board boardPS = boardRepository.findById(boardUpdateReqDto.getId());
 
         if (boardPS == null) {
-            throw new CustomException("없는 게시물을 수정할 수 없습니다");
+            throw new CustomApiException("없는 게시물을 수정할 수 없습니다");
         }
 
         if (boardPS.getUserId() != coPrincipalId) {
@@ -237,7 +237,7 @@ public class BoardService {
         // 1. 해당 게시물에 해당되는 스킬을 삭제
         // 2. update 요청 온 스킬 데이터를 저장
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -264,14 +264,14 @@ public class BoardService {
         // 1. 해당 공고목록을 로그인한 고객이 볼 수 있는지에 대한 권한 체크
         // 2. 해당 userId를 통해 공고목록을 가져 옴
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
 
         // 권한 체크
         if (coPrincipalId != userId) {
-            throw new CustomException("공고 리스트 열람 권한이 없습니다.");
+            throw new CustomApiException("공고 리스트 열람 권한이 없습니다.");
         }
 
         List<BoardMyListRespDto> myBoardListPS;
@@ -292,21 +292,21 @@ public class BoardService {
         // 1. 해당 스크랩목록을 로그인한 고객이 볼 수 있는지에 대한 권한 체크
         // 2. 해당 userId를 통해 공고목록을 가져 옴
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
 
         // 권한 체크
         if (coPrincipalId != userId) {
-        throw new CustomException("공고 리스트 열람 권한이 없습니다.");
+        throw new CustomApiException("공고 리스트 열람 권한이 없습니다.");
         }
 
         List<BoardMyScrapListRespDto> myScrapBoardListPS;
         try {
             myScrapBoardListPS = boardRepository.findAllScrapBoardList(coPrincipalId);
         } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return myScrapBoardListPS;
@@ -321,7 +321,7 @@ public class BoardService {
         // 2. 삭제 요청하는 공고에 대한 삭제 권한이 있는지 체크
         // 3. 공고 삭제 진행
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -354,7 +354,7 @@ public class BoardService {
         //    (이렇게 다르게 저장한 이유는 설계당시 query의 조건절에 걸 때의 용이성과 DB의 부하를 조금이나마 신경쓰자는 취지였음)
         // 2. 해당 요청 정보를 DB에 저장
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -387,7 +387,7 @@ public class BoardService {
         // 진행 과정 :
         // 1. 요청 skill 데이터를 DB에 저장
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -523,13 +523,13 @@ public class BoardService {
     @Transactional
     public void deleteBoard(int boardId, int principalId) {
         Board boardPS = boardRepository.findById(boardId);
-        // if (boardPS == null) {
-        // throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
-        // }
+        if (boardPS == null) {
+        throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
+        }
 
-        // if (boardPS.getUserId() != principalId) {
-        // throw new CustomApiException("게시글 삭제 권한이 없습니다");
-        // }
+        if (boardPS.getUserId() != principalId) {
+        throw new CustomApiException("게시글 삭제 권한이 없습니다");
+        }
 
         try {
             boardRepository.deleteById(boardId);

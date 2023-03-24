@@ -32,7 +32,6 @@ import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
 import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.common.ex.CustomApiException;
-import shop.mtcoding.jobara.common.ex.CustomException;
 import shop.mtcoding.jobara.common.util.DateParse;
 
 @RequiredArgsConstructor
@@ -48,7 +47,7 @@ public class BoardController {
         // 1. 기능 : 메인페이지 요청 메서드
         // ※ Cookie - 메인페이지 하단의 로그인 component에서 아이디 기억하기에 활용
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -79,14 +78,13 @@ public class BoardController {
         //    user(id, profile),
         //    resume(id, userId, title, content, createdAt)
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
 
         LoginUser principal = (LoginUser) session.getAttribute("loginUser");
-
-        BoardDetailRespDto boardDetailRespDto = boardService.getDetail(principal.getId(), id);
+        BoardDetailRespDto boardDetailRespDto = boardService.getDetail(id, principal.getId());
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 상세페이지", boardDetailRespDto), HttpStatus.OK);
     }
@@ -107,7 +105,7 @@ public class BoardController {
         //    totalCount, totalPage, isLast, isFirst,
         //    List<Board>(id, title, companyName, dday, user(id, profile), love(id, css))
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -125,7 +123,7 @@ public class BoardController {
         // 2. Arguments :
         // 3. Return :
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -144,13 +142,13 @@ public class BoardController {
         //   (id, title, content, career, education, jobType,
         //    favor, deadline, userId, List<Integer> skill)
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
 
         LoginUser principal = (LoginUser) session.getAttribute("loginUser");
-        BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id, principal);
+        BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id, principal.getId());
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정페이지", boardUpdateFormRespDto), HttpStatus.OK);
     }
@@ -177,7 +175,7 @@ public class BoardController {
 
         // 3. Return :
         
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -215,7 +213,7 @@ public class BoardController {
 
         // 3. Return :
         
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
@@ -223,7 +221,7 @@ public class BoardController {
 
         ArrayList<Object> resDateParse = DateParse.Dday(boardInsertReqDto.getDeadline());
         if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
-            throw new CustomException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
+            throw new CustomApiException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
         }
 
         int boardId = boardService.insertBoard(boardInsertReqDto, principal.getId());
@@ -246,13 +244,13 @@ public class BoardController {
         //    company(userId, companyNmae),
         //    user(profile))
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
         LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
-        List<BoardMyListRespDto> myBoardListPS = boardService.getMyBoardList(principal.getId(), id);
+        List<BoardMyListRespDto> myBoardListPS = boardService.getMyBoardList(id, principal.getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "등록 게시글 목록", myBoardListPS), HttpStatus.OK);
     }
 
@@ -270,14 +268,14 @@ public class BoardController {
         //    company(userId, companyNmae),
         //    user(profile))
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
 
         LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
-        List<BoardMyScrapListRespDto> myScrapBoardListPS = boardService.getMyScrapBoardList(principal.getId(), id);
+        List<BoardMyScrapListRespDto> myScrapBoardListPS = boardService.getMyScrapBoardList(id, principal.getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 게시글 목록", myScrapBoardListPS), HttpStatus.OK);
     }
 
@@ -291,7 +289,7 @@ public class BoardController {
         //                  (삭제할 게시물의 존재유무 체크, deleteById Query에 활용)
         // 3. Return :
 
-        // 작성자 : 이상현
+        // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
