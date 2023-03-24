@@ -2,11 +2,10 @@ package shop.mtcoding.jobara.employee.dto;
 
 import java.util.ArrayList;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -60,6 +59,7 @@ public class EmployeeReq {
 
             @Getter
             @Setter
+            @AllArgsConstructor
             public static class EmployeeDto {
 
                   @NotEmpty(message = "실명을 입력해주세요.")
