@@ -3,7 +3,6 @@ package shop.mtcoding.jobara.company;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import shop.mtcoding.jobara.common.aop.CompanyCheck;
+import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
 import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.company.dto.CompanyReq.CompanyJoinReqDto;
@@ -25,14 +24,11 @@ import shop.mtcoding.jobara.company.dto.CompanyResp.CompanyInfo;
 @RestController
 @RequiredArgsConstructor
 public class CompanyController {
-
-    @Autowired
-    private CompanyService companyService;
-
-    @Autowired
-    private HttpSession session;
+    private final CompanyService companyService;
+    private final HttpSession session;
 
     @GetMapping("/company/{id}")
+    @CompanyCheckApi
     public ResponseEntity<?> detail(@PathVariable Integer id) {
         // 1. 기능 : 해당 기업 회원의 상세 정보를 불러오는 메소드
         // 2. Arguments :
@@ -79,7 +75,7 @@ public class CompanyController {
     }
 
     @PutMapping("/company/{id}")
-    @CompanyCheck
+    @CompanyCheckApi
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid CompanyUpdateReqDto companyUpdateReqDto, 
             BindingResult bindingResult) {
         // 1. 기능 : 기업 회원 수정 기능을 구현하는 메소드

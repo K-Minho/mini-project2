@@ -35,7 +35,7 @@ public class CompanyService {
     public void insertCompany(CompanyJoinReqDto companyJoinReqDto) {
         // @PostMapping("/joinCompany")에 의해 호출됨.
         // 기능 : Controller에서 회원 가입 요청 데이터를 받아서 DB에 해당 회원 정보 저장
-        // 사용되는 요소 : 
+        // 사용되는 요소 : Hash 함수 인코딩
         // 진행 과정 :
         // 1. 입력받은 username과 동일한 회원이 존재하는지 확인
         //  - findByUsername 메서드를 통해 데이터(회원)가 존재하는지 확인한다.
@@ -73,7 +73,7 @@ public class CompanyService {
     public void updateCompany(CompanyUpdateReqDto companyUpdateReqDto, Integer principalId) {
         // @PutMapping("/company/{id}")에 의해 호출됨.
         // 기능 : Controller에서 회원 수정 요청 데이터를 받아서 DB에 해당 회원 정보 수정
-        // 사용되는 요소 : 
+        // 사용되는 요소 : Hash 함수 인코딩
         // 진행 과정 :
         // 1. profile을 파일로 저장하기 위한 디코딩
         //  - MyBase64Decoder.saveImage() : 문자열 형태가 base64형태로 작성되었는지 여부 확인, 
