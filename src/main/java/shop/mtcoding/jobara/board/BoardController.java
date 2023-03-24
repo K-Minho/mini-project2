@@ -58,6 +58,7 @@ public class BoardController {
     public ResponseEntity<?> home(HttpServletRequest request) {
         // 1. 기능 : 메인페이지 요청 메서드
         // ※ Cookie - 메인페이지 하단의 로그인 component에서 아이디 기억하기에 활용
+
         // 작성자 : 이상현
         // 작성일 : 2023-03-24
         // 수정자 : -
@@ -81,12 +82,14 @@ public class BoardController {
         //          (전체 공고리스트, 등록한 공고, 스크랩한 공고 각 페이지에서 요청 가능)
         // 2. Arguments :
         // - PathVariable : id, 해당 구인공고의 id이다. PK이며 null이 될 수 없음.
+
         // 3. Return :
         // - BoardDetailRespDto
-        //   (id, title, content, career, jobType, education, favor, skill,
+        //   (id, title, content, career, jobType, education, favor, List<Integer> skill,
         //    Company(userId, companyName, comapnyScale, companyField),
         //    User(id, profile),
         //    Resume(id, userId, title, content, createdAt)
+
         // 작성자 : 이상현
         // 작성일 : 2023-03-24
         // 수정자 : -
@@ -107,11 +110,14 @@ public class BoardController {
         //         타 페이지에서의 진입시 null 값이 들어올 수 있으며, 해당 경우 Service에서 1페이지 처리를 한다.
         // - keyword : 구인공고 목록페이지 우상단에 있는 selectBox 내의 요청 값이다.
         //             null, lang(매칭공고), deadline(마감일순) 값이 들어올 수 있다.
+        //             Service와 Query에서의 if문으로 위 3값 Check
+
         // 3. Return :
         // - BoardPagingListDto
         //   (keyword, blockCount, currentBlock, currentPage, startPageNum, lastPageNum,
         //    totalCount, totalPage, isLast, isFirst,
         //    List<Board>(id, title, companyName, dday, User(id, profile), Love(id, css))
+
         // 작성자 : 이상현
         // 작성일 : 2023-03-24
         // 수정자 : -
@@ -126,12 +132,34 @@ public class BoardController {
     @GetMapping("/company/boards/saveForm")
     // @CompanyCheck
     public ResponseEntity<?> saveForm() {
+        // 1. 기능 : 구인공고 등록페이지를 요청하는 페이지
+        // 2. Arguments :
+        // 3. Return :
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록페이지", null), HttpStatus.OK);
     }
 
     @GetMapping("/company/boards/updateForm/{id}")
     // @CompanyCheck
     public ResponseEntity<?> updateForm(@PathVariable int id) {
+        // 1. 기능 : 구인공고 수정페이지를 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 구인공고의 id이다. PK이며 null이 될 수 없음.
+
+        // 3. Return :
+        // - BoardUpdateFormRespDto
+        //   (id, title, content, career, education, jobType,
+        //    favor, deadline, userId, List<Integer> skill)
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         UserVo principal = setCompanyPrincipal();
         BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id);
 
@@ -142,8 +170,33 @@ public class BoardController {
     // @CompanyCheckApi
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody @Valid BoardUpdateReqDto boardUpdateReqDto,
             BindingResult bindingResult) {
+        // 1. 기능 : 구인공고 수정을 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 구인공고의 id이다. PK이며 null이 될 수 없음
+        // - BoardUpdateReqDto
+        //   (id, title, content, careerString, educationString, jobTypeString, deadline,
+        //    favor, userId, List<Integer> checkedValues)
+        //   title : 최소 1 최대 16, null&empty 들어올 수 없음
+        //   content : 최소 1 최대 65536, null&empty 위와 동일
+        //   careerString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   educationString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   jobTypeString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   deadline : 한 가지 이상 선택해야함, null&empty 위와 동일
+        //              아래 DateParse.Dday 메서드를 통해 마감날짜에 대한 최대 일 수를 100일로 제한           
+        //   favor : 최소 1 최대 16, null&empty 위와 동일
+        //   checkedValues : 한 가지 이상 선택해야함, null&empty 위와 동일
+
+        // 3. Return :
+        // - BoardUpdateFormRespDto
+        //   (id, title, content, career, education, jobType,
+        //    favor, deadline, userId, List<Integer> skill)
+        
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         UserVo principal = setCompanyPrincipal();
-        // 유효성
+
         ArrayList<Object> resDateParse = DateParse.Dday(boardUpdateReqDto.getDeadline());
         if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
             throw new CustomApiException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
