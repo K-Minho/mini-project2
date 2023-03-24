@@ -77,16 +77,16 @@
 <!-- list -->
 
 <resultMap id="boardListJoin" type="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto">
-    <result property="boardId" column="board_id"/>
+    <result property="id" column="board_id"/>
     <result property="title" column="title"/>
     <result property="companyName" column="company_name"/>
     <result property="dday" column="dday"/>
     <collection property="user"  ofType="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto$UserDto">
-        <id property="userId" column="user_id"/>
+        <id property="id" column="user_id"/>
         <result property="profile" column="profile"/>
     </collection>
     <collection property="love"  ofType="shop.mtcoding.jobara.board.dto.BoardPagingListDto$BoardListDto$LoveDto">
-        <id property="loveId" column="love_id"/>
+        <id property="id" column="love_id"/>
         <result property="css" column="css"/>
     </collection>
 </resultMap>
