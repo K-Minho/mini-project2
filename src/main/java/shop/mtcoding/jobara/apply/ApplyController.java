@@ -40,12 +40,25 @@ public class ApplyController {
     @PostMapping("/employee/apply")
     @EmployeeCheckApi
     public ResponseEntity<?> apply(@RequestBody @Valid ApplyReqDto applyReqDto, BindingResult bindingResult) {
+        // 1. 기능 : 구직자가 공고에 구직 지원하는 메소드
+        // 2. Arguments :
+        // - ApplyReqDto
+        // (boardId, resumeId)
+        // boardId : 최소 1, null
+        // resumeId : 최소 1, null
+
+        // 3. Return :
+
+        // 작성자 : 김태훈
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
         applyService.insertApply(applyReqDto, loginUser.getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "지원 성공", null), HttpStatus.CREATED);
     }
 
-    @GetMapping("/company/apply/{id}")
+    @GetMapping("/company/{id}/apply")
     @CompanyCheck
     public ResponseEntity<?> companyApplyList(@PathVariable Integer id) {
         List<ApplyJoinBoardAndUser> applyListPS = applyService.getApplyForCompany(id);
