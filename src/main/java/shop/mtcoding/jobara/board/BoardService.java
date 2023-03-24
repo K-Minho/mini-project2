@@ -9,15 +9,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto.BoardListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertSkillReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardListRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
 import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
+import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.board.model.Board;
 import shop.mtcoding.jobara.board.model.BoardRepository;
 import shop.mtcoding.jobara.board.model.BoardTechRepository;
@@ -49,7 +53,7 @@ public class BoardService {
         try {
             boardDetailPS = boardRepository.findBoardDetailByJoin(principalId, boardId);
         } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         boardDetailPS.skillParse(boardDetailPS.getNeedParse());
         boardDetailPS.faSoild();
@@ -58,44 +62,110 @@ public class BoardService {
         return boardDetailPS;
     }
 
-    // 1/2차 경계선
+    @Transactional(readOnly = true)
+    public BoardPagingListDto getListWithJoin(Integer page, String keyword, UserVo uservo) {
+
+        if (page == null) {
+            page = 0;
+        }
+
+        BoardPagingListDto pagingDtoPS;
+        List<BoardListDto> boardsListPS;
+        int startNum = page * BoardPagingListDto.ROW;
+
+        if (uservo != null && uservo.getRole().equals("employee")) {
+            try {
+                boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW,
+                        uservo.getId());
+                pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, uservo.getId());
+            } catch (Exception e) {
+                throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        } else {
+            try {
+                boardsListPS = boardRepository.findAllWithJoin(startNum, keyword, BoardPagingListDto.ROW, 0);
+                pagingDtoPS = boardRepository.pagingWithJoin(page, keyword, BoardPagingListDto.ROW, 0);
+            } catch (Exception e) {
+                throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        pagingDtoPS.makeBlockInfo(keyword);
+        pagingDtoPS.setBoard(boardsListPS);
+
+        return pagingDtoPS;
+    }
 
     @Transactional(readOnly = true)
-    public List<BoardMainRespDto> getListToMain() {
-        List<BoardMainRespDto> boardListPS;
-
+    public BoardUpdateFormRespDto getUpdateFormInfo(Integer boardId) {
+        BoardUpdateFormRespDto boardUpdateFormRespPS;
         try {
-            boardListPS = boardRepository.findAllWithCompanyToMain();
+            boardUpdateFormRespPS = boardRepository.findUpdateFormInfo(boardId);
+        } catch (Exception e) {
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        boardUpdateFormRespPS.skillParse(boardUpdateFormRespPS.getNeedParse());
+
+        boardUpdateFormRespPS.parseIntegerInfo();
+
+        return boardUpdateFormRespPS;
+    }
+
+    @Transactional(readOnly = true)
+    public List<BoardMyListRespDto> getMyBoardList(int coPrincipalId, int userId) {
+        // 권한 체크
+        // if (coPrincipalId != userId) {
+        // throw new CustomException("공고 리스트 열람 권한이 없습니다.");
+        // }
+
+        List<BoardMyListRespDto> myBoardListPS;
+        try {
+            myBoardListPS = boardRepository.findByIdForMyList(coPrincipalId);
+        } catch (Exception e) {
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return myBoardListPS;
+    }
+
+    @Transactional(readOnly = true)
+    public List<BoardMyScrapListRespDto> getMyScrapBoardList(int coPrincipalId, int userId) {
+        // 권한 체크
+        // if (coPrincipalId != userId) {
+        // throw new CustomException("공고 리스트 열람 권한이 없습니다.");
+        // }
+
+        List<BoardMyScrapListRespDto> myScrapBoardListPS;
+        try {
+            myScrapBoardListPS = boardRepository.findAllScrapBoardList(coPrincipalId);
         } catch (Exception e) {
             throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return boardListPS;
+        return myScrapBoardListPS;
     }
 
-    // @Transactional(readOnly = true)
-    // public BoardDetailRespDto getDetail(int id) {
-    // BoardDetailRespDto boardDetailPS;
+    @Transactional
+    public void deleteMyBoard(int boardId, int principalId) {
+        Board boardPS = boardRepository.findById(boardId);
+        // if (boardPS == null) {
+        // throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
+        // }
 
-    // try {
-    // boardDetailPS = boardRepository.findByIdWithCompany(id);
-    // } catch (Exception e) {
-    // throw new CustomException("서버에 일시적인 문제가 생겼습니다",
-    // HttpStatus.INTERNAL_SERVER_ERROR);
-    // }
+        // if (boardPS.getUserId() != principalId) {
+        // throw new CustomApiException("게시글 삭제 권한이 없습니다");
+        // }
 
-    // String career = CareerParse.careerToString(boardDetailPS.getCareer());
-    // boardDetailPS.setCareerString(career);
+        try {
+            boardRepository.deleteById(boardId);
+        } catch (Exception e) {
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-    // String education =
-    // EducationParse.educationToString(boardDetailPS.getEducation());
-    // boardDetailPS.setEducationString(education);
-
-    // String jobType = JobTypeParse.jopTypeToString(boardDetailPS.getJobType());
-    // boardDetailPS.setJobTypeString(jobType);
-
-    // return boardDetailPS;
-    // }
+    // 1/2차 경계선 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     public PagingDto getListWithPaging(Integer page, String keyword, UserVo uservo) {
 
@@ -205,7 +275,7 @@ public class BoardService {
         try {
             boardRepository.insert(board);
         } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return board.getId();
@@ -246,14 +316,14 @@ public class BoardService {
     }
 
     @Transactional
-    public void insertSkill(ArrayList<Integer> checkLang, int boardId) {
+    public void insertSkill(List<Integer> checkLang, int boardId) {
 
         BoardInsertSkillReqDto boardInsertSkillReqDto = new BoardInsertSkillReqDto(boardId, checkLang);
 
         try {
             boardTechRepository.insertSkill(boardInsertSkillReqDto);
         } catch (Exception e) {
-            throw new CustomException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -271,7 +341,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateTech(ArrayList<Integer> techList, int boardId) {
+    public void updateTech(List<Integer> techList, int boardId) {
         try {
             boardTechRepository.deleteByBoardId(boardId);
         } catch (Exception e) {
@@ -299,13 +369,13 @@ public class BoardService {
     @Transactional
     public void deleteBoard(int boardId, int principalId) {
         Board boardPS = boardRepository.findById(boardId);
-        if (boardPS == null) {
-            throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
-        }
+        // if (boardPS == null) {
+        // throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
+        // }
 
-        if (boardPS.getUserId() != principalId) {
-            throw new CustomApiException("게시글 삭제 권한이 없습니다");
-        }
+        // if (boardPS.getUserId() != principalId) {
+        // throw new CustomApiException("게시글 삭제 권한이 없습니다");
+        // }
 
         try {
             boardRepository.deleteById(boardId);

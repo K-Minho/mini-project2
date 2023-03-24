@@ -24,6 +24,12 @@ public class LoveService {
 
     @Transactional
     public int insertLove(int boardId, int userId) {
+
+        Love lovePS = loveRepository.findByBoardIdAndUserId(boardId, userId);
+        if (lovePS != null) {
+            throw new CustomApiException("좋아요 내역이 존재합니다.");
+        }
+
         // 게시글 존재 여부 체크
         Board boardPS = boardRepository.findById(boardId);
         if (boardPS == null) {

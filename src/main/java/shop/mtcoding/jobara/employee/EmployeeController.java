@@ -2,10 +2,13 @@ package shop.mtcoding.jobara.employee;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,13 +16,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
 import shop.mtcoding.jobara.common.aop.EmployeeCheck;
 import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
-import shop.mtcoding.jobara.common.ex.CustomException;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeJoinReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeTechUpdateReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeUpdateReqDto;
@@ -38,10 +39,10 @@ public class EmployeeController {
         return "employee/joinForm";
     }
 
-    @PostMapping("/employee/update/{id}")
+    @PutMapping("/employee/{id}")
     @EmployeeCheck
     public @ResponseBody ResponseEntity<?> update(@PathVariable int id,
-            @RequestBody EmployeeUpdateReqDto employeeUpdateReqDto) {
+            @RequestBody @Valid EmployeeUpdateReqDto employeeUpdateReqDto, BindingResult bindingResult) {
         UserVo UserVoPS = employeeService.updateEmpolyee(employeeUpdateReqDto, id);
         return ResponseEntity.status(201).body(UserVoPS);
     }
@@ -49,7 +50,8 @@ public class EmployeeController {
     @PutMapping("/employee/update/tech/{id}")
     @EmployeeCheckApi
     public ResponseEntity<?> update(@PathVariable int id,
-            @RequestBody EmployeeTechUpdateReqDto employeeTechUpdateReqDto, Model model) {
+            @RequestBody @Valid EmployeeTechUpdateReqDto employeeTechUpdateReqDto, Model model,
+            BindingResult bindingResult) {
         if (employeeTechUpdateReqDto.getCheckedValues() != null) {
             employeeService.updateEmpolyeeTech(employeeTechUpdateReqDto.getCheckedValues(), id);
         }
@@ -66,7 +68,7 @@ public class EmployeeController {
         return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.valueOf(200));
     }
 
-    @GetMapping("/employee/{id}/updateForm")
+    @GetMapping("/employee/{id}")
     @EmployeeCheck
     public ResponseEntity<?> updateForm(@PathVariable int id, Model model) {
 
@@ -93,13 +95,14 @@ public class EmployeeController {
         return ResponseEntity.status(200).body(model);
     }
 
-    @PostMapping("/join")
-    public ResponseEntity<?> join(EmployeeJoinReqDto employeeJoinReqDto) {
+    @PostMapping("/joinEmployee")
+    public ResponseEntity<?> join(@RequestBody @Valid EmployeeJoinReqDto employeeJoinReqDto,
+            BindingResult bindingResult) {
         employeeService.insertEmployee(employeeJoinReqDto);
         return new ResponseEntity<>(new ResponseDto<>(1, "가입 완료", null), HttpStatus.valueOf(201));
     }
 
-    @GetMapping("/employee/{id}")
+    @GetMapping("/user/{id}")
     public @ResponseBody ResponseEntity<?> employeeDetail(@PathVariable int id, Model model) {
         EmployeeAndResumeRespDto employeePS = employeeService.getEmployee(id);
         List<String> employeeTechPS = employeeService.getEmployeeTech(id);

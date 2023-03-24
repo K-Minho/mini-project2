@@ -3,11 +3,12 @@ package shop.mtcoding.jobara.apply;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +25,8 @@ import shop.mtcoding.jobara.common.aop.CompanyCheck;
 import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
 import shop.mtcoding.jobara.common.aop.EmployeeCheck;
 import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
+import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
-import shop.mtcoding.jobara.common.util.Verify;
-import shop.mtcoding.jobara.user.vo.UserVo;
 
 @RestController
 public class ApplyController {
@@ -37,27 +37,25 @@ public class ApplyController {
     @Autowired
     private HttpSession session;
 
-    @PostMapping("/apply")
+    @PostMapping("/employee/apply")
     @EmployeeCheckApi
-    public ResponseEntity<?> apply(@RequestBody ApplyReqDto applyReqDto) {
-        UserVo principal = (UserVo) session.getAttribute("principal");
-        applyService.insertApply(applyReqDto, principal.getId());
+    public ResponseEntity<?> apply(@RequestBody @Valid ApplyReqDto applyReqDto, BindingResult bindingResult) {
+        LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
+        applyService.insertApply(applyReqDto, loginUser.getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "지원 성공", null), HttpStatus.CREATED);
     }
 
-    @GetMapping("/company/{id}/apply")
+    @GetMapping("/company/apply/{id}")
     @CompanyCheck
     public ResponseEntity<?> companyApplyList(@PathVariable Integer id) {
         List<ApplyJoinBoardAndUser> applyListPS = applyService.getApplyForCompany(id);
         return new ResponseEntity<>(new ResponseDto<>(1, "지원자 리스트 불러오기 성공", applyListPS), HttpStatus.OK);
     }
 
-    @PutMapping("/board/{id}/apply")
+    @PutMapping("/company/apply/{id}")
     @CompanyCheckApi
     public @ResponseBody ResponseEntity<?> decideApplyment(@PathVariable int id,
-            @RequestBody ApplyDecideReqDto applyDecideReqDto) {
-        Verify.validateApiObject(applyDecideReqDto.getUserId(), "처리할 유저 Id를 입력하세요.");
-        Verify.validateApiObject(applyDecideReqDto.getState(), "처리할 결과 코드를 입력하세요.");
+            @RequestBody @Valid ApplyDecideReqDto applyDecideReqDto, BindingResult bindingResult) {
         applyService.approveApply(applyDecideReqDto, id);
         if (applyDecideReqDto.getState() == 1) {
             return new ResponseEntity<>(new ResponseDto<>(1, "합격 처리 완료", null), HttpStatus.CREATED);
@@ -66,7 +64,7 @@ public class ApplyController {
         }
     }
 
-    @GetMapping("/employee/{id}/apply")
+    @GetMapping("/employee/apply/{id}")
     @EmployeeCheck
     public ResponseEntity<?> employeeApplyList(@PathVariable Integer id) {
         List<ApplyJoinBoardAndResume> applyListPS = applyService.getApplyForEmployee(id);

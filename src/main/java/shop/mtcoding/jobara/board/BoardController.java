@@ -6,41 +6,35 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import shop.mtcoding.jobara.board.dto.BoardDetailRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto;
+import shop.mtcoding.jobara.board.dto.BoardPagingListDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardInsertReqDto;
 import shop.mtcoding.jobara.board.dto.BoardReq.BoardUpdateReqDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardMainRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.BoardUpdateRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.MyBoardListRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.MyScrapBoardListRespDto;
-import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
-import shop.mtcoding.jobara.common.aop.CompanyCheck;
-import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
+import shop.mtcoding.jobara.board.dto.BoardUpdateFormRespDto;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.common.ex.CustomApiException;
 import shop.mtcoding.jobara.common.ex.CustomException;
 import shop.mtcoding.jobara.common.util.DateParse;
-import shop.mtcoding.jobara.common.util.RedisService;
-import shop.mtcoding.jobara.common.util.RedisServiceSet;
-import shop.mtcoding.jobara.common.util.Verify;
 import shop.mtcoding.jobara.love.LoveService;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
-@Controller
+@RestController
 public class BoardController {
 
     @Autowired
@@ -52,18 +46,23 @@ public class BoardController {
     @Autowired
     HttpSession session;
 
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private RedisServiceSet redisServiceSet;
-
     public UserVo setPrincipal() {
         return new UserVo(1, "ssar", "", "employee");
     }
 
+    public UserVo setCompanyPrincipal() {
+        return new UserVo(6, "cos", "", "company");
+    }
+
     @GetMapping({ "/", "/home" })
-    public String home(Model model, HttpServletRequest request) {
+    public ResponseEntity<?> home(HttpServletRequest request) {
+        // 1. 기능 : 메인페이지 요청 메서드
+        // ※ Cookie - 메인페이지 하단의 로그인 component에서 아이디 기억하기에 활용
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
 
         String username = "";
         Cookie[] cookies = request.getCookies();
@@ -74,155 +73,250 @@ public class BoardController {
                 }
             }
         }
-        List<BoardMainRespDto> boardListPS = boardService.getListToMain();
-        model.addAttribute("boardMainList", boardListPS);
-        model.addAttribute("remember", username);
-        redisServiceSet.addModel(model);
-        return "board/home";
+        return new ResponseEntity<>(new ResponseDto<>(1, "메인 페이지", null), HttpStatus.OK);
     }
 
     @GetMapping("/boards/{id}")
     public ResponseEntity<?> detail(@PathVariable int id) {
+        // 1. 기능 : 구인공고 목록에서 특정 구인공고 클릭시 해당 페이지를 요청하는 메서드
+        //          (전체 공고리스트, 등록한 공고, 스크랩한 공고 각 페이지에서 요청 가능)
+        // 2. Arguments :
+        // - PathVariable : id, 해당 구인공고의 id이다. PK이며 null이 될 수 없음.
+
+        // 3. Return :
+        // - BoardDetailRespDto
+        //   (id, title, content, career, jobType, education, favor, List<Integer> skill,
+        //    Company(userId, companyName, comapnyScale, companyField),
+        //    user(id, profile),
+        //    resume(id, userId, title, content, createdAt)
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         UserVo principal = setPrincipal();
         System.out.println(principal.getId());
         BoardDetailRespDto boardDetailRespDto = boardService.getDetail(principal.getId(), id);
 
-        return ResponseEntity.status(200).body(boardDetailRespDto);
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 상세페이지", boardDetailRespDto), HttpStatus.OK);
     }
 
-    @GetMapping("/board/list")
-    public String list(Model model, Integer page, String keyword) {
-        UserVo principal = redisService.getValue("principal");
-        PagingDto pagingDto = boardService.getListWithPaging(page, keyword, principal);
-        model.addAttribute("pagingDto", pagingDto);
-        redisServiceSet.addModel(model);
-        return "board/list";
+    @GetMapping("/boards")
+    public ResponseEntity<?> list(Integer page, String keyword) {
+        // 1. 기능 : 구인공고 목록페이지를 요청하는 페이지
+        // 2. Arguments :
+        // - Page : keyword 또는 기본 정렬에 따른 Page 요청 값이다.
+        //         타 페이지에서의 진입시 null 값이 들어올 수 있으며, 해당 경우 Service에서 1페이지 처리를 한다.
+        // - keyword : 구인공고 목록페이지 우상단에 있는 selectBox 내의 요청 값이다.
+        //             null, lang(매칭공고), deadline(마감일순) 값이 들어올 수 있다.
+        //             Service와 Query에서의 if문으로 위 3값 Check
+
+        // 3. Return :
+        // - BoardPagingListDto
+        //   (keyword, blockCount, currentBlock, currentPage, startPageNum, lastPageNum,
+        //    totalCount, totalPage, isLast, isFirst,
+        //    List<Board>(id, title, companyName, dday, user(id, profile), love(id, css))
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
+        UserVo principal = setPrincipal();
+        BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
+
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 목록페이지", boardPagingDto), HttpStatus.OK);
     }
 
-    @GetMapping("/board/saveForm")
-    @CompanyCheck
-    public String saveForm(Model model) {
-        redisServiceSet.addModel(model);
-        return "board/saveForm";
+    @GetMapping("/company/boards/saveForm")
+    // @CompanyCheck
+    public ResponseEntity<?> saveForm() {
+        // 1. 기능 : 구인공고 등록페이지를 요청하는 페이지
+        // 2. Arguments :
+        // 3. Return :
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록페이지", null), HttpStatus.OK);
     }
 
-    @GetMapping("/board/updateForm/{id}")
-    @CompanyCheck
-    public String updateForm(Model model, @PathVariable int id) {
-        UserVo principal = redisService.getValue("principal");
+    @GetMapping("/company/boards/updateForm/{id}")
+    // @CompanyCheck
+    public ResponseEntity<?> updateForm(@PathVariable int id) {
+        // 1. 기능 : 구인공고 수정페이지를 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 구인공고의 id이다. PK이며 null이 될 수 없음.
 
-        List<Integer> boardSkill = boardService.getSkillForDetail(id);
+        // 3. Return :
+        // - BoardUpdateFormRespDto
+        //   (id, title, content, career, education, jobType,
+        //    favor, deadline, userId, List<Integer> skill)
 
-        BoardUpdateRespDto boardDetailPS = boardService.getDetailForUpdate(id, principal.getId());
-        model.addAttribute("boardDetail", boardDetailPS);
-        model.addAttribute("boardSkill", boardSkill);
-        redisServiceSet.addModel(model);
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
 
-        return "board/updateForm";
+        UserVo principal = setCompanyPrincipal();
+        BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id);
+
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정페이지", boardUpdateFormRespDto), HttpStatus.OK);
     }
 
-    @PutMapping("/board/update/{id}")
-    @CompanyCheckApi
-    public ResponseEntity<?> update(@PathVariable int id, @RequestBody BoardUpdateReqDto boardUpdateReqDto) {
-        UserVo principal = redisService.getValue("principal");
+    @PutMapping("/company/boards/{id}")
+    // @CompanyCheckApi
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody @Valid BoardUpdateReqDto boardUpdateReqDto,
+            BindingResult bindingResult) {
+        // 1. 기능 : 구인공고 수정을 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 구인공고의 id이다. PK이며 null이 될 수 없음
+        // - BoardUpdateReqDto
+        //   (id, title, content, careerString, educationString, jobTypeString, deadline,
+        //    favor, userId, List<Integer> checkedValues)
+        //   title : 최소 1 최대 16, null&empty 들어올 수 없음
+        //   content : 최소 1 최대 65536, null&empty 위와 동일
+        //   careerString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   educationString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   jobTypeString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   deadline : 한 가지 이상 선택해야함, null&empty 위와 동일
+        //              아래 DateParse.Dday 메서드를 통해 마감날짜에 대한 최대 일 수를 100일로 제한           
+        //   favor : 최소 1 최대 16, null&empty 위와 동일
+        //   checkedValues : 한 가지 이상 선택해야함, null&empty 위와 동일
 
-        // 유효성
-        Verify.validateApiString(boardUpdateReqDto.getDeadline(), "마감 날짜를 선택하세요");
+        // 3. Return :
+        
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+        UserVo principal = setCompanyPrincipal();
 
         ArrayList<Object> resDateParse = DateParse.Dday(boardUpdateReqDto.getDeadline());
         if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
             throw new CustomApiException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
         }
 
-        if (boardUpdateReqDto.getFavor().length() > 16) {
-            throw new CustomApiException("우대사항은 16자 이내 입력 가능합니다");
-        }
-
-        Verify.isEqualApi(boardUpdateReqDto.getCheckedValues().size(), 0, "선호기술을 한 가지 이상 선택해주세요.",
-                HttpStatus.BAD_REQUEST);
-
-        Verify.validateApiString(boardUpdateReqDto.getTitle(), "제목을 입력하세요");
-        Verify.validateApiString(boardUpdateReqDto.getContent(), "내용을 입력하세요");
-        Verify.validateApiString(boardUpdateReqDto.getCareerString(), "경력을 입력하세요");
-
         boardService.updateBoard(boardUpdateReqDto, principal.getId());
         boardService.updateTech(boardUpdateReqDto.getCheckedValues(), id);
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정완료", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정 성공", null), HttpStatus.CREATED);
     }
 
-    @PostMapping("/board/save")
-    @CompanyCheck
-    public String save(BoardInsertReqDto boardInsertReqDto,
-            @RequestParam(required = false, defaultValue = "") ArrayList<Integer> checkLang) {
+    @PostMapping("/company/boards")
+    // @CompanyCheck
+    public ResponseEntity<?> save(@RequestBody @Valid BoardInsertReqDto boardInsertReqDto,
+            BindingResult bindingResult) {
+        // 1. 기능 : 구인공고 등록을 요청하는 메서드
+        // 2. Arguments :
+        // - BoardInsertReqDto
+        //   (title, content, careerString, educationString, jobTypeString, deadline,
+        //    favor, userId, List<Integer> checkLang)
+        //   title : 최소 1 최대 16, null&empty 들어올 수 없음
+        //   content : 최소 1 최대 65536, null&empty 위와 동일
+        //   careerString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   educationString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   jobTypeString : selectBox에서 선택해야함, null&empty 위와 동일
+        //   deadline : 한 가지 이상 선택해야함, null&empty 위와 동일
+        //              아래 DateParse.Dday 메서드를 통해 마감날짜에 대한 최대 일 수를 100일로 제한           
+        //   favor : 최소 1 최대 16, null&empty 위와 동일
+        //   checkLang : 한 가지 이상 선택해야함, null&empty 위와 동일
 
-        UserVo principal = redisService.getValue("principal");
-
-        // 유효성
-        Verify.validateString(boardInsertReqDto.getTitle(), "제목을 입력하세요");
-        Verify.validateString(boardInsertReqDto.getContent(), "내용을 입력하세요");
-        if (boardInsertReqDto.getFavor().length() > 16) {
-            throw new CustomException("우대사항은 16자 이내 입력 가능합니다");
-        }
-
-        Verify.isStringEquals(boardInsertReqDto.getCareerString(), "경력선택", "경력을 선택하세요", HttpStatus.BAD_REQUEST);
-        Verify.isStringEquals(boardInsertReqDto.getCareerString(), "학력선택", "학력을 선택하세요", HttpStatus.BAD_REQUEST);
-        Verify.isStringEquals(boardInsertReqDto.getCareerString(), "근무형태", "근무형태를 선택하세요", HttpStatus.BAD_REQUEST);
-
-        Verify.validateString(boardInsertReqDto.getDeadline(), "마감 날짜를 선택하세요");
+        // 3. Return :
+        
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+        UserVo principal = setCompanyPrincipal();
 
         ArrayList<Object> resDateParse = DateParse.Dday(boardInsertReqDto.getDeadline());
         if (!(0 < (Integer) resDateParse.get(0) && (Integer) resDateParse.get(0) < 100)) {
             throw new CustomException("1일~100일 내의 마감날짜를 선택 해주세요. (~" + (String) resDateParse.get(1) + ")");
         }
 
-        Verify.isEqual(checkLang.size(), 0, "선호기술을 한 가지 이상 선택해주세요.", HttpStatus.BAD_REQUEST);
-
         int boardId = boardService.insertBoard(boardInsertReqDto, principal.getId());
-        boardService.insertSkill(checkLang, boardId);
+        boardService.insertSkill(boardInsertReqDto.getCheckLang(), boardId);
 
-        return "redirect:/board/boardList/" + principal.getId();
+        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
     }
 
-    @GetMapping("/board/boardList/{id}")
-    @CompanyCheck
-    public String myBoardList(@PathVariable int id, Model model) {
+    @GetMapping("/company/boards/myList/{id}")
+    // @CompanyCheck
+    public ResponseEntity<?> myBoardList(@PathVariable int id) {
+        // 1. 기능 : 내가 등록한 공고목록을 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 특정 유저의 id값이다. PK이며 null이 될 수 없음
+        //                  (로그인 유저의 id값과 열람하려는 id값을 비교하여 권한체크에 활용)
 
-        UserVo principal = redisService.getValue("principal");
+        // 3. Return :
+        // - List<BoardMyListRespDto>
+        //   (id, title, dday, company, user,
+        //    company(userId, companyNmae),
+        //    user(profile))
 
-        List<MyBoardListRespDto> myBoardListPS = boardService.getMyBoard(principal.getId(), id);
-        model.addAttribute("myBoardList", myBoardListPS);
-        redisServiceSet.addModel(model);
-        return "board/myBoardList";
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+        UserVo principal = setCompanyPrincipal();
+
+        List<BoardMyListRespDto> myBoardListPS = boardService.getMyBoardList(principal.getId(), id);
+        return new ResponseEntity<>(new ResponseDto<>(1, "등록 게시글 목록", myBoardListPS), HttpStatus.OK);
     }
 
-    @GetMapping("/board/scrapList/{id}")
-    public String myScrapBoardList(@PathVariable int id, Model model) {
+    @GetMapping("/employee/boards/myScrapList/{id}")
+    public ResponseEntity<?> myScrapBoardList(@PathVariable int id) {
+        // 1. 기능 : 내가 스크랩한 공고목록을 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 특정 유저의 id값이다. PK이며 null이 될 수 없음
+        //                  (로그인 유저의 id값과 열람하려는 id값을 비교하여 권한체크에 활용)
 
-        UserVo principal = redisService.getValue("principal");
+        // 3. Return :
+        // - List<BoardMyScrapListRespDto>
+        //   (id, title, dday, company, user,
+        //    company(userId, companyNmae),
+        //    user(profile))
+
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
+        UserVo principal = setPrincipal();
 
         // 인증체크
-        Verify.validateObject(
-                principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST,
-                "/loginForm");
+        // Verify.validateObject(
+        // principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST,
+        // "/loginForm");
 
-        Verify.checkRole(principal, "employee");
+        // Verify.checkRole(principal, "employee");
 
-        List<MyScrapBoardListRespDto> myScrapBoardListPS = boardService.getMyScrapBoard(principal.getId(), id);
-        model.addAttribute("myScrapBoardList", myScrapBoardListPS);
-        redisServiceSet.addModel(model);
-        return "board/myScrapBoardList";
+        List<BoardMyScrapListRespDto> myScrapBoardListPS = boardService.getMyScrapBoardList(principal.getId(), id);
+        return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 게시글 목록", myScrapBoardListPS), HttpStatus.OK);
     }
 
-    @DeleteMapping("/board/{id}")
+    @DeleteMapping("/company/boards/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
+        UserVo principal = setCompanyPrincipal();
+        // 1. 기능 : 등록된 공고를 삭제 요청하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 삭제요청하는 공고의 id값. PK이며 null이 될 수 없음
+        //                  (삭제할 게시물의 존재유무 체크, deleteById Query에 활용)
+        // 3. Return :
 
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateApiObject(
-                principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST);
-        Verify.checkRoleApi(principal, "company");
+        // 작성자 : 이상현
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
 
-        boardService.deleteBoard(id, principal.getId());
+        // Verify.validateApiObject(
+        // principal, "로그인이 필요한 페이지입니다", HttpStatus.BAD_REQUEST);
+        // Verify.checkRoleApi(principal, "company");
+
+        boardService.deleteMyBoard(id, principal.getId());
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글을 삭제하였습니다", null), HttpStatus.OK);
     }

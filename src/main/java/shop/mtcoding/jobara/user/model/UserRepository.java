@@ -25,5 +25,5 @@ public interface UserRepository {
 
     public User findByUsername(String username);
 
-    public UserVo findByUsernameAndPassword(User user);
+    public User findByUsernameAndPassword(User user);
 }

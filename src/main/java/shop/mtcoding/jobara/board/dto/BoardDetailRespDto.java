@@ -62,7 +62,6 @@ public class BoardDetailRespDto {
         this.career = CareerParse.careerToString(careerInteger);
         this.jobType = JobTypeParse.jopTypeToString(jobTypeInteger);
         this.education = EducationParse.educationToString(educationInteger);
-        System.out.print("테스트" + education);
     }
 
     @Getter

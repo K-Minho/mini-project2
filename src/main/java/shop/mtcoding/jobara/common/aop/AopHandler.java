@@ -1,22 +1,29 @@
 package shop.mtcoding.jobara.common.aop;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import shop.mtcoding.jobara.common.util.RedisService;
-import shop.mtcoding.jobara.common.util.Verify;
-import shop.mtcoding.jobara.user.vo.UserVo;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import shop.mtcoding.jobara.common.config.auth.LoginUser;
+import shop.mtcoding.jobara.common.ex.CustomApiException;
+import shop.mtcoding.jobara.common.ex.CustomException;
 
 @Aspect
 @Component
 public class AopHandler {
+
     @Autowired
-    private RedisService redisService;
+    HttpSession session;
 
     @Pointcut("@annotation(shop.mtcoding.jobara.common.aop.CompanyCheck)")
     public void CompanyCheck() {
@@ -24,9 +31,13 @@ public class AopHandler {
 
     @Before("CompanyCheck()")
     public void CompanyCheck(JoinPoint joinPoint) {
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED, "/#login");
-        Verify.checkRole(principal, "company");
+        LoginUser token = (LoginUser) session.getAttribute("loginUser");
+        if (token == null) {
+            throw new CustomApiException("인증 토큰이 존재하지 않습니다.");
+        }
+        if (!token.getRole().equals("company")) {
+            throw new CustomApiException("기업회원이 아닙니다.");
+        }
     }
 
     @Pointcut("@annotation(shop.mtcoding.jobara.common.aop.CompanyCheckApi)")
@@ -35,9 +46,13 @@ public class AopHandler {
 
     @Before("CompanyCheckApi()")
     public void CompanyCheckApi(JoinPoint joinPoint) {
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateApiObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED);
-        Verify.checkRoleApi(principal, "company");
+        LoginUser token = (LoginUser) session.getAttribute("loginUser");
+        if (token == null) {
+            throw new CustomApiException("인증 토큰이 존재하지 않습니다.");
+        }
+        if (!token.getRole().equals("company")) {
+            throw new CustomApiException("기업회원이 아닙니다.");
+        }
     }
 
     @Pointcut("@annotation(shop.mtcoding.jobara.common.aop.EmployeeCheck)")
@@ -46,9 +61,13 @@ public class AopHandler {
 
     @Before("EmployeeCheck()")
     public void EmployeeCheck(JoinPoint joinPoint) {
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED, "/#login");
-        Verify.checkRole(principal, "employee");
+        LoginUser token = (LoginUser) session.getAttribute("loginUser");
+        if (token == null) {
+            throw new CustomException("인증 토큰이 존재하지 않습니다.");
+        }
+        if (!token.getRole().equals("employee")) {
+            throw new CustomException("구직자회원이 아닙니다.");
+        }
     }
 
     @Pointcut("@annotation(shop.mtcoding.jobara.common.aop.EmployeeCheckApi)")
@@ -57,8 +76,12 @@ public class AopHandler {
 
     @Before("EmployeeCheckApi()")
     public void EmployeeCheckApi(JoinPoint joinPoint) {
-        UserVo principal = redisService.getValue("principal");
-        Verify.validateApiObject(principal, "로그인이 필요한 기능입니다", HttpStatus.UNAUTHORIZED);
-        Verify.checkRoleApi(principal, "employee");
+        LoginUser token = (LoginUser) session.getAttribute("loginUser");
+        if (token == null) {
+            throw new CustomApiException("인증 토큰이 존재하지 않습니다.");
+        }
+        if (!token.getRole().equals("employee")) {
+            throw new CustomApiException("구직자회원이 아닙니다.");
+        }
     }
 }
