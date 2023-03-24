@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,16 +17,13 @@ public class EmployeeReq {
       @Setter
       public static class EmployeeJoinReqDto {
             @NotEmpty(message = "유저이름을 입력해주세요.")
-            @Min(2)
-            @Max(16)
+            @Size(min = 2, max = 16)
             private String username;
             @NotEmpty(message = "비밀번호를 입력해주세요.")
-            @Min(2)
-            @Max(16)
+            @Size(min = 2, max = 16)
             private String password;
             @NotEmpty(message = "이메일을 입력해주세요.")
-            @Min(2)
-            @Max(32)
+            @Size(min = 2, max = 32)
             private String email;
       }
 
@@ -33,12 +31,10 @@ public class EmployeeReq {
       @Setter
       public static class EmployeeLoginReqDto {
             @NotEmpty(message = "유저이름을 입력해주세요.")
-            @Min(2)
-            @Max(16)
+            @Size(min = 2, max = 16)
             private String username;
             @NotEmpty(message = "비밀번호를 입력해주세요.")
-            @Min(2)
-            @Max(16)
+            @Size(min = 2, max = 16)
             private String password;
       }
 
@@ -46,24 +42,19 @@ public class EmployeeReq {
       @Setter
       public static class EmployeeUpdateReqDto {
             @NotEmpty(message = "비밀번호를 입력해주세요.")
-            @Min(2)
-            @Max(16)
+            @Size(min = 2, max = 16)
             private String password;
             @NotEmpty(message = "이메일을 입력해주세요.")
-            @Min(2)
-            @Max(32)
+            @Size(min = 2, max = 32)
             private String email;
             @NotEmpty(message = "주소를 입력해주세요.")
-            @Min(2)
-            @Max(32)
+            @Size(min = 2, max = 32)
             private String address;
             @NotEmpty(message = "상세 주소를 입력해주세요.")
-            @Min(2)
-            @Max(64)
+            @Size(min = 2, max = 64)
             private String detailAddress;
             @NotEmpty(message = "전화번호를 입력해주세요.")
-            @Min(2)
-            @Max(16)
+            @Size(min = 2, max = 16)
             private String tel;
             private EmployeeDto employeeDto;
 
@@ -72,16 +63,13 @@ public class EmployeeReq {
             public static class EmployeeDto {
 
                   @NotEmpty(message = "실명을 입력해주세요.")
-                  @Min(2)
-                  @Max(16)
+                  @Size(min = 2, max = 16)
                   private String realName;
                   @NotEmpty(message = "학력을 입력해주세요.")
-                  @Min(2)
-                  @Max(16)
+                  @Size(min = 2, max = 16)
                   private String education;
                   @NotEmpty(message = "경력을 입력해주세요.")
-                  @Min(2)
-                  @Max(16)
+                  @Size(min = 2, max = 16)
                   private Integer career;
 
             }
