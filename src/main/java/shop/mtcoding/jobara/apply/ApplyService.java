@@ -38,6 +38,26 @@ public class ApplyService {
 
     @Transactional
     public void insertApply(ApplyReqDto applyReqDto, Integer principalId) {
+        // @PostMapping("/employee/apply")에 의해 호출됨.
+        // 기능 : Controller에서 지원 추가 요청을 전달받아서 DB에 해당 지원 저장
+        // 사용되는 요소 : 
+        // 진행 과정 :
+        // 1. 해당 공고가 DB에 존재하는지 확인하기
+        //  - findById 메서드를 통해 데이터(공고글)가 존재하는지 확인한다.
+        //  - 존재하지 않는다면, 예외를 처리한다. (msg: "존재하지 않는 게시물 입니다.")
+        //  - apply.getBoardId()는 해당 공고가 존재하는지 여부를 확인하는데 사용된다.
+        // 2. 해당 공고에 동일 회원이 지원했는지 여부 확인
+        //  - findByUserIdAndBoardId 메서드를 통해 데이터(지원)가 존재하는지 확인한다.
+        //  - 존재한다면, 예외를 처리한다. (msg: "이미 지원한 공고입니다.)
+        // 3. 해당 지원 DB에 저장
+        //  - 위 과정을 거친 뒤 DB에 insert한다.
+        //  - DB 데이터 처리 과정에서 예외가 발생하면 예외 처리한다. (msg: "서버 에러 : 지원 실패")
+
+        // 작성자 : 김태훈
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+        
         Apply apply = new Apply(principalId, applyReqDto);
         Board boardPS = boardRepository.findById(apply.getBoardId());
         Verify.validateApiObject(boardPS, "존재하지 않는 게시물 입니다.");
