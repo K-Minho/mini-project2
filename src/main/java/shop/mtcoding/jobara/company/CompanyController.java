@@ -82,7 +82,7 @@ public class CompanyController {
     @CompanyCheck
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid CompanyUpdateReqDto companyUpdateReqDto, 
             BindingResult bindingResult) {
-        // 1. 기능 : 기업 회원 가입 기능을 구현하는 메소드
+        // 1. 기능 : 기업 회원 수정 기능을 구현하는 메소드
         // 2. Arguments :
         // - CompanyUpdateReqDto
         //   (password, email, address, detailAddress, tel, profile, companyName, companyScale, companyField)
