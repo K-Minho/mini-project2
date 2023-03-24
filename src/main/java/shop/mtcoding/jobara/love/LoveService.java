@@ -24,6 +24,17 @@ public class LoveService {
 
     @Transactional
     public int insertLove(int boardId, int userId) {
+        // @PostMapping("/loves")에 의해 호출됨.
+        // 기능 : 좋아요 요청에 따라 boardId와 userId를 활용하여 DB에 저장
+        // 진행 과정 :
+        // 1. 좋아요 내역이 존재하는지 확인 (PostMan을 이용한 악용 방지)
+        // 2. Controller의 pathVariable로 넘어온 boardId가 존재하는지 게시물 PK값인지 체크 (PostMan을 이용한 악용 방지)
+        // 3. DB에 love 정보 저장
+
+        // 작성자 : 이상x
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
 
         Love lovePS = loveRepository.findByBoardIdAndUserId(boardId, userId);
         if (lovePS != null) {
@@ -43,21 +54,33 @@ public class LoveService {
         return love.getId();
     }
 
-    @Transactional(readOnly = true)
-    public LoveDetailRespDto getLove(int boardId, UserVo principal) {
+    // @Transactional(readOnly = true)
+    // public LoveDetailRespDto getLove(int boardId, UserVo principal) {
 
-        Love lovePS = loveRepository.findByBoardIdAndUserId(boardId, principal.getId());
+    //     Love lovePS = loveRepository.findByBoardIdAndUserId(boardId, principal.getId());
 
-        if (lovePS == null) {
-            return new LoveDetailRespDto(0, "");
-        } else {
-            return new LoveDetailRespDto(lovePS.getId(), "fa-solid");
-        }
+    //     if (lovePS == null) {
+    //         return new LoveDetailRespDto(0, "");
+    //     } else {
+    //         return new LoveDetailRespDto(lovePS.getId(), "fa-solid");
+    //     }
 
-    }
+    // }
 
     @Transactional
     public void deleteLove(int id, int userId) {
+        // @DeleteMapping("/loves/{id}")에 의해 호출됨.
+        // 기능 : 좋아요 취소 요청에 따라 loveId와 userId를 활용하여 DB에서 삭제
+        // 진행 과정 :
+        // 1. 좋아요 내역이 존재하는지 확인 (PostMan을 이용한 악용 방지)
+        // 2. 좋아요 내역에 있는 userId와 로그인한 userId를 비교하여 권한 체크
+        // 3. DB에서 love 정보 삭제
+
+        // 작성자 : 이상x
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         // 좋아요 존재 여부 체크
         Love lovePS = loveRepository.findById(id);
         if (lovePS == null) {

@@ -46,7 +46,7 @@ public class BoardService {
     private final ResumeRepository resumeRepository;
 
     @Transactional(readOnly = true)
-    public BoardDetailRespDto getDetail(Integer principalId, Integer boardId) {
+    public BoardDetailRespDto getDetail(Integer boardId, Integer principalId) {
         // @GetMapping("/boards/{id}")에 의해 호출됨.
         // 기능 : 게시글 상세보기 View에 필요한 데이터를 가져와 Controller에 전달
         // 사용되는 요소 : skill 파싱, 좋아요(스크랩) 파싱, carrer/jobType/education 파싱
