@@ -2,9 +2,9 @@ package shop.mtcoding.jobara.employee;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import shop.mtcoding.jobara.board.dto.BoardResp.PagingDto;
 import shop.mtcoding.jobara.common.aop.EmployeeCheck;
 import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
+import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeJoinReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeTechUpdateReqDto;
@@ -28,11 +30,12 @@ import shop.mtcoding.jobara.employee.dto.EmployeeResp.EmployeeAndResumeRespDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeResp.EmployeeUpdateRespDto;
 import shop.mtcoding.jobara.user.vo.UserVo;
 
+@RequiredArgsConstructor
 @RestController
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
+    private final HttpSession session;
 
     @GetMapping("/joinForm")
     public String joinForm() {
@@ -44,7 +47,8 @@ public class EmployeeController {
     public @ResponseBody ResponseEntity<?> update(@PathVariable int id,
             @RequestBody @Valid EmployeeUpdateReqDto employeeUpdateReqDto, BindingResult bindingResult) {
         UserVo UserVoPS = employeeService.updateEmpolyee(employeeUpdateReqDto, id);
-        return ResponseEntity.status(201).body(UserVoPS);
+        return new ResponseEntity<>(new ResponseDto<>(1, "수정 완료", UserVoPS),
+                HttpStatus.valueOf(201));
     }
 
     @PutMapping("/employee/update/tech/{id}")
@@ -55,7 +59,7 @@ public class EmployeeController {
         if (employeeTechUpdateReqDto.getCheckedValues() != null) {
             employeeService.updateEmpolyeeTech(employeeTechUpdateReqDto.getCheckedValues(), id);
         }
-        return new ResponseEntity<>(new ResponseDto<>(1, " 수정완료", null),
+        return new ResponseEntity<>(new ResponseDto<>(1, "기술 수정 완료", null),
                 HttpStatus.valueOf(201));
     }
 
@@ -65,7 +69,7 @@ public class EmployeeController {
         List<String> employeeTechPS = employeeService.getEmployeeTech(id);
         model.addAttribute("employee", employeePS);
         model.addAttribute("employeeTech", employeeTechPS);
-        return new ResponseEntity<>(new ResponseDto<>(1, "", model), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(new ResponseDto<>(1, "상세 페이지", model), HttpStatus.valueOf(200));
     }
 
     @GetMapping("/employee/{id}")
@@ -76,23 +80,23 @@ public class EmployeeController {
         List<Integer> employeeSkill = employeeService.getSkillForDetail(id);
         model.addAttribute("employeeDto", employeeUpdateRespDto);
         model.addAttribute("employeeSkill", employeeSkill);
-        return ResponseEntity.status(200).body(model);
+        return new ResponseEntity<>(new ResponseDto<>(1, "수정 페이지", model), HttpStatus.valueOf(200));
     }
 
     @GetMapping("/list")
     public @ResponseBody ResponseEntity<?> employeeList(Model model, Integer page) {
-        UserVo principal = (UserVo) model.getAttribute("principal");
+        LoginUser loginUser = (LoginUser) session.getAttribute("loginUser");
         PagingDto pagingPS = employeeService.getEmployee(page);
         model.addAttribute("pagingDto", pagingPS);
-        if (principal != null) {
-            if (principal.getRole().equals("company")) {
+        if (loginUser != null) {
+            if (loginUser.getRole().equals("company")) {
                 List<EmployeeAndResumeRespDto> recommendEmployeeListPS = employeeService
-                        .getRecommendEmployee(principal.getId());
+                        .getRecommendEmployee(loginUser.getId());
                 model.addAttribute("recommendEmployeeList", recommendEmployeeListPS);
             }
         }
 
-        return ResponseEntity.status(200).body(model);
+        return new ResponseEntity<>(new ResponseDto<>(1, "목록 페이지", model), HttpStatus.valueOf(200));
     }
 
     @PostMapping("/joinEmployee")
@@ -108,6 +112,6 @@ public class EmployeeController {
         List<String> employeeTechPS = employeeService.getEmployeeTech(id);
         model.addAttribute("employee", employeePS);
         model.addAttribute("employeeTech", employeeTechPS);
-        return ResponseEntity.status(200).body(model);
+        return new ResponseEntity<>(new ResponseDto<>(1, "상세 페이지", model), HttpStatus.valueOf(200));
     }
 }
