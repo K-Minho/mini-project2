@@ -50,7 +50,7 @@ public class AopHandler {
                 throw new CustomException("기업회원이 아닙니다.");
             }
         } catch (Exception e) {
-            throw new CustomException("기업회원이 아닙니다.");
+            throw new CustomException("로그인 검증 중 오류가 발생했습니다.");
         }
     }
 
@@ -80,7 +80,7 @@ public class AopHandler {
                 throw new CustomApiException("기업회원이 아닙니다.");
             }
         } catch (Exception e) {
-            throw new CustomApiException("기업회원이 아닙니다.");
+            throw new CustomApiException("로그인 검증 중 오류가 발생했습니다.");
         }
     }
 
@@ -110,7 +110,7 @@ public class AopHandler {
                 throw new CustomException("일반회원이 아닙니다.");
             }
         } catch (Exception e) {
-            throw new CustomException("일반회원이 아닙니다.");
+            throw new CustomException("로그인 검증 중 오류가 발생했습니다.");
         }
     }
 
@@ -141,7 +141,7 @@ public class AopHandler {
                 throw new CustomApiException("일반회원이 아닙니다.");
             }
         } catch (Exception e) {
-            throw new CustomApiException("일반회원이 아닙니다.");
+            throw new CustomApiException("로그인 검증 중 오류가 발생했습니다.");
         }
     }
 }
