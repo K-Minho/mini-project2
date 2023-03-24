@@ -57,7 +57,7 @@ public class ApplyService {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
-        
+
         Apply apply = new Apply(principalId, applyReqDto);
         Board boardPS = boardRepository.findById(apply.getBoardId());
         Verify.validateApiObject(boardPS, "존재하지 않는 게시물 입니다.");
@@ -82,6 +82,30 @@ public class ApplyService {
 
     @Transactional
     public void approveApply(ApplyDecideReqDto applyDecideReqDto, int boradId) {
+        // @PutMapping("/company/apply/{id}")에 의해 호출됨.
+        // 기능 : Controller에서 지원 수정 요청을 전달받아서 DB에 해당 지원 수정
+        // 사용되는 요소 : 
+        // 진행 과정 :
+        // 1. 해당 구직자가 DB에 존재하는지 확인하기
+        //  - findById 메서드를 통해 데이터(구직자)가 존재하는지 확인한다.
+        //  - 존재하지 않는다면, 예외를 처리한다. (msg: "존재하지 않는 유저입니다.")
+        //  - applyDecideReqDto.getUserId()는 해당 회원이 존재하는지 여부를 확인하는데 사용된다.
+        // 2. 해당 지원이 DB에 존재하는지 확인하기
+        //  - findByUserIdAndBoardId 메서드를 통해 데이터(지원)가 존재하는지 확인한다.
+        //  - 존재하지 않는다면, 예외를 처리한다. (msg: "존재하지 않는 지원입니다.")
+        // 3. 해당 지원 DB에 저장
+        //  - 위 과정을 거친 뒤 DB에 update한다.
+        //  - DB 데이터 처리 과정에서 예외가 발생하면 예외 처리한다. (msg: "서버 에러 : 결과 처리 실패")
+        // 4. 지원 처리 결과 Mail 전송
+        //  - findByIdWithBoardForMail 메서드를 통해 해당 지원 결과를 메일로 전송하기 위해 필요한 데이터를 가져온다.
+        //  - sendMail 메서드로 메일을 전송한다.
+        //  - 동기화를 위해서 해당 메서드들을 새 스레드에서 실행한다.
+
+        // 작성자 : 김태훈
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
+
         User user = userRepository.findById(applyDecideReqDto.getUserId());
         Verify.validateApiObject(user, "존재하지 않는 유저입니다.");
         Apply apply = new Apply(boradId, applyDecideReqDto.getUserId());
@@ -92,7 +116,7 @@ public class ApplyService {
         try {
             applyRepository.updateById(applyPS);
         } catch (Exception e) {
-            throw new CustomApiException("결과 처리 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomApiException("서버 에러 : 결과 처리 실패", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
             new Thread(() -> {
