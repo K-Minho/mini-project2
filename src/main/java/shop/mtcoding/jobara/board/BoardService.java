@@ -150,13 +150,13 @@ public class BoardService {
     @Transactional
     public void deleteMyBoard(int boardId, int principalId) {
         Board boardPS = boardRepository.findById(boardId);
-        // if (boardPS == null) {
-        // throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
-        // }
+        if (boardPS == null) {
+        throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
+        }
 
-        // if (boardPS.getUserId() != principalId) {
-        // throw new CustomApiException("게시글 삭제 권한이 없습니다");
-        // }
+        if (boardPS.getUserId() != principalId) {
+        throw new CustomApiException("게시글 삭제 권한이 없습니다");
+        }
 
         try {
             boardRepository.deleteById(boardId);
