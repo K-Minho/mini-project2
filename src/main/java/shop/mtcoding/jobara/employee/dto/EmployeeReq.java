@@ -15,15 +15,15 @@ public class EmployeeReq {
       @Getter
       @Setter
       public static class EmployeeJoinReqDto {
-            @NotEmpty
+            @NotEmpty(message = "유저이름을 입력해주세요.")
             @Min(2)
             @Max(16)
             private String username;
-            @NotEmpty
+            @NotEmpty(message = "비밀번호를 입력해주세요.")
             @Min(2)
             @Max(16)
             private String password;
-            @NotEmpty
+            @NotEmpty(message = "이메일을 입력해주세요.")
             @Min(2)
             @Max(32)
             private String email;
@@ -32,11 +32,11 @@ public class EmployeeReq {
       @Getter
       @Setter
       public static class EmployeeLoginReqDto {
-            @NotEmpty
+            @NotEmpty(message = "유저이름을 입력해주세요.")
             @Min(2)
             @Max(16)
             private String username;
-            @NotEmpty
+            @NotEmpty(message = "비밀번호를 입력해주세요.")
             @Min(2)
             @Max(16)
             private String password;
@@ -45,23 +45,23 @@ public class EmployeeReq {
       @Getter
       @Setter
       public static class EmployeeUpdateReqDto {
-            @NotEmpty
+            @NotEmpty(message = "비밀번호를 입력해주세요.")
             @Min(2)
             @Max(16)
             private String password;
-            @NotEmpty
+            @NotEmpty(message = "이메일을 입력해주세요.")
             @Min(2)
             @Max(32)
             private String email;
-            @NotEmpty
+            @NotEmpty(message = "주소를 입력해주세요.")
             @Min(2)
             @Max(32)
             private String address;
-            @NotEmpty
+            @NotEmpty(message = "상세 주소를 입력해주세요.")
             @Min(2)
             @Max(64)
             private String detailAddress;
-            @NotEmpty
+            @NotEmpty(message = "전화번호를 입력해주세요.")
             @Min(2)
             @Max(16)
             private String tel;
@@ -72,15 +72,15 @@ public class EmployeeReq {
             @Setter
             public static class EmployeeDto {
 
-                  @NotEmpty
+                  @NotEmpty(message = "실명을 입력해주세요.")
                   @Min(2)
                   @Max(16)
                   private String realName;
-                  @NotEmpty
+                  @NotEmpty(message = "학력을 입력해주세요.")
                   @Min(2)
                   @Max(16)
                   private String education;
-                  @NotEmpty
+                  @NotEmpty(message = "경력을 입력해주세요.")
                   @Min(2)
                   @Max(16)
                   private Integer career;
@@ -98,7 +98,7 @@ public class EmployeeReq {
       @Getter
       @Setter
       public static class EmployeeInsertSkillReqDto {
-            @NotEmpty
+
             private Integer employeeId;
             private ArrayList<Integer> checkLang;
 
