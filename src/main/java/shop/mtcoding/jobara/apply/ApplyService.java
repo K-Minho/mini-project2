@@ -2,11 +2,11 @@ package shop.mtcoding.jobara.apply;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyDecideReqDto;
 import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyReqDto;
 import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndResume;
@@ -23,18 +23,12 @@ import shop.mtcoding.jobara.user.model.User;
 import shop.mtcoding.jobara.user.model.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 public class ApplyService {
-    @Autowired
-    private ApplyRepository applyRepository;
-
-    @Autowired
-    private BoardRepository boardRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private Mail mail;
+    private final ApplyRepository applyRepository;
+    private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
+    private final Mail mail;
 
     @Transactional
     public void insertApply(ApplyReqDto applyReqDto, Integer principalId) {

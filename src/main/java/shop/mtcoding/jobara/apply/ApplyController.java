@@ -5,7 +5,6 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,25 +16,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyDecideReqDto;
 import shop.mtcoding.jobara.apply.dto.ApplyReq.ApplyReqDto;
 import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndResume;
 import shop.mtcoding.jobara.apply.dto.ApplyResp.ApplyJoinBoardAndUser;
-import shop.mtcoding.jobara.common.aop.CompanyCheck;
 import shop.mtcoding.jobara.common.aop.CompanyCheckApi;
-import shop.mtcoding.jobara.common.aop.EmployeeCheck;
 import shop.mtcoding.jobara.common.aop.EmployeeCheckApi;
 import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 
 @RestController
+@RequiredArgsConstructor
 public class ApplyController {
-
-    @Autowired
-    private ApplyService applyService;
-
-    @Autowired
-    private HttpSession session;
+    private final ApplyService applyService;
+    private final HttpSession session;
 
     @PostMapping("/employee/apply")
     @EmployeeCheckApi
@@ -60,7 +55,7 @@ public class ApplyController {
     }
 
     @GetMapping("/company/{id}/apply")
-    @CompanyCheck
+    @CompanyCheckApi
     public ResponseEntity<?> companyApplyList(@PathVariable Integer id) {
         // 1. 기능 : 해당 기업 회원의 지원자 목록을 불러오는 메소드
         // 2. Arguments :
@@ -110,7 +105,7 @@ public class ApplyController {
     }
 
     @GetMapping("/employee/{id}/apply")
-    @EmployeeCheck
+    @EmployeeCheckApi
     public ResponseEntity<?> employeeApplyList(@PathVariable Integer id) {
         // 1. 기능 : 해당 구직자 회원의 지원 목록을 불러오는 메소드
         // 2. Arguments :
