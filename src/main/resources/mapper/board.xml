@@ -27,19 +27,19 @@
             <result property="profile" column="profile"/>
         </association>
 
-        <association property="love" javaType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$LoveDto">
-            <id property="id" column="love_id"/>
-            <id property="boardId" column="love_board_id"/>
-            <id property="userId" column="love_user_id"/>
-        </association>
-
-        <collection property="resume" javaType="java.util.ArrayList" ofType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$ResumeDto">
-            <id property="id" column="resume_id"/>
-            <result property="userId" column="resume_user_id"/>
-            <result property="title" column="resume_title"/>
-            <result property="content" column="resume_content"/>
-            <result property="createdAt" column="resume_created_at"/>
-        </collection>
+            <association property="love" javaType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$LoveDto">
+                <id property="id" column="love_id"/>
+                <id property="boardId" column="love_board_id"/>
+                <id property="userId" column="love_user_id"/>
+            </association>
+        
+            <collection property="resume" javaType="java.util.ArrayList" ofType="shop.mtcoding.jobara.board.dto.BoardDetailRespDto$ResumeDto">
+                <id property="id" column="resume_id"/>
+                <result property="userId" column="resume_user_id"/>
+                <result property="title" column="resume_title"/>
+                <result property="content" column="resume_content"/>
+                <result property="createdAt" column="resume_created_at"/>
+            </collection>
 
         <collection property="needParse" ofType="java.lang.String">
             <result column="skills" />
@@ -47,31 +47,52 @@
     </resultMap>
 
     <select id="findBoardDetailByJoin" resultMap="boardDetailJoin">
-        SELECT bt.*, ct.user_id company_user_id, ct.company_name company_name, ct.company_scale company_scale
-            , ct.company_field company_field, ut.id user_id, ut.profile profile,lv.id love_id, lv.board_id love_board_id, lv.user_id love_user_id, btt.skills
-            , rt.id resume_id, rt.user_id resume_user_id, rt.title resume_title, rt.content resume_content, rt.created_at resume_created_at
-        FROM (
-            SELECT * 
-            FROM BOARD_TB
-            WHERE id = #{boardId}
-        ) bt
-        LEFT OUTER JOIN company_tb ct ON bt.user_id = ct.user_id
-        LEFT OUTER JOIN user_tb ut ON bt.user_id = ut.id
-        LEFT OUTER JOIN (
-            SELECT *
-            FROM love_tb
-            WHERE user_id = #{userId}
-        ) lv ON lv.board_id = bt.id
-        LEFT OUTER JOIN (
-            SELECT board_id, STRING_AGG(skill, ',') skills
-            FROM BOARDTECH_TB
-            GROUP BY board_id
-        ) btt ON btt.board_id = bt.id
-        LEFT OUTER JOIN (
-            SELECT *
-            FROM resume_tb
-            ORDER BY id 
-        ) rt ON rt.user_id = #{userId};
+     <choose>
+            <when test='userId == null'>
+                SELECT bt.*, ct.user_id company_user_id, ct.company_name company_name, ct.company_scale company_scale
+                    , ct.company_field company_field, ut.id user_id, ut.profile profile, btt.skills
+                FROM (
+                    SELECT * 
+                    FROM BOARD_TB
+                    WHERE id = 1
+                ) bt
+                LEFT OUTER JOIN company_tb ct ON bt.user_id = ct.user_id
+                LEFT OUTER JOIN user_tb ut ON bt.user_id = ut.id
+                LEFT OUTER JOIN (
+                    SELECT board_id, STRING_AGG(skill, ',') skills
+                    FROM BOARDTECH_TB
+                    GROUP BY board_id
+                ) btt ON btt.board_id = bt.id;
+            </when>
+
+            <otherwise>
+                SELECT bt.*, ct.user_id company_user_id, ct.company_name company_name, ct.company_scale company_scale
+                    , ct.company_field company_field, ut.id user_id, ut.profile profile,lv.id love_id, lv.board_id love_board_id, lv.user_id love_user_id, btt.skills
+                    , rt.id resume_id, rt.user_id resume_user_id, rt.title resume_title, rt.content resume_content, rt.created_at resume_created_at
+                FROM (
+                    SELECT * 
+                    FROM BOARD_TB
+                    WHERE id = #{boardId}
+                ) bt
+                LEFT OUTER JOIN company_tb ct ON bt.user_id = ct.user_id
+                LEFT OUTER JOIN user_tb ut ON bt.user_id = ut.id
+                LEFT OUTER JOIN (
+                    SELECT *
+                    FROM love_tb
+                    WHERE user_id = #{userId}
+                ) lv ON lv.board_id = bt.id
+                LEFT OUTER JOIN (
+                    SELECT board_id, STRING_AGG(skill, ',') skills
+                    FROM BOARDTECH_TB
+                    GROUP BY board_id
+                ) btt ON btt.board_id = bt.id
+                LEFT OUTER JOIN (
+                    SELECT *
+                    FROM resume_tb
+                    ORDER BY id 
+                ) rt ON rt.user_id = #{userId};
+            </otherwise>
+         </choose>
     </select>
 
 <!-- list -->
