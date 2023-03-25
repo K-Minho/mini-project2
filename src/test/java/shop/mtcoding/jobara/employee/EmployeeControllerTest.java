@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -22,13 +21,11 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import shop.mtcoding.jobara.common.config.auth.JwtProvider;
 import shop.mtcoding.jobara.employee.dto.EmployeeJoinBuilder;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeJoinReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeTechUpdateReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeUpdateReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeUpdateBuilder;
-import shop.mtcoding.jobara.user.model.User;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
@@ -40,7 +37,6 @@ public class EmployeeControllerTest {
       @Autowired
       private ObjectMapper om;
 
-      private MockHttpSession mockSession;
       String employeeJwtToken;
 
       @BeforeEach
