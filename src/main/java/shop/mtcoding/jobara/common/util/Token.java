@@ -14,7 +14,6 @@ public class Token {
     public static LoginUser loginCheck(LoginUser principal, ServletRequest request, ServletResponse response) {
         HttpServletRequest req = (HttpServletRequest) request;
         String prefixJwt = req.getHeader(JwtProvider.HEADER);
-        System.out.println("테스트 : " + prefixJwt);
 
         if (!(prefixJwt == null)) {
             String jwt = prefixJwt.replace(JwtProvider.TOKEN_PREFIX, "");
