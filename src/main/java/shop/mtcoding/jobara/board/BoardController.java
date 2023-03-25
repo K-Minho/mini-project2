@@ -64,7 +64,7 @@ public class BoardController {
                 }
             }
         }
-        return new ResponseEntity<>(new ResponseDto<>(1, "메인 페이지", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "메인 페이지 출력 성공", null), HttpStatus.OK);
     }
 
     @GetMapping("/boards/{id}")
@@ -96,7 +96,7 @@ public class BoardController {
 
         BoardDetailRespDto boardDetailRespDto = boardService.getDetail(id, principal);
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 상세페이지", boardDetailRespDto), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "공고 상세정보 불러오기 성공", boardDetailRespDto), HttpStatus.OK);
     }
 
     @GetMapping("/boards")
@@ -130,7 +130,7 @@ public class BoardController {
 
         BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 목록페이지", boardPagingDto), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "공고 리스트 불러오기 성공", boardPagingDto), HttpStatus.OK);
     }
 
     @GetMapping("/company/boards/saveForm")
@@ -144,7 +144,7 @@ public class BoardController {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록페이지", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "공고 등록페이지 출력 성공", null), HttpStatus.OK);
     }
 
     @GetMapping("/company/boards/updateForm/{id}")
@@ -167,7 +167,7 @@ public class BoardController {
         LoginUser principal = (LoginUser) session.getAttribute("loginUser");
         BoardUpdateFormRespDto boardUpdateFormRespDto = boardService.getUpdateFormInfo(id, principal.getId());
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정페이지", boardUpdateFormRespDto), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "공고 수정페이지 출력 성공", boardUpdateFormRespDto), HttpStatus.OK);
     }
 
     @PutMapping("/company/boards/{id}")
@@ -206,7 +206,7 @@ public class BoardController {
         boardService.updateBoard(boardUpdateReqDto, principal.getId());
         boardService.updateTech(boardUpdateReqDto.getCheckedValues(), id);
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 수정 성공", null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ResponseDto<>(1, "공고 수정성공", null), HttpStatus.CREATED);
     }
 
     @PostMapping("/company/boards")
@@ -244,7 +244,7 @@ public class BoardController {
         int boardId = boardService.insertBoard(boardInsertReqDto, principal.getId());
         boardService.insertSkill(boardInsertReqDto.getCheckLang(), boardId);
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글 등록 성공", null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ResponseDto<>(1, "공고 등록성공", null), HttpStatus.CREATED);
     }
 
     @GetMapping("/company/boards/myList/{id}")
@@ -268,7 +268,7 @@ public class BoardController {
         LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
         List<BoardMyListRespDto> myBoardListPS = boardService.getMyBoardList(id, principal.getId());
-        return new ResponseEntity<>(new ResponseDto<>(1, "등록 게시글 목록", myBoardListPS), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "등록 공고 리스트 불러오기 성공", myBoardListPS), HttpStatus.OK);
     }
 
     @GetMapping("/employee/boards/myScrapList/{id}")
@@ -293,7 +293,7 @@ public class BoardController {
         LoginUser principal = (LoginUser) session.getAttribute("loginUser");
 
         List<BoardMyScrapListRespDto> myScrapBoardListPS = boardService.getMyScrapBoardList(id, principal.getId());
-        return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 게시글 목록", myScrapBoardListPS), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 공고 목록 불러오기 성공", myScrapBoardListPS), HttpStatus.OK);
     }
 
     @DeleteMapping("/company/boards/{id}")
@@ -313,7 +313,7 @@ public class BoardController {
 
         boardService.deleteMyBoard(id, principal.getId());
 
-        return new ResponseEntity<>(new ResponseDto<>(1, "게시글을 삭제하였습니다", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto<>(1, "공고 삭제 성공", null), HttpStatus.OK);
     }
 
 }
