@@ -12,15 +12,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shop.mtcoding.jobara.love.dto.LoveReq.LoveSaveReqDto;
-import shop.mtcoding.jobara.user.vo.UserVo;
 
 @Transactional
 @AutoConfigureMockMvc
@@ -32,27 +32,29 @@ public class LoveControllerTest {
     @Autowired
     private ObjectMapper om;
 
-    private MockHttpSession employeeMockSession;
-    private MockHttpSession companyMockSession;
+    String employeeJwtToken;
+    String companyJwtToken;
 
     @BeforeEach
-    public void setUp() {
-        UserVo employeePrincipal = new UserVo();
-        UserVo companyPrincipal = new UserVo();
-        employeePrincipal.setId(6);
-        employeePrincipal.setUsername("cos");
-        employeePrincipal.setRole("company");
-        employeePrincipal.setProfile(null);
+    public void setUp() throws Exception {
 
-        companyPrincipal.setId(1);
-        companyPrincipal.setUsername("ssar");
-        companyPrincipal.setRole("employee");
-        companyPrincipal.setProfile(null);
+            // employee test용
+            MockHttpServletRequestBuilder employeeLoginRequest = post("/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"username\":\"ssar\", \"password\":\"1234\"}");
+            MvcResult employeeLoginResult = mvc.perform(employeeLoginRequest).andReturn();
 
-        employeeMockSession = new MockHttpSession();
-        companyMockSession = new MockHttpSession();
-        employeeMockSession.setAttribute("EmployeePrincipal", employeePrincipal);
-        companyMockSession.setAttribute("CompanyPrincipal", companyPrincipal);
+            // 로그인 응답에서 토큰 추출하기
+            employeeJwtToken = employeeLoginResult.getResponse().getHeader("Authorization");
+
+            // company test용
+            MockHttpServletRequestBuilder companyLoginRequest = post("/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"username\":\"cos\", \"password\":\"1234\"}");
+            MvcResult companyLoginResult = mvc.perform(companyLoginRequest).andReturn();
+
+            // 로그인 응답에서 토큰 추출하기
+            companyJwtToken = companyLoginResult.getResponse().getHeader("Authorization");
     }
 
     @Test
@@ -67,14 +69,14 @@ public class LoveControllerTest {
         ResultActions resultActions = mvc.perform(post("/loves")
                 .content(requestBody)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .session(employeeMockSession));
+                .header("Authorization", "Bearer " + employeeJwtToken));
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("테스트 : " + responseBody);
 
         // then
         resultActions.andExpect(status().isCreated());
-        resultActions.andExpect(jsonPath("$.msg").value("좋아요성공"));
+        resultActions.andExpect(jsonPath("$.msg").value("좋아요 성공"));
         // resultActions.andExpect(jsonPath("$.msg").value("좋아요 내역이 존재합니다."));
     }
 
@@ -86,7 +88,7 @@ public class LoveControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(delete("/loves/" + loveId)
-                .session(employeeMockSession));
+        .header("Authorization", "Bearer " + employeeJwtToken));
 
         // then
         resultActions.andExpect(status().isOk());
