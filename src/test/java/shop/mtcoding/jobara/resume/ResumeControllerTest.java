@@ -96,18 +96,18 @@ public class ResumeControllerTest {
             resultActions.andExpect(status().is2xxSuccessful());
       }
 
-      
+
       @Test
       public void resumeDelete_test() throws Exception {
             // given
             int id = 1;
             int id2 = 2; // 본인것이 아닌 이력서
             // when
-            ResultActions resultActions = mvc.perform(delete("/resume/" + id + "/delete").contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
-            ResultActions resultActions2 = mvc.perform(delete("/resume/" + id2 + "/delete").contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
+            ResultActions resultActions = mvc.perform(delete("/employee/resume/" + id).contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
+            ResultActions resultActions2 = mvc.perform(delete("/employee/resume/" + id2).contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
 
             // then
-            resultActions.andExpect(jsonPath("$.code").value(1));
+            resultActions.andExpect(status().is2xxSuccessful());
             resultActions2.andExpect(status().is4xxClientError()); // 본인 것이 아닌 이력서 삭제 요청시
       }
 
