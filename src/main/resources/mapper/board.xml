@@ -258,11 +258,11 @@
             <result property="dday" column="dday"/>
 
             <association property="company" javaType="shop.mtcoding.jobara.board.dto.BoardMyListRespDto$CompanyDto">
-                <id property="userId" column="user_id"/>
                 <result property="companyName" column="company_name"/>
             </association>
             
             <association property="user" javaType="shop.mtcoding.jobara.board.dto.BoardMyListRespDto$UserDto">
+                <id property="id" column="user_id"/>
                 <result property="profile" column="profile"/>
             </association>
 
@@ -285,16 +285,16 @@
             <result property="dday" column="dday"/>
 
             <association property="company" javaType="shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto$CompanyDto">
-                <id property="userId" column="user_id"/>
                 <result property="companyName" column="company_name"/>
             </association>
             
             <association property="user" javaType="shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto$UserDto">
+                <id property="id" column="user_id"/>
                 <result property="profile" column="profile"/>
             </association>
 
             <association property="love" javaType="shop.mtcoding.jobara.board.dto.BoardMyScrapListRespDto$LoveDto">
-                <id property="lovdId" column="love_id"/>
+                <id property="id" column="love_id"/>
                 <result property="boardId" column="love_board_id"/>
                 <result property="userId" column="love_user_id"/>
                 <result property="css" column="css"/>

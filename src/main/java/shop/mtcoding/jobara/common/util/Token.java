@@ -15,7 +15,7 @@ public class Token {
         HttpServletRequest req = (HttpServletRequest) request;
         String prefixJwt = req.getHeader(JwtProvider.HEADER);
 
-        if (!prefixJwt.equals("Bearer null")) {
+        if (!(prefixJwt == null)) {
             String jwt = prefixJwt.replace(JwtProvider.TOKEN_PREFIX, "");
 
             DecodedJWT decodedJWT = JwtProvider.verify(jwt);

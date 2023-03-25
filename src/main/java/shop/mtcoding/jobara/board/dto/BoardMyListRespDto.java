@@ -15,13 +15,13 @@ public class BoardMyListRespDto {
     @Getter
     @Setter
     public static class CompanyDto {
-        private Integer userId;
         private String companyName;
     }
-
+    
     @Getter
     @Setter
     public static class UserDto {
+        private Integer id;
         private String profile;
     }
 
