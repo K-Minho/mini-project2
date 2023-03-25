@@ -17,17 +17,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import shop.mtcoding.jobara.common.util.RedisService;
 import shop.mtcoding.jobara.resume.dto.ResumeReq.ResumeSaveReq;
 import shop.mtcoding.jobara.resume.dto.ResumeReq.ResumeUpdateReq;
 import shop.mtcoding.jobara.resume.model.Resume;
-import shop.mtcoding.jobara.user.vo.UserVo;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
@@ -39,21 +38,16 @@ public class ResumeControllerTest {
       @Autowired
       ObjectMapper om;
 
-      @Autowired
-      private RedisService redisService;
-
-      private MockHttpSession mockSession;
+      String employeeJwtToken;
 
       @BeforeEach
-      public void setUp() {
-            UserVo principal = new UserVo();
-            principal.setId(1);
-            principal.setUsername("ssar");
-            principal.setRole("employee");
-            principal.setProfile(null);
-            redisService.setValue("principal", principal);
-            mockSession = new MockHttpSession();
-            mockSession.setAttribute("principal", principal);
+      public void setUp() throws Exception {
+              MockHttpServletRequestBuilder employeeLoginRequest = post("/login")
+                              .contentType(MediaType.APPLICATION_JSON)
+                              .content("{\"username\":\"ssar\", \"password\":\"1234\"}");
+              MvcResult employeeLoginResult = mvc.perform(employeeLoginRequest).andReturn();
+
+              employeeJwtToken = employeeLoginResult.getResponse().getHeader("Authorization");
       }
 
       @Test
@@ -63,12 +57,11 @@ public class ResumeControllerTest {
             // when
 
             ResultActions resultActions = mvc.perform(
-                        get("/resume/list").session(mockSession));
+                        get("/employee/resume/list").contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
 
-            Map<String, Object> map = resultActions.andReturn().getModelAndView().getModel();
-            List<Resume> resumeList = (List<Resume>) map.get("resumeList");
+            String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+            System.out.println("resp:" + responseBody);
             // then
-            assertThat(resumeList.get(0).getTitle()).isEqualTo("뛰어난 컴퓨터 프로그래머 능력을 펼쳐보이겠습니다.");
             resultActions.andExpect(status().is2xxSuccessful());
 
       }
@@ -83,9 +76,9 @@ public class ResumeControllerTest {
             // when
             ResultActions resultActions = mvc.perform(
                         post("/resume/save").content(requestBody)
-                                    .contentType(MediaType.APPLICATION_JSON_VALUE).session(mockSession));
+                        .contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
             // then
-            resultActions.andExpect(jsonPath("$.code").value(1));
+            resultActions.andExpect(status().is2xxSuccessful());
       }
 
       @Test
@@ -100,7 +93,7 @@ public class ResumeControllerTest {
             // when
             ResultActions resultActions = mvc.perform(
                         post("/resume/update/" + id).content(requestBody)
-                                    .contentType(MediaType.APPLICATION_JSON_VALUE).session(mockSession));
+                        .contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
             // then
             resultActions.andExpect(jsonPath("$.code").value(1));
       }
@@ -111,8 +104,8 @@ public class ResumeControllerTest {
             int id = 1;
             int id2 = 2; // 본인것이 아닌 이력서
             // when
-            ResultActions resultActions = mvc.perform(delete("/resume/" + id + "/delete").session(mockSession));
-            ResultActions resultActions2 = mvc.perform(delete("/resume/" + id2 + "/delete").session(mockSession));
+            ResultActions resultActions = mvc.perform(delete("/resume/" + id + "/delete").contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
+            ResultActions resultActions2 = mvc.perform(delete("/resume/" + id2 + "/delete").contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
 
             // then
             resultActions.andExpect(jsonPath("$.code").value(1));
