@@ -1,14 +1,11 @@
 package shop.mtcoding.jobara.resume;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shop.mtcoding.jobara.resume.dto.ResumeReq.ResumeSaveReq;
 import shop.mtcoding.jobara.resume.dto.ResumeReq.ResumeUpdateReq;
-import shop.mtcoding.jobara.resume.model.Resume;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
@@ -77,6 +73,8 @@ public class ResumeControllerTest {
             ResultActions resultActions = mvc.perform(
                         post("/employee/resume/save").content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
+            String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+            System.out.println("resp:" + responseBody);
             // then
             resultActions.andExpect(status().is2xxSuccessful());
       }
@@ -92,12 +90,13 @@ public class ResumeControllerTest {
             String requestBody = om.writeValueAsString(resume);
             // when
             ResultActions resultActions = mvc.perform(
-                        post("/resume/update/" + id).content(requestBody)
+                        put("/employee/resume/" + id).content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
             // then
-            resultActions.andExpect(jsonPath("$.code").value(1));
+            resultActions.andExpect(status().is2xxSuccessful());
       }
 
+      
       @Test
       public void resumeDelete_test() throws Exception {
             // given
