@@ -14,8 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.yaml.snakeyaml.events.Event.ID;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,15 +38,16 @@ public class EmployeeControllerTest {
       private ObjectMapper om;
 
       private MockHttpSession mockSession;
+      String employeeJwtToken;
 
       @BeforeEach
-      public void setUp() {
-            User user = new User();
-            user.setId(1);
-            user.setRole("employee");
-            mockSession = new MockHttpSession();
-            mockSession.setAttribute("loginUser", user);
+      public void setUp() throws Exception {
+              MockHttpServletRequestBuilder employeeLoginRequest = post("/login")
+                              .contentType(MediaType.APPLICATION_JSON)
+                              .content("{\"username\":\"ssar\", \"password\":\"1234\"}");
+              MvcResult employeeLoginResult = mvc.perform(employeeLoginRequest).andReturn();
 
+              employeeJwtToken = employeeLoginResult.getResponse().getHeader("Authorization");
       }
 
       @Test
@@ -117,6 +119,23 @@ public class EmployeeControllerTest {
             ResultActions resultActions = mvc
                         .perform(get("/user/" + id + "/resume/" + resumeId)
                                     .contentType(MediaType.APPLICATION_JSON_VALUE));
+            String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+            System.out.println("resp:" + responseBody);
+
+            // then
+            resultActions.andExpect(status().is2xxSuccessful());
+      }
+
+      @Test
+      public void updateForm_test() throws Exception {
+
+            // given
+            int id = 1;
+            
+            // when
+            ResultActions resultActions = mvc
+                        .perform(get("/employee/"+id)
+                                    .contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
             String responseBody = resultActions.andReturn().getResponse().getContentAsString();
             System.out.println("resp:" + responseBody);
 
