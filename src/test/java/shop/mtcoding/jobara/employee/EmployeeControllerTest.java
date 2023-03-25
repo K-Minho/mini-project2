@@ -143,4 +143,21 @@ public class EmployeeControllerTest {
             resultActions.andExpect(status().is2xxSuccessful());
       }
 
+      @Test
+      public void detail_test() throws Exception {
+
+            // given
+            int id = 1;
+            
+            // when
+            ResultActions resultActions = mvc
+                        .perform(get("/user/"+id)
+                                    .contentType(MediaType.APPLICATION_JSON_VALUE));
+            String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+            
+            // then
+            System.out.println("resp :" + responseBody);
+            resultActions.andExpect(status().is2xxSuccessful());
+      }
+
 }
