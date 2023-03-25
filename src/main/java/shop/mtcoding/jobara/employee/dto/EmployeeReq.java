@@ -59,7 +59,7 @@ public class EmployeeReq {
 
             @Getter
             @Setter
-            @AllArgsConstructor
+            @NoArgsConstructor
             public static class EmployeeDto {
 
                   @NotEmpty(message = "실명을 입력해주세요.")

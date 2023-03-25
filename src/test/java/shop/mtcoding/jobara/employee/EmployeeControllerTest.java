@@ -78,14 +78,11 @@ public class EmployeeControllerTest {
             int id = 1;
             EmployeeUpdateReqDto employeeUpdateReqDto = EmployeeUpdateBuilder.makeUpdateReqDto("1234", "asdf@asdf.asd",
                         "부산광역시", "부산대로", "01011112222", "김실명", "4년제", 1);
-            User user = (User) mockSession.getAttribute("loginUser");
             String requestBody = om.writeValueAsString(employeeUpdateReqDto);
 
             // when
             System.out.println("req:" + requestBody);
-            ResultActions resultActions = mvc.perform(put("/employee/" + id).content(requestBody)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE).session(mockSession)
-                        .header("Authorization", JwtProvider.create(user)));
+            ResultActions resultActions = mvc.perform(put("/employee/" + id).content(requestBody).contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
             String responseBody = resultActions.andReturn().getResponse().getContentAsString();
             System.out.println("resp:" + responseBody);
 
@@ -179,8 +176,6 @@ public class EmployeeControllerTest {
             ResultActions resultActions = mvc
                         .perform(put("/employee/update/tech/"+id).content(requestBody)
                                     .contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
-            String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-            
 
             // then
             resultActions.andExpect(status().is2xxSuccessful());
