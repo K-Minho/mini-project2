@@ -14,6 +14,7 @@ public class BoardUpdateReqBuilder extends BoardUpdateReqDto {
 
         mockBoardUpdateReqDto.setId(id);
         mockBoardUpdateReqDto.setTitle(title);
+        mockBoardUpdateReqDto.setContent(content);
         mockBoardUpdateReqDto.setCareerString(careerString);
         mockBoardUpdateReqDto.setEducationString(educationString);
         mockBoardUpdateReqDto.setJobTypeString(jobTypeString);

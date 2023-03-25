@@ -3,6 +3,8 @@ package shop.mtcoding.jobara.board;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -33,6 +35,7 @@ import shop.mtcoding.jobara.common.config.auth.LoginUser;
 import shop.mtcoding.jobara.common.dto.ResponseDto;
 import shop.mtcoding.jobara.common.ex.CustomApiException;
 import shop.mtcoding.jobara.common.util.DateParse;
+import shop.mtcoding.jobara.common.util.Token;
 
 @RequiredArgsConstructor
 @RestController
@@ -65,7 +68,7 @@ public class BoardController {
     }
 
     @GetMapping("/boards/{id}")
-    public ResponseEntity<?> detail(@PathVariable int id) {
+    public ResponseEntity<?> detail(@PathVariable int id, ServletRequest request, ServletResponse response) {
         // 1. 기능 : 구인공고 목록에서 특정 구인공고 클릭시 해당 페이지를 요청하는 메서드
         //          (전체 공고리스트, 등록한 공고, 스크랩한 공고 각 페이지에서 요청 가능)
         // 2. Arguments :
@@ -73,44 +76,57 @@ public class BoardController {
 
         // 3. Return :
         // - BoardDetailRespDto
-        //   (id, title, content, career, jobType, education, favor, List<Integer> skill,
-        //    Company(userId, companyName, comapnyScale, companyField),
-        //    user(id, profile),
-        //    resume(id, userId, title, content, createdAt)
+        // (id, title, content, career, jobType, education, favor, List<Integer> skill,
+        //  Company(userId, companyName, comapnyScale, companyField),
+        //  user(id, profile),
+        //  resume(id, userId, title, content, createdAt)
 
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
 
-        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
-        BoardDetailRespDto boardDetailRespDto = boardService.getDetail(id, principal.getId());
+        // 특이사항 : 해당 핸들러는 인증이 필요 없지만, employee 로그인 유저에겐 love, resume을 보여 줘야 함
+        //           Filter에서는 걸리지 않기 때문에 session에 값이 저장되어 있지 않은 상태임
+        //           로그인 유저의 id가 필요한 상황이라 인터셉터나 AOP처리를 하려고 하였으나 기타 문제로 인해 추후에 처리할 예정
+        //           (진행 코드는 Controller에서 token을 확인하여 id값을 가져옴)
+        LoginUser principal = null;
+        principal = Token.loginCheck(principal, request, response);
+
+        BoardDetailRespDto boardDetailRespDto = boardService.getDetail(id, principal);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 상세페이지", boardDetailRespDto), HttpStatus.OK);
     }
 
     @GetMapping("/boards")
-    public ResponseEntity<?> list(Integer page, String keyword) {
+    public ResponseEntity<?> list(Integer page, String keyword, ServletRequest request, ServletResponse response) {
         // 1. 기능 : 구인공고 목록페이지를 요청하는 페이지
         // 2. Arguments :
         // - Page : keyword 또는 기본 정렬에 따른 Page 요청 값이다.
-        //         타 페이지에서의 진입시 null 값이 들어올 수 있으며, 해당 경우 Service에서 1페이지 처리를 한다.
+        //          타 페이지에서의 진입시 null 값이 들어올 수 있으며, 해당 경우 Service에서 1페이지 처리를 한다.
         // - keyword : 구인공고 목록페이지 우상단에 있는 selectBox 내의 요청 값이다.
         //             null, lang(매칭공고), deadline(마감일순) 값이 들어올 수 있다.
         //             Service와 Query에서의 if문으로 위 3값 Check
 
         // 3. Return :
         // - BoardPagingListDto
-        //   (keyword, blockCount, currentBlock, currentPage, startPageNum, lastPageNum,
-        //    totalCount, totalPage, isLast, isFirst,
-        //    List<Board>(id, title, companyName, dday, user(id, profile), love(id, css))
+        // (keyword, blockCount, currentBlock, currentPage, startPageNum, lastPageNum,
+        //  totalCount, totalPage, isLast, isFirst,
+        //  List<Board>(id, title, companyName, dday, user(id, profile), love(id, css))
 
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
 
-        LoginUser principal = (LoginUser) session.getAttribute("loginUser");
+        
+        // 특이사항 : 해당 핸들러는 인증이 필요 없지만, employee 로그인 유저에겐 love, resume을 보여 줘야 함
+        //           Filter에서는 걸리지 않기 때문에 session에 값이 저장되어 있지 않은 상태임
+        //           로그인 유저의 id가 필요한 상황이라 인터셉터나 AOP처리를 하려고 하였으나 기타 문제로 인해 추후에 처리할 예정
+        //           (진행 코드는 Controller에서 token을 확인하여 id값을 가져옴)
+        LoginUser principal = null;
+        principal = Token.loginCheck(principal, request, response);
+
         BoardPagingListDto boardPagingDto = boardService.getListWithJoin(page, keyword, principal);
 
         return new ResponseEntity<>(new ResponseDto<>(1, "게시글 목록페이지", boardPagingDto), HttpStatus.OK);
@@ -139,8 +155,8 @@ public class BoardController {
 
         // 3. Return :
         // - BoardUpdateFormRespDto
-        //   (id, title, content, career, education, jobType,
-        //    favor, deadline, userId, List<Integer> skill)
+        // (id, title, content, career, education, jobType,
+        // favor, deadline, userId, List<Integer> skill)
 
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
@@ -161,20 +177,20 @@ public class BoardController {
         // 2. Arguments :
         // - PathVariable : id, 해당 구인공고의 id이며, PK이다.
         // - BoardUpdateReqDto
-        //   (id, title, content, careerString, educationString, jobTypeString, deadline,
-        //    favor, userId, List<Integer> checkedValues)
+        //  (id, title, content, careerString, educationString, jobTypeString, deadline,
+        //  favor, userId, List<Integer> checkedValues)
         //   title : 최소 1 최대 16, null&empty
         //   content : 최소 1 최대 65536, null&empty
         //   careerString : selectBox에서 선택, null&empty
         //   educationString : selectBox에서 선택, null&empty
         //   jobTypeString : selectBox에서 선택, null&empty
         //   deadline : 한 가지 이상 선택해야함, null&empty
-        //              아래 DateParse.Dday 메서드를 통해 마감날짜에 대한 최대 일 수를 100일로 제한           
-        //   favor : 최소 1 최대 16, null&empty 
+        //              아래 DateParse.Dday 메서드를 통해 마감날짜에 대한 최대 일 수를 100일로 제한
+        //   favor : 최소 1 최대 16, null&empty
         //   checkedValues : 한 가지 이상 선택해야함, null&empty
 
         // 3. Return :
-        
+
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
@@ -199,20 +215,20 @@ public class BoardController {
         // 1. 기능 : 구인공고 등록을 요청하는 메서드
         // 2. Arguments :
         // - BoardInsertReqDto
-        //   (title, content, careerString, educationString, jobTypeString, deadline,
-        //    favor, userId, List<Integer> checkLang)
+        //  (title, content, careerString, educationString, jobTypeString, deadline,
+        //  favor, userId, List<Integer> checkLang)
         //   title : 최소 1 최대 16, null&empty
         //   content : 최소 1 최대 65536, null&empty
         //   careerString : selectBox에서 선택, null&empty
         //   educationString : selectBox에서 선택, null&empty
         //   jobTypeString : selectBox에서 선택, null&empty
         //   deadline : 한 가지 이상 선택해야함, null&empty
-        //              아래 DateParse.Dday 메서드를 통해 마감날짜에 대한 최대 일 수를 100일로 제한           
+        //              아래 DateParse.Dday 메서드를 통해 마감날짜에 대한 최대 일 수를 100일로 제한
         //   favor : 최소 1 최대 16, null&empty
         //   checkLang : 한 가지 이상 선택해야함, null&empty
 
         // 3. Return :
-        
+
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
@@ -240,9 +256,9 @@ public class BoardController {
 
         // 3. Return :
         // - List<BoardMyListRespDto>
-        //   (id, title, dday, company, user,
-        //    company(userId, companyNmae),
-        //    user(profile))
+        //  (id, title, dday, company, user,
+        //   company(userId, companyNmae),
+        //   user(profile))
 
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
@@ -264,9 +280,9 @@ public class BoardController {
 
         // 3. Return :
         // - List<BoardMyScrapListRespDto>
-        //   (id, title, dday, company, user,
-        //    company(userId, companyNmae),
-        //    user(profile))
+        //  (id, title, dday, company, user,
+        //   company(userId, companyNmae),
+        //   user(profile))
 
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
@@ -286,7 +302,7 @@ public class BoardController {
         // 1. 기능 : 등록된 공고를 삭제 요청하는 메서드
         // 2. Arguments :
         // - PathVariable : id, 삭제요청하는 공고의 id이며, PK이다.
-        //                  (삭제할 게시물의 존재유무 체크, deleteById Query에 활용)
+        //                 (삭제할 게시물의 존재유무 체크, deleteById Query에 활용)
         // 3. Return :
 
         // 작성자 : 이상x

@@ -13,6 +13,7 @@ public class BoardInsertReqBuilder extends BoardInsertReqDto {
         BoardInsertReqDto mockBoardInsertReqDto = new BoardInsertReqDto();
 
         mockBoardInsertReqDto.setTitle(title);
+        mockBoardInsertReqDto.setContent(content);
         mockBoardInsertReqDto.setCareerString(careerString);
         mockBoardInsertReqDto.setEducationString(educationString);
         mockBoardInsertReqDto.setJobTypeString(jobTypeString);
