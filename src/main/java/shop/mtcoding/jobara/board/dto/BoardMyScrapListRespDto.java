@@ -17,20 +17,20 @@ public class BoardMyScrapListRespDto {
     @Getter
     @Setter
     public static class CompanyDto {
-        private Integer userId;
         private String companyName;
     }
-
+    
     @Getter
     @Setter
     public static class UserDto {
+        private Integer id;
         private String profile;
     }
 
     @Getter
     @Setter
     public static class LoveDto {
-        private Integer lovdId;
+        private Integer id;
         private Integer boardId;
         private Integer userId;
         private String css;

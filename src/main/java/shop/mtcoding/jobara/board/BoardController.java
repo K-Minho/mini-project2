@@ -79,7 +79,8 @@ public class BoardController {
         // (id, title, content, career, jobType, education, favor, List<Integer> skill,
         //  Company(userId, companyName, comapnyScale, companyField),
         //  user(id, profile),
-        //  resume(id, userId, title, content, createdAt)
+        //  resume(id, userId, title, content, createdAt),
+        //  love(id, boardId, userId, css)
 
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
@@ -257,8 +258,8 @@ public class BoardController {
         // 3. Return :
         // - List<BoardMyListRespDto>
         //  (id, title, dday, company, user,
-        //   company(userId, companyNmae),
-        //   user(profile))
+        //   company(companyNmae),
+        //   user(id, profile))
 
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
@@ -281,8 +282,8 @@ public class BoardController {
         // 3. Return :
         // - List<BoardMyScrapListRespDto>
         //  (id, title, dday, company, user,
-        //   company(userId, companyNmae),
-        //   user(profile))
+        //   company(companyNmae),
+        //   user(id, profile))
 
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
