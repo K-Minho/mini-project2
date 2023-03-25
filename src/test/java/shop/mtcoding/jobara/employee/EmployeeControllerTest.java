@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import shop.mtcoding.jobara.common.config.auth.JwtProvider;
 import shop.mtcoding.jobara.employee.dto.EmployeeJoinBuilder;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeJoinReqDto;
+import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeTechUpdateReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeReq.EmployeeUpdateReqDto;
 import shop.mtcoding.jobara.employee.dto.EmployeeUpdateBuilder;
 import shop.mtcoding.jobara.user.model.User;
@@ -160,4 +163,26 @@ public class EmployeeControllerTest {
             resultActions.andExpect(status().is2xxSuccessful());
       }
 
+      @Test
+      public void skillUpdate_test() throws Exception {
+
+            // given
+            int id = 1;
+            EmployeeTechUpdateReqDto employeeTechUpdateReqDto = new EmployeeTechUpdateReqDto();
+            ArrayList<Integer> skill = new ArrayList<>();
+            skill.add(1);
+            skill.add(3);
+            skill.add(7);
+            employeeTechUpdateReqDto.setCheckedValues(skill);
+            String requestBody = om.writeValueAsString(employeeTechUpdateReqDto);
+            // when
+            ResultActions resultActions = mvc
+                        .perform(put("/employee/update/tech/"+id).content(requestBody)
+                                    .contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
+            String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+            
+
+            // then
+            resultActions.andExpect(status().is2xxSuccessful());
+      }
 }
