@@ -75,7 +75,7 @@ public class ResumeControllerTest {
             String requestBody = om.writeValueAsString(resume);
             // when
             ResultActions resultActions = mvc.perform(
-                        post("/resume/save").content(requestBody)
+                        post("/employee/resume/save").content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", "Bearer " + employeeJwtToken));
             // then
             resultActions.andExpect(status().is2xxSuccessful());
