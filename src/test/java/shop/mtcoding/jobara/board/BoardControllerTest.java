@@ -78,7 +78,7 @@ public class BoardControllerTest {
 
                 // then
                 resultActions.andExpect(status().isOk());
-                resultActions.andExpect(jsonPath("$.msg").value("게시글을 삭제하였습니다"));
+                resultActions.andExpect(jsonPath("$.msg").value("공고 삭제 성공"));
         }
 
         @Test
