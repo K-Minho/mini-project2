@@ -329,17 +329,20 @@ public class BoardService {
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
-
+        System.out.println("디버깅4");
         Board boardPS = boardRepository.findById(boardId);
+        System.out.println("디버깅5");
         if (boardPS == null) {
             throw new CustomApiException("삭제할 게시물이 존재하지 않습니다");
         }
-
+        
+        System.out.println("디버깅6");
         if (boardPS.getUserId() != principalId) {
             throw new CustomApiException("게시글 삭제 권한이 없습니다");
         }
-
+        
         try {
+            System.out.println("디버깅7");
             boardRepository.deleteById(boardId);
         } catch (Exception e) {
             throw new CustomApiException("서버에 일시적인 문제가 생겼습니다", HttpStatus.INTERNAL_SERVER_ERROR);

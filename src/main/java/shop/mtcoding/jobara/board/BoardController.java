@@ -291,8 +291,8 @@ public class BoardController {
         // 수정일 : -
 
         LoginUser principal = (LoginUser) session.getAttribute("loginUser");
-
         List<BoardMyScrapListRespDto> myScrapBoardListPS = boardService.getMyScrapBoardList(id, principal.getId());
+
         return new ResponseEntity<>(new ResponseDto<>(1, "스크랩 공고 목록 불러오기 성공", myScrapBoardListPS), HttpStatus.OK);
     }
 
@@ -305,12 +305,11 @@ public class BoardController {
         // - PathVariable : id, 삭제요청하는 공고의 id이며, PK이다.
         //                 (삭제할 게시물의 존재유무 체크, deleteById Query에 활용)
         // 3. Return :
-
+        
         // 작성자 : 이상x
         // 작성일 : 2023-03-24
         // 수정자 : -
         // 수정일 : -
-
         boardService.deleteMyBoard(id, principal.getId());
 
         return new ResponseEntity<>(new ResponseDto<>(1, "공고 삭제 성공", null), HttpStatus.OK);
