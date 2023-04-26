@@ -26,8 +26,11 @@ public class CompanyReq {
         @NotEmpty(message = "상세 주소를 입력하세요")
         @Size(min = 2, max = 64)
         private String detailAddress;
-        @NotEmpty(message = "사업자 등록 번호를 입력하세요")
-        @Size(min = 2, max = 16)
+        // @NotEmpty(message = "사업자 등록 번호를 입력하세요")
+        // @Size(min = 2, max = 16)
+        //long은 size notempty 사용불가능함 min max, notnull로 해야함
+        // - 작성자 : 강민호
+        // - 작성일시 : 03-26
         private Long companyNumb;
         @NotEmpty(message = "회사 이름을 입력하세요")
         @Size(min = 1, max = 16)
@@ -52,7 +55,7 @@ public class CompanyReq {
         @NotEmpty(message = "전화 번호를 입력하세요")
         @Size(min = 2, max = 64)
         private String tel;
-        @NotEmpty(message = "사진을 등록하세요")
+        // @NotEmpty(message = "사진을 등록하세요")
         private String profile;
         @NotEmpty(message = "회사 이름을 입력하세요")
         @Size(min = 1, max = 16)

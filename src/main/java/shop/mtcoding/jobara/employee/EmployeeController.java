@@ -128,7 +128,7 @@ public class EmployeeController {
         List<String> employeeTechPS = employeeService.getEmployeeTech(id);
         model.addAttribute("employee", employeePS);
         model.addAttribute("employeeTech", employeeTechPS);
-        return new ResponseEntity<>(new ResponseDto<>(1, "상세 페이지", model), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(new ResponseDto<>(1, "상세 페이지 요청 성공", model), HttpStatus.valueOf(200));
     }
 
     @GetMapping("/employee/{id}")
@@ -169,7 +169,7 @@ public class EmployeeController {
 
     @GetMapping("/list")
     public @ResponseBody ResponseEntity<?> employeeList(Model model, Integer page) {
-        // 1. 기능 : 구직자 회원 가입 요청을 하는 메서드
+        // 1. 기능 : 구직자 회원의 리스트 페이지 요청을 하는 메서드
         // 2. Arguments :
         // - employeeJoinReqDto EmployeeJoinReqDto타입 내부 요소들은 전부 String 타입이다.
         // username, password : 최소 2 ~ 최대 16,

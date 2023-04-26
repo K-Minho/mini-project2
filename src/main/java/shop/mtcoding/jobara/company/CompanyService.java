@@ -92,15 +92,15 @@ public class CompanyService {
         // 수정일 : -
 
         String profilePath;
-        try {
-            profilePath = MyBase64Decoder.saveImage(companyUpdateReqDto.getProfile());
-        } catch (Exception e) {
-            throw new CustomApiException("서버 오류 : 파일 변환 실패", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        // try {
+        //     profilePath = MyBase64Decoder.saveImage(companyUpdateReqDto.getProfile());
+        // } catch (Exception e) {
+        //     throw new CustomApiException("서버 오류 : 파일 변환 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+        // }
 
         String salt = Hash.makeSalt();
         String hashPassword = Hash.encode(companyUpdateReqDto.getPassword() + salt);
-        User user = new User(companyUpdateReqDto, principalId, profilePath, hashPassword, salt);
+        User user = new User(companyUpdateReqDto, principalId, "profilePath", hashPassword, salt);
         Company company = new Company(companyUpdateReqDto, principalId);
         try {
             userRepository.updateById(user);

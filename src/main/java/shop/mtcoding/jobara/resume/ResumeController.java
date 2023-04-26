@@ -37,7 +37,20 @@ public class ResumeController {
     @EmployeeCheckApi
     public ResponseEntity<?> updateResume(@PathVariable Integer id, @Valid @RequestBody ResumeUpdateReq resumeUpdateReq,
             BindingResult bindingResult) {
+        // 1. 기능 : 구직자 회원의 이력서 수정 요청을 하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 이력서의 id이며 PK이다.
+        // - resumeUpdateReq ResumeUpdateReq
+        // id : 수정 요청을 하는 해당 이력서의 id이다 . Integer 타입 PK이다.
+        // title : 필수값이 아님. 없을시 "무제"로 등록 됨.
+        // content : 최소 2 ~ 최대 65546
 
+        // 3. Return : 없음
+
+        // 작성자 : 강민호
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         LoginUser user = (LoginUser) session.getAttribute("loginUser");
         if (resumeUpdateReq.getTitle().isEmpty() || resumeUpdateReq.getTitle().isBlank()) {
             resumeUpdateReq.setTitle("무제");
@@ -49,7 +62,21 @@ public class ResumeController {
     @GetMapping("/employee/resume/{id}")
     @EmployeeCheck
     public ResponseEntity<?> saveResumeForm(@PathVariable("id") Integer id, Model model) {
+        // 1. 기능 : 구직자 회원의 이력서 상세보기를 요청을 하는 메서드
+        // 2. Arguments :
+        // - PathVariable : id, 해당 이력서의 id이며 PK이다.
 
+        // 3. Return : Resume
+        // id : Integer
+        // userId : Integer 
+        // title : String
+        // content : String
+        // createdAt : Timestamp
+
+        // 작성자 : 강민호
+        // 작성일 : 2023-03-24
+        // 수정자 : -
+        // 수정일 : -
         LoginUser user = (LoginUser) session.getAttribute("loginUser");
         Resume resumePS = resumeService.findById(user.getId(), id);
         model.addAttribute("resume", resumePS);

@@ -26,6 +26,7 @@ spring:
     password: 
   sql:
     init:
+      encoding: utf-8
       schema-locations:
       - classpath:db/table.sql
       data-locations:
