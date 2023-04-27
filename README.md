@@ -4,7 +4,7 @@
 [![2차_미니프로젝트_시연영상](http://img.youtube.com/vi/oGc5zsfmxl4/0.jpg)](https://youtu.be/oGc5zsfmxl4)
 
 ## 발표 PPT
-![2차_미니프로젝트_발표PPT](https://github.com/K-Minho/mini-project2/blob/68b84eca6ec0f603d7b0c384462382432a99ae86/%EB%AF%B8%EB%8B%88%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8_2%EC%A1%B0.pdf)
+![2차_미니프로젝트_발표PPT](https://github.com/K-Minho/mini-project2/blob/73bfa66aef77e87d83294564f01b386939146e13/2%EC%A1%B0_2%EC%B0%A8%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8.pdf)
 
 ## 팀 소개
 - 김태훈(팀장)
